@@ -63,6 +63,8 @@ export class SelfieComponent implements OnInit, AfterViewInit {
   }
 
   async detectFaces() {
+    requestAnimationFrame(() => this.detectFaces());
+
     const videoEl: HTMLVideoElement = this.inputVideo.nativeElement;
     if (!this.tempCanvas) {
       this.tempCanvas = document.createElement('canvas');
