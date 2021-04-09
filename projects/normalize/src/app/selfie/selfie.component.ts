@@ -63,8 +63,6 @@ export class SelfieComponent implements OnInit, AfterViewInit {
   }
 
   async detectFaces() {
-    requestAnimationFrame(() => this.detectFaces());
-
     const videoEl: HTMLVideoElement = this.inputVideo.nativeElement;
     if (!this.tempCanvas) {
       this.tempCanvas = document.createElement('canvas');
@@ -117,7 +115,11 @@ export class SelfieComponent implements OnInit, AfterViewInit {
       ]) {
         const extent = this.extent(...feature);
         const center = this.center(index, extent[2], extent[3]);
-        dstContext.drawImage(canvas, ...extent, ...center);
+        try {
+          dstContext.drawImage(canvas, ...extent, ...center);
+        } catch (exception) {
+          console.log('FAILED TO COPY', extent, center);
+        }
         index++;
       }
       // const extent = this.extent(...leftEye, ...rightEye, ...leftEyeBbrow, ...rightEyeBrow);
