@@ -14,8 +14,8 @@ export class FaceApiService {
   }
 
   async loadModels() {
-    await faceapi.loadFaceLandmarkTinyModel('/assets/models');
-    await faceapi.loadTinyFaceDetectorModel('/assets/models');
+    await faceapi.loadFaceLandmarkTinyModel('assets/models');
+    await faceapi.loadTinyFaceDetectorModel('assets/models');
   }
 }
 

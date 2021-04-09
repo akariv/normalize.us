@@ -75,10 +75,10 @@ export class SelfieComponent implements OnInit, AfterViewInit {
     const scoreThreshold = 0.5;
     const options = new TinyFaceDetectorOptions({ inputSize, scoreThreshold });
     if (!nets.tinyFaceDetector.params) {
-      await nets.tinyFaceDetector.load('/assets/models');
+      await nets.tinyFaceDetector.load('assets/models');
     }
     if (!nets.faceLandmark68TinyNet.params) {
-      await nets.faceLandmark68TinyNet.load('/assets/models');
+      await nets.faceLandmark68TinyNet.load('assets/models');
     }
     const result = await detectSingleFace(canvas, options).withFaceLandmarks(true);
     if (result) {
