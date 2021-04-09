@@ -15,7 +15,8 @@ export class SelfieComponent implements OnInit, AfterViewInit {
   @ViewChild('outputImage') outputImage: ElementRef;
 
   private videoStream: MediaStream;
-  frames: {el: HTMLCanvasElement, box: any}[] = [];
+  private tempCanvas: HTMLCanvasElement;
+  // frames: {el: HTMLCanvasElement, box: any}[] = [];
 
   constructor(private faceapi: FaceApiService, private config: ConfigService) {}
 
@@ -63,7 +64,10 @@ export class SelfieComponent implements OnInit, AfterViewInit {
 
   async detectFaces() {
     const videoEl: HTMLVideoElement = this.inputVideo.nativeElement;
-    const canvas: HTMLCanvasElement = document.createElement('canvas');
+    if (!this.tempCanvas) {
+      this.tempCanvas = document.createElement('canvas');
+    }
+    const canvas: HTMLCanvasElement = this.tempCanvas;
     canvas.width = videoEl.videoWidth;
     canvas.height = videoEl.videoHeight;
 
@@ -123,8 +127,6 @@ export class SelfieComponent implements OnInit, AfterViewInit {
       // // const imgData = context.getImageData(result.box.x, result.box.y, result.box.width, result.box.height);
       // // context.clearRect(0, 0, canvas.width, canvas.height);
       // context.drawImage(canvas, result.box.x, result.box.y, result.box.width, result.box.height, 0, 0, canvas.width, canvas.height);
-    } else {
-      canvas.remove();
     }
 
     requestAnimationFrame(() => this.detectFaces());
