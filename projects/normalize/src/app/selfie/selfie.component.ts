@@ -108,8 +108,7 @@ export class SelfieComponent implements OnInit, AfterViewInit {
       let index = 0;
       for (const feature of [
         [...nose],
-        [...leftEye, ...rightEye, ],
-          // ...leftEyeBbrow, ...rightEyeBrow],
+        [...leftEye, ...rightEye, ...leftEyeBbrow, ...rightEyeBrow],
         [...mouth],
         [...forehead as Point[]],
         [...face],
