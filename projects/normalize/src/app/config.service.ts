@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class ConfigService {
 
-  COLLECTED_FRAMES = 3;
+  COLLECTED_FRAMES = 7;
   IMAGE_SIZE = 480;
   NUM_FEATURES = 5;
 
