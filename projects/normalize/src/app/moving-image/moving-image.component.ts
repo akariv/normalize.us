@@ -1,4 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { AnimationManagerService } from '../animation-manager.service';
 import { ConfigService } from '../config.service';
 
 @Component({
@@ -17,17 +18,19 @@ export class MovingImageComponent implements OnInit, OnDestroy {
   y = 0;
   frame = 0;
   count = 0;
-  active = true;
+  animationId = '';
 
-  constructor(private config: ConfigService) { }
+  constructor(private config: ConfigService, private animation: AnimationManagerService) { }
 
   ngOnInit(): void {
     this.x = -this.config.IMAGE_SIZE * this.index;
-    requestAnimationFrame(() => this.animationFrame());
+    this.animationId = 'moving-image-' + this.index;
+    this.animation.register(this.animationId, () => this.animationFrame());
+    this.animation.enable(this.animationId);
   }
 
   ngOnDestroy(): void {
-    this.active = false;
+    this.animation.deregister(this.animationId);
   }
 
   animationFrame() {
@@ -35,14 +38,12 @@ export class MovingImageComponent implements OnInit, OnDestroy {
     if (this.count <= 0) {
       this.frame += 1;
       if (this.frame >= this.config.COLLECTED_FRAMES) {
-        this.frame = -this.config.COLLECTED_FRAMES + 1;
+        this.frame = -this.config.COLLECTED_FRAMES + 2;
       }
       this.y = -Math.abs(this.frame) * this.config.IMAGE_SIZE;
       this.count = this.ANIMATION_DIVIDER;
     }
-    if (this.active) {
-      requestAnimationFrame(() => this.animationFrame());
-    }
+    this.animation.go();
   }
 
 }

@@ -19,9 +19,12 @@ export class SelfieComponent implements OnInit, AfterViewInit {
   private tempCanvas2: HTMLCanvasElement;
   private compositionFrame: HTMLCanvasElement;
   // frames: {el: HTMLCanvasElement, box: any}[] = [];
+  private skipFrames = 5;
   private frames = 0;
   public preview = '';
   public src = '';
+
+  private detectorOptions = new TinyFaceDetectorOptions({inputSize: 256, scoreThreshold: 0.5});
 
   constructor(private faceapi: FaceApiService, private config: ConfigService) {}
 
@@ -49,8 +52,10 @@ export class SelfieComponent implements OnInit, AfterViewInit {
         audio: audioConstraints,
       });
     videoEl.srcObject = this.videoStream;
-    fromEvent(videoEl, 'play').pipe(first(), delay(200)).subscribe(async () => {
-      await this.detectFaces();
+    fromEvent(videoEl, 'play').pipe(first()).subscribe(() => {
+      setTimeout(() => {
+        this.triggerDetectFaces();
+      }, 1000);
     });
   }
 
@@ -71,6 +76,12 @@ export class SelfieComponent implements OnInit, AfterViewInit {
     return [index * this.config.IMAGE_SIZE + x, frame * this.config.IMAGE_SIZE + y, tgtWidth, tgtHeight];
   }
 
+  triggerDetectFaces() {
+    // setTimeout(() => {
+      requestAnimationFrame(() => this.detectFaces());
+    // }, 33);
+  }
+
   async detectFaces() {
     const videoEl: HTMLVideoElement = this.inputVideo.nativeElement;
     if (!this.tempCanvas) {
@@ -88,19 +99,17 @@ export class SelfieComponent implements OnInit, AfterViewInit {
 
     // Copy frame to canvas
     const context = canvas.getContext('2d');
-    context.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
     const context2 = canvas2.getContext('2d');
 
-    const inputSize = 128;
-    const scoreThreshold = 0.5;
-    const options = new TinyFaceDetectorOptions({ inputSize, scoreThreshold });
     if (!nets.tinyFaceDetector.params) {
       await nets.tinyFaceDetector.load('assets/models');
     }
     if (!nets.faceLandmark68TinyNet.params) {
       await nets.faceLandmark68TinyNet.load('assets/models');
     }
-    let result = await detectSingleFace(canvas, options).withFaceLandmarks(true);
+
+    context.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+    let result = await detectSingleFace(canvas, this.detectorOptions).withFaceLandmarks(true);
     if (result) {
       // console.log('SCORE', result.detection.score);
       const landmarks: FaceLandmarks68 = result.landmarks;
@@ -124,7 +133,7 @@ export class SelfieComponent implements OnInit, AfterViewInit {
       context2.drawImage(canvas, 0, 0, canvas2.width, canvas2.height);
       this.preview = canvas2.toDataURL('png');
       console.log('ROTATED', rotation/Math.PI*180);
-      result = await detectSingleFace(canvas2, options).withFaceLandmarks(true);
+      result = await detectSingleFace(canvas2, this.detectorOptions).withFaceLandmarks(true);
       if (result) {
         console.log('SCORE', result.detection.score);
         const landmarks: FaceLandmarks68 = result.landmarks;
@@ -138,36 +147,37 @@ export class SelfieComponent implements OnInit, AfterViewInit {
         const forehead = [{x: box.x, y: box.y}, {x: box.x + box.width, y: this.extent(...leftEyeBbrow, ...rightEyeBrow)[1]}];
         forehead[0].y -= this.extent(...forehead as Point[])[3];
         const face = [{x: box.x, y: box.y}, {x: box.x + box.width, y: box.y + box.height}] as Point[];
-        const e = this.extent(...face);
         
         const dstCanvas: HTMLCanvasElement = this.compositionFrame;
         const dstContext = dstCanvas.getContext('2d');
         let index = 0;
-        for (const feature of [
-          [...nose],
-          [...leftEye, ...rightEye, ...leftEyeBbrow, ...rightEyeBrow],
-          [...mouth],
-          [...forehead as Point[]],
-          [...face],
-        ]) {
-          const extent = this.extent(...feature);
-          const center = this.center(index, this.frames, extent[2], extent[3]);
-          try {
-            dstContext.drawImage(canvas2, ...extent, ...center);
-          } catch (exception) {
-            console.log('FAILED TO COPY', extent, center);
+        if (this.skipFrames <= 0) {
+          for (const feature of [
+            [...nose],
+            [...leftEye, ...rightEye, ...leftEyeBbrow, ...rightEyeBrow],
+            [...mouth],
+            [...forehead as Point[]],
+            [...face],
+          ]) {
+            const extent = this.extent(...feature);
+            const center = this.center(index, this.frames, extent[2], extent[3]);
+            try {
+              dstContext.drawImage(canvas2, ...extent, ...center);
+            } catch (exception) {
+              console.log('FAILED TO COPY', extent, center);
+            }
+            index++;
           }
-          index++;
+          // this.frames++;
+        } else {
+          this.skipFrames--;
         }
-        this.frames++;
         console.log('COLLECTED', this.frames);
       }
     }
 
     if (this.frames < this.config.COLLECTED_FRAMES) {
-      setTimeout(() => {
-        requestAnimationFrame(() => this.detectFaces());
-      }, 33);
+      this.triggerDetectFaces();
     } else {
       console.log('FINISHED');
       requestAnimationFrame(() => this.processFrames());
