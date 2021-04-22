@@ -1,6 +1,6 @@
 <video #inputVideo [autoplay]='true' [muted]='true' [volume]='0' playsinline 
        [style.transform]='transform' [style.transform-origin]='transformOrigin'
-       [class.no-detection]='transformOrigin === "0 0"'
+       [class.no-detection]='scoreThresholdHigh === detectorOptions'
 ></video>
 <img [src]='preview'>
 <div class='moving-images' *ngIf='src'>

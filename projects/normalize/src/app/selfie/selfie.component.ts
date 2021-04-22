@@ -26,9 +26,9 @@ export class SelfieComponent implements OnInit, AfterViewInit {
   public transform = '';
   public transformOrigin = '';
 
-  private scoreThresholdHigh = new TinyFaceDetectorOptions({inputSize: 256, scoreThreshold: 0.75});;
-  private scoreThresholdLow = new TinyFaceDetectorOptions({inputSize: 128, scoreThreshold: 0.5});;
-  private detectorOptions = this.scoreThresholdHigh;
+  public scoreThresholdHigh = new TinyFaceDetectorOptions({inputSize: 256, scoreThreshold: 0.75});;
+  public scoreThresholdLow = new TinyFaceDetectorOptions({inputSize: 256, scoreThreshold: 0.5});;
+  public detectorOptions = this.scoreThresholdHigh;
 
   constructor(private faceapi: FaceApiService, private config: ConfigService) {}
 
@@ -188,8 +188,8 @@ export class SelfieComponent implements OnInit, AfterViewInit {
       // }
     } else {
       this.detectorOptions = this.scoreThresholdHigh;
-      this.transformOrigin = `0 0`;
-      this.transform = `translate(0,0)rotate(0)scale(1)`;  
+      // this.transformOrigin = `0 0`;
+      // this.transform = `translate(0,0)rotate(0)scale(1)`;  
     }
 
     if (this.frames < this.config.COLLECTED_FRAMES) {
