@@ -11,6 +11,13 @@
     video {
         width: auto;
         height: 400px;
+        transition-property: transform transform-origin;
+        transition-duration: 200ms;
+        transition-timing-function: linear;
+
+        &.no-detection {
+            filter: grayscale(1);
+        }
     }
 
     img {
