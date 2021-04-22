@@ -94,7 +94,7 @@ export class SelfieComponent implements OnInit, AfterViewInit {
     const canvas: HTMLCanvasElement = this.tempCanvas;
     canvas.width = videoEl.videoWidth;
     canvas.height = videoEl.videoHeight;
-    const ratio = videoEl.offsetWidth / videoEl.videoWidth;
+    const ratio = Math.min(videoEl.offsetWidth / videoEl.videoWidth);
     if (!this.tempCanvas2) {
       this.tempCanvas2 = document.createElement('canvas');
     }
@@ -128,7 +128,7 @@ export class SelfieComponent implements OnInit, AfterViewInit {
       //   sub._y += 0.00001;
       // }
       const rotation = Math.atan(sub.x / (sub.y ? sub.y : 0.00001));
-      const scale = 0.4 * videoEl.videoHeight / sub.magnitude();
+      const scale = 0.4 * window.innerHeight / (sub.magnitude() * ratio);
       // context.save();
       // // const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
       // context2.clearRect(0, 0, canvas2.width, canvas2.height);
@@ -143,7 +143,7 @@ export class SelfieComponent implements OnInit, AfterViewInit {
       // console.log('ROTATED', rotation/Math.PI*180);
 
       this.transformOrigin = `${center.x * ratio}px ${center.y * ratio}px`;
-      this.transform = `translate(${videoEl.offsetWidth/2-center.x * ratio}px,${videoEl.offsetHeight/2-center.y * ratio}px)rotate(${rotation}rad)scale(${scale})`;
+      this.transform = `translate(${videoEl.offsetWidth*0.5-center.x * ratio}px,${videoEl.offsetHeight*0.4-center.y * ratio}px)rotate(${rotation}rad)scale(${scale})`;
       // this._transform = `translate(-${videoEl.offsetWidth/2}px,-${videoEl.offsetHeight/2}px)`;//rotate(${rotation}rad)translate(${center.x * ratio}px,${center.y * ratio}px)`;
       // result = await detectSingleFace(canvas2, this.detectorOptions).withFaceLandmarks(true);
       // if (result) {
