@@ -1,7 +1,9 @@
 <!-- <div [style.background-image]='"url(" + src + ")"' [style.background-position-x]='x + "px"' [style.background-position-y]='y + "px"'>
 
 </div> -->
-<div class='wrapper'>
+<div class='wrapper'
+    [style.width]='config.IMAGE_SIZE + "px"'
+    [style.height]='config.IMAGE_SIZE + "px"'>
     <div class='mover' [style.top]='y + "px"' [style.left]='x + "px"'>
         <img [src]='src'>
     </div>

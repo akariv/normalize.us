@@ -20,7 +20,7 @@ export class MovingImageComponent implements OnInit, OnDestroy {
   count = 0;
   animationId = '';
 
-  constructor(private config: ConfigService, private animation: AnimationManagerService) { }
+  constructor(public config: ConfigService, private animation: AnimationManagerService) { }
 
   ngOnInit(): void {
     this.x = -this.config.IMAGE_SIZE * this.index;
