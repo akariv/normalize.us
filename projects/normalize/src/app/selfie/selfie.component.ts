@@ -19,7 +19,7 @@ export class SelfieComponent implements OnInit, AfterViewInit {
   public transform = '';
   public transformOrigin = '';
 
-  public rotation = '';
+  public orientation = '';
   public scale = '';
   public distance = '';
 
@@ -56,12 +56,11 @@ export class SelfieComponent implements OnInit, AfterViewInit {
     const videoEl: HTMLVideoElement = this.inputVideo.nativeElement;
     this.faceProcessor.processFaces(videoEl, 50)
       .subscribe((event) => {
-        console.log('EV', event);
         if (event.kind === 'transform') {
           this.transform = event.transform;
           this.transformOrigin = event.transformOrigin;
-          this.distance = (event.distance as Number).toFixed(0);
-          this.rotation = (event.rotation as Number).toFixed(1);;
+          this.distance = (event.distance as Number).toFixed(2);
+          this.orientation = (event.orientation as Number).toFixed(1);;
           this.scale = (event.scale as Number).toFixed(2);;
         } else if (event.kind === 'detection') {
           this.detected = event.detected;

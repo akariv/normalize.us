@@ -15,7 +15,7 @@
         top: 50px;
         left: 50px;
         font-size: 40px;
-        color: transparent;
+        color: rgba(0,0,0,.25);
         text-shadow:
             -1px -1px 0 #fff,  
             1px -1px 0 #fff,
@@ -32,6 +32,7 @@
     video {
         width: 100%;
         height: auto;
+        max-height: 100%;
         transition-property: transform transform-origin;
         transition-duration: 75ms;
         transition-timing-function: linear;
@@ -45,10 +46,10 @@
         width: 640px;
     }
 
-    // .moving-images {
-    //     width: 100%;
-    //     display: flex;
-    //     flex-flow: row;
-    //     justify-content: space-evenly;
-    // }
+    .moving-images {
+        width: 100%;
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: center;
+    }
 }

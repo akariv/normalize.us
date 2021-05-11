@@ -63,7 +63,7 @@ export class FaceProcessorService {
   public defaultSnap = {
     orientaton: 10,
     size: 10,
-    distance: 100
+    distance: 0.1
   };
 
   constructor(private faceapi: FaceApiService, private config: ConfigService, private animationManager: AnimationManagerService) {
@@ -77,7 +77,7 @@ export class FaceProcessorService {
     this.detectorOptions = this.scoreThresholdHigh;
   }
 
-  processFaces(el: HTMLVideoElement | HTMLImageElement, skipFrames=5, snap=this.defaultSnap) {
+  processFaces(el: HTMLVideoElement | HTMLImageElement, skipFramesStart=20, snap=this.defaultSnap) {
     const compositionFrame = this.getCompositionFrame();
     const canvas = document.createElement('canvas');
     if (el instanceof HTMLVideoElement) {
@@ -89,11 +89,15 @@ export class FaceProcessorService {
       canvas.height = el.height;  
     }
     const ratio = Math.min(el.offsetWidth / canvas.width);
+    console.log('RATIO', ratio);
     const context = canvas.getContext('2d');
     const progress = new ReplaySubject<any>(1);
 
     let frames = 0;
+    let skipFrames = skipFramesStart;
     let descriptor = [];
+    let snapped = false;
+
     const id = 'fps' + Math.random();
     const animationObs = new AnimationObservable(id, this.animationManager);
     progress.next({
@@ -118,7 +122,14 @@ export class FaceProcessorService {
             kind: 'detection',
             score: result ? result.detection.score : 0,
             detected: false
-          });  
+          });
+          progress.next({
+            transformOrigin: `0px 0px`,
+            transform: `translate(0px,0px)rotate(0rad)scale(1)`,
+            kind: 'transform',
+            snapped: false,
+            orientation: NaN, scale: NaN, distance: NaN
+          });
         }
         return !!result || animationObs.cancelled;
       }),
@@ -134,19 +145,21 @@ export class FaceProcessorService {
         const center = topPoint.add(bottomPoint).div(new Point(2, 2));
         const sub = topPoint.sub(bottomPoint);
         const rotation = Math.atan(sub.x / (sub.y ? sub.y : 0.00001));
-        let scale = 0.1 * window.innerHeight / (sub.magnitude() * ratio);
-        if (scale < 1) {
-          scale = 1;
-        }
-        const distance = Math.sqrt((center.x - canvas.width/2)^2 + (center.y - canvas.height/2)^2);
+        const orientation = rotation / Math.PI * 180;
+        let scale = 0.3 * canvas.height / sub.magnitude();
+        // if (scale < 1) {
+        //   scale = 1;
+        // }
+        const distance = Math.sqrt((center.x - canvas.width*0.5)**2 + (center.y - canvas.height*0.6)**2);
   
+        const snapRatio = snapped ? 2 : 1;
         const shouldSnap = (
-          (Math.abs(rotation) < snap.orientaton / 180 * Math.PI) &&
-          (scale < 1 + snap.size/100) &&
-          (scale > 1 - snap.size/100) &&
-          (scale > 1 - snap.size/100) &&
-          (distance < snap.distance)
+          (Math.abs(orientation) < snap.orientaton * snapRatio) &&
+          (scale < 1 + snap.size * snapRatio / 100) &&
+          (scale > 1 - snap.size * snapRatio / 100) &&
+          (distance < snap.distance * canvas.height * snapRatio)
         );
+        snapped = shouldSnap;
 
         if (shouldSnap) {
           context.save();
@@ -160,23 +173,24 @@ export class FaceProcessorService {
   
           progress.next({
             transformOrigin: `${center.x * ratio}px ${center.y * ratio}px`,
-            transform: `translate(${el.offsetWidth*0.5-center.x * ratio}px,${el.offsetHeight*0.4-center.y * ratio}px)rotate(${rotation}rad)scale(${scale})`,
-            preview: canvas.toDataURL(),
+            transform: `translate(${el.offsetWidth*0.5-center.x * ratio}px,${el.offsetHeight*0.5-center.y * ratio}px)rotate(${rotation}rad)scale(${scale})`,
+            // preview: canvas.toDataURL(),
             kind: 'transform',
             snapped: true,
-            rotation, scale, distance
-          });  
+            orientation, scale, distance: distance / canvas.height  
+          });
+          return detectSingleFace(canvas, this.detectorOptions).withFaceLandmarks(this.config.TINY).withFaceDescriptor().run();
         } else {
           progress.next({
             transformOrigin: `0px 0px`,
             transform: `translate(0px,0px)rotate(0rad)scale(1)`,
             kind: 'transform',
             snapped: false,
-            rotation, scale, distance
+            orientation, scale, distance: distance / canvas.height
           });
+          return from([null]);
         }
 
-        return detectSingleFace(canvas, this.detectorOptions).withFaceLandmarks(this.config.TINY).withFaceDescriptor().run();
       }),
       filter((result) => {
         animationObs.continue();
@@ -185,6 +199,9 @@ export class FaceProcessorService {
           score: result ? result.detection.score : 0,
           detected: !!result
         });
+        if (!result) {
+          skipFrames = skipFramesStart;
+        }
         return !!result || animationObs.cancelled;
       }),
       tap(() => {
