@@ -1,8 +1,12 @@
 <video #inputVideo [autoplay]='true' [muted]='true' [volume]='0' playsinline 
        [style.transform]='transform' [style.transform-origin]='transformOrigin'
-       [class.no-detection]='scoreThresholdHigh === detectorOptions'
+       [class.no-detection]='!detected'
 ></video>
-<img [src]='preview'>
 <div class='moving-images' *ngIf='src'>
     <app-moving-image *ngFor='let idx of [0,1,2,3,4]' [src]='src' [index]='idx'></app-moving-image>
+</div>
+<div class='stats'>
+    <span>{{rotation}}</span>
+    <span>{{scale}}</span>
+    <span>{{distance}}</span>
 </div>

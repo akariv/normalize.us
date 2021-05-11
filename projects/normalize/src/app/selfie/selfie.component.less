@@ -8,6 +8,26 @@
     align-items: flex-start;
     overflow: hidden;
     justify-content: center;
+    position: relative;
+
+    .stats {
+        position: absolute;
+        top: 50px;
+        left: 50px;
+        font-size: 40px;
+        color: transparent;
+        text-shadow:
+            -1px -1px 0 #fff,  
+            1px -1px 0 #fff,
+            -1px 1px 0 #fff,
+            1px 1px 0 #fff;
+        display: flex;
+        flex-flow: row;
+        span {
+            display: inline-block;
+            margin: 20px;
+        }
+    }
 
     video {
         width: 100%;

@@ -10,8 +10,8 @@ export class ApiService {
 
   constructor(private http: HttpClient) { }
 
-  createNew(image) {
-    return this.http.post(environment.endpoints.new, {image});
+  createNew(image, descriptor) {
+    return this.http.post(environment.endpoints.new, {image, descriptor});
   }
 
 }

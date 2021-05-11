@@ -6,12 +6,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SelfieComponent } from './selfie/selfie.component';
 import { MovingImageComponent } from './moving-image/moving-image.component';
+import { DatasetComponent } from './dataset/dataset.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SelfieComponent,
-    MovingImageComponent
+    MovingImageComponent,
+    DatasetComponent
   ],
   imports: [
     BrowserModule,
