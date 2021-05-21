@@ -27,4 +27,7 @@ def get_game_handler(request: Request):
             json.dumps(response),
             headers=HEADERS
         )
-    return json.dumps(dict(success=False))
+    return Response(
+        json.dumps(dict(success=False)),
+        headers=HEADERS
+    )

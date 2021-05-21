@@ -29,4 +29,7 @@ def new_selfie_handler(request: Request):
                 json.dumps(dict(success=True, id=new_id)),
                 headers=HEADERS
             )
-    return json.dumps(dict(success=False))
+    return Response(
+        json.dumps(dict(success=False)),
+        headers=HEADERS
+    )
