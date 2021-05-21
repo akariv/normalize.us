@@ -5,7 +5,7 @@ from flask import Request, Response
 from .db import connection
 from .net import HEADERS
 
-update = text('UPDATE FACES SET tournaments = tournaments + :t SET votes = votes + :v WHERE id=:id')
+update_sql = text('UPDATE FACES SET tournaments = tournaments + :t SET votes = votes + :v WHERE id=:id')
 
 def game_results_handler(request: Request):
     if request.method == 'OPTIONS':
@@ -20,7 +20,7 @@ def game_results_handler(request: Request):
             updates.setdefault(loser, dict(t=0, v=0))['t'] += 1
             updates[winner]['v'] += 1
         for id, update in updates.items():
-            connection.execute(update, t=update['t'], v=update['v'], id=id)
+            connection.execute(update_sql, t=update['t'], v=update['v'], id=id)
         response = dict(
             success=True, updated=len(updates)
         )
