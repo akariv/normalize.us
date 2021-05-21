@@ -14,7 +14,7 @@ def get_image_handler(request: Request):
     if request.method == 'OPTIONS':
         return Response('', headers=HEADERS)
     if request.method == 'GET':
-        id = request.values.get('id')
+        id = int(request.values.get('id'))
         rows = connection.execute(fetch_image, id=id)
         for row in rows:
             image = PREFIX + row['image']
