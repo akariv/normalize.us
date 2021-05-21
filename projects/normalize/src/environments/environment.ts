@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   endpoints: {
-    new: 'http://localhost:8080/'
+    new: 'https://europe-west3-normalize-us.cloudfunctions.net/upload-selfie'
+    // new: 'http://localhost:8080/'
   }
 };
 

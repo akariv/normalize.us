@@ -1,6 +1,3 @@
-<p>{{url}}</p>
-<div class='imgs'>
-    <img [src]='url' #image/>
-    <img [src]='preview'/>
-</div>
+<input (change)='testUrl($event)' placeholder="name of dataset to load...">
+<p>{{images.length}}: {{url}}</p>
 <img [src]='extracted'/>

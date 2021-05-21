@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { detectSingleFace, FaceLandmarks68, Point, TinyFaceDetectorOptions, SsdMobilenetv1Options, LabeledFaceDescriptors } from 'face-api.js';
 import { from, Observable, ReplaySubject, Subject } from 'rxjs';
-import { filter, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 import { AnimationManagerService } from './animation-manager.service';
 import { ConfigService } from './config.service';
 import { FaceApiService } from './face-api.service';
@@ -88,6 +88,7 @@ export class FaceProcessorService {
       canvas.width = el.width;
       canvas.height = el.height;  
     }
+    console.log('CANVAS', canvas);
     const ratio = Math.min(el.offsetWidth / canvas.width);
     console.log('RATIO', ratio);
     const context = canvas.getContext('2d');
@@ -106,18 +107,27 @@ export class FaceProcessorService {
     });
     this.faceapi.ready.pipe(
       switchMap(() => {
+        console.log('FP: READY');
         return animationObs.start();  
       }),
       switchMap(() => {
+        console.log('FP: animationObs');
         context.drawImage(el, 0, 0, canvas.width, canvas.height);
+        console.log('FP: drawn');
         return detectSingleFace(canvas, this.detectorOptions).withFaceLandmarks(this.config.TINY).run();
       }),
-      filter((result) => {
+      catchError((e, caught) => {
+        console.log('ERRR', e);
+        return from([false]);
+      }),
+      filter((result: any) => {
+        console.log('RESULTTT', result.detection.score);
         if (!result) {
           animationObs.continue();
           this.detectorOptions = this.scoreThresholdHigh;
         }
         if (!result) {
+          console.log('NO DETECTION');
           progress.next({
             kind: 'detection',
             score: result ? result.detection.score : 0,
@@ -161,6 +171,7 @@ export class FaceProcessorService {
         );
         snapped = shouldSnap;
 
+        console.log('SHOULD SNAP', shouldSnap, orientation, scale, distance);
         if (shouldSnap) {
           context.save();
           context.clearRect(0, 0, canvas.width, canvas.height);
@@ -194,6 +205,7 @@ export class FaceProcessorService {
       }),
       filter((result) => {
         animationObs.continue();
+        console.log('DETECTION2', result ? result.detection.score : 0);
         progress.next({
           kind: 'detection',
           score: result ? result.detection.score : 0,
