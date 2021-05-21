@@ -10,7 +10,7 @@ update = text('UPDATE FACES SET tournaments = tournaments + :t SET votes = votes
 def game_results_handler(request: Request):
     if request.method == 'OPTIONS':
         return Response('', headers=HEADERS)
-    if request.method == 'GET':
+    if request.method == 'POST':
         content = request.json
         results = content['results']
         updates = dict()

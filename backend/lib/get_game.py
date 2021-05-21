@@ -9,6 +9,7 @@ from .net import HEADERS
 fetch_random = text('WITH a as (SELECT * from faces ORDER BY tournaments LIMIT 100) SELECT * FROM a ORDER BY RANDOM() limit 5')
 PREFIX = 'data:image/png;base64,'
 
+
 def get_game_handler(request: Request):
     if request.method == 'OPTIONS':
         return Response('', headers=HEADERS)
