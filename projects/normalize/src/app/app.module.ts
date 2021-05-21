@@ -7,13 +7,17 @@ import { AppComponent } from './app.component';
 import { SelfieComponent } from './selfie/selfie.component';
 import { MovingImageComponent } from './moving-image/moving-image.component';
 import { DatasetComponent } from './dataset/dataset.component';
+import { GameComponent } from './tournament/game/game.component';
+import { SingleTournamentComponent } from './tournament/single-tournament/single-tournament.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SelfieComponent,
     MovingImageComponent,
-    DatasetComponent
+    DatasetComponent,
+    GameComponent,
+    SingleTournamentComponent
   ],
   imports: [
     BrowserModule,

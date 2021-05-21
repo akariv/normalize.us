@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { AnimationManagerService } from '../animation-manager.service';
 import { ConfigService } from '../config.service';
 
@@ -7,7 +7,7 @@ import { ConfigService } from '../config.service';
   templateUrl: './moving-image.component.html',
   styleUrls: ['./moving-image.component.less']
 })
-export class MovingImageComponent implements OnInit, OnDestroy {
+export class MovingImageComponent implements OnChanges, OnDestroy {
 
   @Input() src: string;
   @Input() index: number;
@@ -22,11 +22,17 @@ export class MovingImageComponent implements OnInit, OnDestroy {
 
   constructor(public config: ConfigService, private animation: AnimationManagerService) { }
 
-  ngOnInit(): void {
+  ngOnChanges(): void {
     this.x = -this.config.IMAGE_SIZE * this.index;
-    this.animationId = 'moving-image-' + this.index;
-    this.animation.register(this.animationId, () => this.animationFrame());
-    this.animation.enable(this.animationId);
+    const animationId = 'moving-image-' + this.index;
+    if (this.animationId !== animationId) {
+      if (this.animationId) {
+        this.animation.deregister(this.animationId);
+      }
+      this.animationId = animationId;
+      this.animation.register(this.animationId, () => this.animationFrame());
+      this.animation.enable(this.animationId);  
+    }
   }
 
   ngOnDestroy(): void {

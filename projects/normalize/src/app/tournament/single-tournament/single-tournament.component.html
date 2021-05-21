@@ -1,0 +1,8 @@
+<div class='candidates' *ngIf='candidates'>
+    <ng-container *ngFor='let candidate of candidates'>
+        <div class='candidate' *ngIf='candidate.image'>
+            <app-moving-image [src]='candidate.image' [index]='index'></app-moving-image>
+            <button (click)='select(candidate)'>More normal!</button>
+        </div>    
+    </ng-container>
+</div>

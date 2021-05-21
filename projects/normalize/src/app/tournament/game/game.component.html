@@ -1,0 +1,6 @@
+<ng-container *ngIf='index < maxIndex && index >= 0'>
+    <app-single-tournament [candidates]='candidates' [index]='index' (results)='addResults($event)'></app-single-tournament>
+</ng-container>
+<ng-container *ngIf='index === maxIndex'>
+    <h2>Done!</h2>
+</ng-container>

@@ -5,7 +5,10 @@
 export const environment = {
   production: false,
   endpoints: {
-    new: 'https://europe-west3-normalize-us.cloudfunctions.net/upload-selfie'
+    new: 'https://europe-west3-normalize-us.cloudfunctions.net/upload-selfie',
+    getGame: 'https://europe-west3-normalize-us.cloudfunctions.net/get-game',
+    getImage: 'https://europe-west3-normalize-us.cloudfunctions.net/get-image',
+    gameResults: 'https://europe-west3-normalize-us.cloudfunctions.net/game-results',
     // new: 'http://localhost:8080/'
   }
 };
