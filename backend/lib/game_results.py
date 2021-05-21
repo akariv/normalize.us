@@ -5,7 +5,7 @@ from flask import Request, Response
 from .db import connection
 from .net import HEADERS
 
-update_sql = text('UPDATE FACES SET tournaments = tournaments + :t, SET votes = votes + :v WHERE id=:id')
+update_sql = text('UPDATE faces SET tournaments=tournaments+:t, votes=votes+:v WHERE id=:id')
 
 def game_results_handler(request: Request):
     if request.method == 'OPTIONS':
