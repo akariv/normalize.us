@@ -6,7 +6,7 @@ from flask import Request, Response
 from .db import connection
 from .net import HEADERS
 
-fetch_image = text("SELECT encode(image, 'base64') as image WHERE id = :id")
+fetch_image = text("SELECT encode(image, 'base64') as image from FACES WHERE id = :id")
 PREFIX = 'data:image/png;base64,'
 
 
