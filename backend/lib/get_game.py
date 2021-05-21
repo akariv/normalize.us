@@ -18,6 +18,7 @@ def get_game_handler(request: Request):
         for row in rows:
             row = dict(row)
             row['image'] = PREFIX + codecs.decode(codecs.encode(row['image'], 'base64'), 'ascii')
+            row['created_timestamp'] = row['created_timestamp'].isoformat()
             result.append(row)
         response = dict(
             success=True, records=result
