@@ -12,7 +12,7 @@ PREFIX = 'data:image/png;base64,'
 def get_game_handler(request: Request):
     if request.method == 'OPTIONS':
         return Response('', headers=HEADERS)
-    if request.method == 'POST':
+    if request.method == 'GET':
         rows = connection.execute(fetch_random)
         result = []
         for row in rows:
