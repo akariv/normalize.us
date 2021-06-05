@@ -122,7 +122,10 @@ def main():
         aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
         region_name='fra1',
     )
-    response = s3_client.upload_fileobj(buff, os.environ['BUCKET_NAME'], 'tsne.png')
+    response = s3_client.upload_fileobj(
+        buff, os.environ['BUCKET_NAME'], 'tsne.png',
+        ExtraArgs={'ACL': 'public-read'}
+    )
     print(response)
     # for filename, img_size, img_location in IMAGES:
     #     create_tsne_image(grid, ids, out_dim, to_plot, img_size, 
