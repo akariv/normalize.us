@@ -124,7 +124,7 @@ def main():
     )
     response = s3_client.upload_fileobj(
         buff, os.environ['BUCKET_NAME'], 'tsne.png',
-        ExtraArgs={'ACL': 'public-read'}
+        ExtraArgs={'ACL': 'public-read', 'ContentType': 'image/png'}
     )
     print(response)
     # for filename, img_size, img_location in IMAGES:
