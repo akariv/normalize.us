@@ -81,13 +81,13 @@ def create_tsne_image(grid_jv, img_collection, out_dim, to_plot, res, img_locati
     # print('>>>', filename)
     out_res_x, out_res_y = res
     out = np.zeros((out_dim*out_res_y, out_dim*out_res_x, 3))
-    alpha = np.zeros((out_dim*out_res_y, out_dim*out_res_x))
+    alpha = np.zeros((out_dim*out_res_y, out_dim*out_res_x, 1))
     for pos, id in zip(grid_jv, img_collection[0:to_plot]):
         img = load_image(id, out_res_x, out_res_y, img_location, img_size)
         h_range = int(np.floor(pos[0]* (out_dim - 1) * out_res_y))
         w_range = int(np.floor(pos[1]* (out_dim - 1) * out_res_x))
         out[h_range:h_range + out_res_y, w_range:w_range + out_res_x] = image.img_to_array(img)
-        alpha[h_range:h_range + out_res_y, w_range:w_range + out_res_x] = np.ones((out_res_y, out_res_x))
+        alpha[h_range:h_range + out_res_y, w_range:w_range + out_res_x] = 255*np.ones((out_res_y, out_res_x, 1))
 
     im = image.array_to_img(out)
     im.putalpha(image.array_to_img(alpha))
