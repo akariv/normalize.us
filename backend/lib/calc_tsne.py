@@ -89,7 +89,7 @@ def create_tsne_image(grid_jv, img_collection, out_dim, to_plot, res, img_locati
 
     im = image.array_to_img(out)
     buff = BytesIO()
-    im.save(buff, quality=90)
+    im.save(buff, format='png', quality=90)
     buff.seek(0)
     return buff
 
