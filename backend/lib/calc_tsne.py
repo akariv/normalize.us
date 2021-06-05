@@ -112,8 +112,8 @@ def main():
     X_2d = generate_tsne(activations, to_plot, perplexity, tsne_iter)
     print("Generating image grid (%dx%d, %d images)" % (out_dim, out_dim, len(ids)))
     grid = calc_tsne_grid(X_2d, out_dim)
-    buff = create_tsne_image(grid, ids, out_dim, to_plot, (300, 300), 
-                            (1200, 0), (100, 100), 'tsne.png')
+    buff = create_tsne_image(grid, ids, out_dim, to_plot, (100, 100), 
+                            (1200, 0), (300, 300), 'tsne.png')
 
     s3_client = boto3.client(
         's3',
