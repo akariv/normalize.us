@@ -128,7 +128,7 @@ def main():
                                    (52, 52),
                                    (1200, 0), (300, 300), 'tsne.png')
     json_buff = BytesIO()
-    json.dump(info, json_buff)
+    json_buff.write(json.dumps(info).encode('utf8'))
     json_buff.seek(0)
 
     s3_client = boto3.client(
