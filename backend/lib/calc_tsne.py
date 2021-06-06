@@ -25,7 +25,7 @@ def load_image(id, out_res_x, out_res_y, img_location, img_size):
     img = img.crop((*img_location, img_location[0] + img_size[0], img_location[1] + img_size[1]))
     img = img.convert('RGB')
     img = img.resize((out_res_x, out_res_y), Image.NEAREST)
-    img = ImageOps.autocontrast(img)
+    # img = ImageOps.autocontrast(img)
     # image_fetches += 1
     # if image_fetches % 100 == 0:
     #     print('...', image_fetches)
