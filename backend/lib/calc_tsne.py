@@ -77,17 +77,21 @@ def calc_tsne_grid(X_2d, out_dim):
     grid_jv = grid[col_asses]
     return grid_jv
 
-def create_tsne_image(grid_jv, img_collection, out_dim, to_plot, res, img_location, img_size, filename):
+def create_tsne_image(grid_jv, img_collection, out_dim, to_plot, 
+        res, offset, out_size,
+        img_location, img_size, filename):
     # print('>>>', filename)
     out_res_x, out_res_y = res
+    offset_x, offset_y = offset
+    out_size_x, out_size_y = out_size
     out = np.zeros((out_dim*out_res_y, out_dim*out_res_x, 3))
     alpha = np.zeros((out_dim*out_res_y, out_dim*out_res_x, 1))
     for pos, id in zip(grid_jv, img_collection[0:to_plot]):
-        img = load_image(id, out_res_x, out_res_y, img_location, img_size)
-        h_range = int(np.floor(pos[0]* (out_dim - 1) * out_res_y))
-        w_range = int(np.floor(pos[1]* (out_dim - 1) * out_res_x))
-        out[h_range:h_range + out_res_y, w_range:w_range + out_res_x] = image.img_to_array(img)
-        alpha[h_range:h_range + out_res_y, w_range:w_range + out_res_x] = 255*np.ones((out_res_y, out_res_x, 1))
+        img = load_image(id, out_size_x, out_size_y, img_location, img_size)
+        h_range = int(np.floor(pos[0]* (out_dim - 1) * out_res_y)) + offset_y
+        w_range = int(np.floor(pos[1]* (out_dim - 1) * out_res_x)) + offset_x
+        out[h_range:h_range + out_size_y, w_range:w_range + out_size_x] = image.img_to_array(img)
+        alpha[h_range:h_range + out_size_y, w_range:w_range + out_size_x] = 255*np.ones((out_size_y, out_size_x, 1))
 
     im = image.array_to_img(out)
     im.putalpha(image.array_to_img(alpha))
@@ -115,7 +119,10 @@ def main():
     X_2d = generate_tsne(activations, to_plot, perplexity, tsne_iter)
     print("Generating image grid (%dx%d, %d images)" % (out_dim, out_dim, len(ids)))
     grid = calc_tsne_grid(X_2d, out_dim)
-    buff = create_tsne_image(grid, ids, out_dim, to_plot, (100, 100), 
+    buff = create_tsne_image(grid, ids, out_dim, to_plot, 
+                            (100, 100), 
+                            (24, 24),
+                            (52, 52),
                             (1200, 0), (300, 300), 'tsne.png')
 
     s3_client = boto3.client(
