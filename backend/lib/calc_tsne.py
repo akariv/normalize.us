@@ -1,5 +1,6 @@
 import os
 import math
+import json
 from botocore import endpoint
 import numpy as np
 from PIL import Image, ImageOps
@@ -81,6 +82,7 @@ def create_tsne_image(grid_jv, img_collection, out_dim, to_plot,
         res, offset, out_size,
         img_location, img_size, filename):
     # print('>>>', filename)
+    info = dict(dim=out_dim, grid=[])
     out_res_x, out_res_y = res
     offset_x, offset_y = offset
     out_size_x, out_size_y = out_size
@@ -92,13 +94,14 @@ def create_tsne_image(grid_jv, img_collection, out_dim, to_plot,
         w_range = int(np.floor(pos[1]* (out_dim - 1) * out_res_x)) + offset_x
         out[h_range:h_range + out_size_y, w_range:w_range + out_size_x] = image.img_to_array(img)
         alpha[h_range:h_range + out_size_y, w_range:w_range + out_size_x] = 255*np.ones((out_size_y, out_size_x, 1))
+        info['grid'].append(dict(pos=dict(x=pos[1], y=pos[0]), id=id))
 
     im = image.array_to_img(out)
     im.putalpha(image.array_to_img(alpha))
     buff = BytesIO()
     im.save(buff, format='png', quality=90)
     buff.seek(0)
-    return buff
+    return buff, info
 
 IMAGES = [
     # ('noses', (200, 300), (0, 0)),
@@ -119,11 +122,14 @@ def main():
     X_2d = generate_tsne(activations, to_plot, perplexity, tsne_iter)
     print("Generating image grid (%dx%d, %d images)" % (out_dim, out_dim, len(ids)))
     grid = calc_tsne_grid(X_2d, out_dim)
-    buff = create_tsne_image(grid, ids, out_dim, to_plot, 
-                            (100, 100), 
-                            (24, 24),
-                            (52, 52),
-                            (1200, 0), (300, 300), 'tsne.png')
+    buff, info = create_tsne_image(grid, ids, out_dim, to_plot, 
+                                   (100, 100), 
+                                   (24, 24),
+                                   (52, 52),
+                                   (1200, 0), (300, 300), 'tsne.png')
+    json_buff = BytesIO()
+    json.dump(info, json_buff)
+    json_buff.seek(0)
 
     s3_client = boto3.client(
         's3',
@@ -135,6 +141,10 @@ def main():
     response = s3_client.upload_fileobj(
         buff, os.environ['BUCKET_NAME'], 'tsne.png',
         ExtraArgs={'ACL': 'public-read', 'ContentType': 'image/png'}
+    )
+    response = s3_client.upload_fileobj(
+        json_buff, os.environ['BUCKET_NAME'], 'tsne.json',
+        ExtraArgs={'ACL': 'public-read', 'ContentType': 'application/json'}
     )
     print(response)
     # for filename, img_size, img_location in IMAGES:
