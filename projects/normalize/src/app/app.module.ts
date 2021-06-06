@@ -9,6 +9,7 @@ import { MovingImageComponent } from './moving-image/moving-image.component';
 import { DatasetComponent } from './dataset/dataset.component';
 import { GameComponent } from './tournament/game/game.component';
 import { SingleTournamentComponent } from './tournament/single-tournament/single-tournament.component';
+import { MapComponent } from './map/map.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { SingleTournamentComponent } from './tournament/single-tournament/single
     MovingImageComponent,
     DatasetComponent,
     GameComponent,
-    SingleTournamentComponent
+    SingleTournamentComponent,
+    MapComponent
   ],
   imports: [
     BrowserModule,

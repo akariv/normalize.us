@@ -27,4 +27,7 @@ export class ApiService {
     return this.http.post(environment.endpoints.gameResults, {results});
   }
 
+  getMapConfiguration() {
+    return this.http.get('https://normalizing-us-files.fra1.digitaloceanspaces.com/tsne.json');
+  }
 }

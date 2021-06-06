@@ -31,7 +31,8 @@
               "projects/normalize/src/assets"
             ],
             "styles": [
-              "projects/normalize/src/styles.less"
+              "projects/normalize/src/styles.less",
+              "node_modules/leaflet/dist/leaflet.css"
             ],
             "scripts": []
           },
@@ -94,7 +95,8 @@
               "projects/normalize/src/assets"
             ],
             "styles": [
-              "projects/normalize/src/styles.less"
+              "projects/normalize/src/styles.less",
+              "node_modules/leaflet/dist/leaflet.css"
             ],
             "scripts": []
           }
