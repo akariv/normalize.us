@@ -22,9 +22,7 @@ export class SingleTournamentComponent implements OnInit, OnChanges {
       for (const candidate of this.candidates) {
         if (!candidate.image) {
           console.log('FETCHING IMAGE FOR', candidate.id);
-          this.imageFetcher.fetchImage(candidate.id).subscribe((image) => {
-            candidate.image = image;
-          })
+          candidate.image = this.imageFetcher.fetchImage(candidate.id);
         }
       }
     }

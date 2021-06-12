@@ -14,7 +14,7 @@ fetch_random = text('''
         LIMIT 20)
     SELECT * FROM a ORDER BY RANDOM() limit 5
 ''')
-PREFIX = 'data:image/png;base64,'
+# PREFIX = 'data:image/png;base64,'
 
 
 def get_game_handler(request: Request):

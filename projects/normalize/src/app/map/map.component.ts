@@ -4,6 +4,7 @@ import * as L from 'leaflet';
 import { ReplaySubject } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { ApiService } from '../api.service';
+import { ImageFetcherService } from '../image-fetcher.service';
 
 @Component({
   selector: 'app-map',
@@ -23,7 +24,8 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   @ViewChild('map') mapElement:  ElementRef;
 
-  constructor(private hostElement: ElementRef, private api: ApiService) { }
+  constructor(private hostElement: ElementRef, private api: ApiService,
+              private fetchImage: ImageFetcherService) { }
 
   ngOnInit(): void {
     this.api.getMapConfiguration().subscribe((config) => {
@@ -82,7 +84,7 @@ export class MapComponent implements OnInit, AfterViewInit {
             const lon = x;
             const bounds: L.LatLngTuple[] = [[lat + 0.24, lon + 0.24], [lat + 0.76, lon + 0.76]];
             this.focusedLayerPhoto = L.imageOverlay(
-              `https://europe-west3-normalize-us.cloudfunctions.net/get-image?id=${id}&face_img=1`, bounds
+              this.fetchImage.fetchFaceImage(id), bounds
             ).addTo(this.map);
             break;
           }

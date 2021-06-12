@@ -9,19 +9,13 @@ import { ApiService } from './api.service';
 })
 export class ImageFetcherService {
 
-  private cache: any = {};
-
   constructor(private api: ApiService, private sanitizer: DomSanitizer) { }
 
   fetchImage(id) {
-    if (!this.cache[id]) {
-      console.log('ID', id, 'NOT IN CACHE');
-      const rs = new ReplaySubject<SafeUrl>(1);
-      this.cache[id] = rs;
-      this.api.getImage(id).subscribe((image) => {
-        rs.next(this.sanitizer.bypassSecurityTrustUrl(image));
-      })
-    }
-    return this.cache[id].pipe(first());
+    return `https://normalizing-us-files.fra1.cdn.digitaloceanspaces.com/${id}_full.png`;
+  }
+
+  fetchFaceImage(id) {
+    return `https://normalizing-us-files.fra1.cdn.digitaloceanspaces.com/${id}_face.png`;
   }
 }
