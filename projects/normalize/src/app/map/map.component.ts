@@ -62,9 +62,9 @@ export class MapComponent implements OnInit, AfterViewInit {
     let y = -1;
     if (this.zoomedMax) {
       const bounds = this.map.getBounds();
-      const pos = bounds.getNorthWest();
-      x = Math.round(pos.lng);
-      y = this.dim - Math.round(pos.lat);
+      const pos = bounds.getCenter();
+      x = Math.floor(pos.lng);
+      y = this.dim - Math.ceil(pos.lat);
     }
     // console.log({x,y});
     if (this.focusedLayerPos.x !== x || this.focusedLayerPos.x !== y) {

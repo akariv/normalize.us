@@ -33,14 +33,12 @@ export class GameComponent implements OnInit {
         this.index += 1;
         console.log('INDEX = ', this.index);
         this.tuples = this.randomTuples(5)
-        for (const t of this.tuples) {
-          this.imageFetcher.fetchImage(t[0]);
-          this.imageFetcher.fetchImage(t[1]);
-        }
+        // for (const t of this.tuples) {
+        //   this.imageFetcher.fetchImage(t[0]);
+        //   this.imageFetcher.fetchImage(t[1]);
+        // }
       }
-      this.candidates = this.tuples.shift().map((id) => {
-        return this.game.records.filter((x) => x.id === id)[0];
-      });
+      this.candidates = this.tuples.shift();
       console.log('CANDIDATES', this.candidates);
       if (this.index === this.maxIndex) {
         this.saveGameResults();
@@ -63,9 +61,9 @@ export class GameComponent implements OnInit {
           continue;
         }
         if (Math.random() > 0.5) {
-          ret.push([i.id, j.id]);
+          ret.push([i, j]);
         } else {
-          ret.push([j.id, i.id]);
+          ret.push([j, i]);
         }
       }
     }

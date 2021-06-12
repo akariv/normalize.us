@@ -12,20 +12,12 @@ export class SingleTournamentComponent implements OnInit, OnChanges {
   @Input() index: number;
   @Output() results = new EventEmitter<number[]>();
 
-  constructor(private imageFetcher: ImageFetcherService) { }
+  constructor(public imageFetcher: ImageFetcherService) { }
 
   ngOnInit(): void {
   }
 
   ngOnChanges() {
-    if (this.candidates) {
-      for (const candidate of this.candidates) {
-        if (!candidate.image) {
-          console.log('FETCHING IMAGE FOR', candidate.id);
-          candidate.image = this.imageFetcher.fetchImage(candidate.id);
-        }
-      }
-    }
   }
 
   select(candidate) {
