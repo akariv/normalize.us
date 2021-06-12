@@ -8,7 +8,7 @@ from .net import HEADERS
 
 fetch_random = text('''
     WITH a as (
-        SELECT image, votes, tournaments, descriptor
+        SELECT id, image, votes, tournaments, descriptor
         FROM faces
         ORDER BY tournaments
         LIMIT 20)
