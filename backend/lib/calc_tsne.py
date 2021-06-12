@@ -20,9 +20,7 @@ conn = engine.connect()
 
 def load_image(id, out_res_x, out_res_y, img_location, img_size):
     # global image_fetches
-    row = conn.execute('select image from faces where id=%s' % id).fetchone()
-    img_url = row[0]
-    img_url = f'https://normalizing-us-files.fra1.digitaloceanspaces.com/{img_url}_face.png'
+    img_url = f'https://normalizing-us-files.fra1.digitaloceanspaces.com/{id}_face.png'
     img_data = requests.get(img_url).content
     img = Image.open(BytesIO(img_data))
     # img = img.crop((*img_location, img_location[0] + img_size[0], img_location[1] + img_size[1]))
@@ -36,13 +34,13 @@ def load_image(id, out_res_x, out_res_y, img_location, img_size):
 
 def load_activations():
     print('Fetching descriptors')
-    rows = conn.execution_options(stream_results=True).execute('select id, descriptor from faces order by tournaments desc limit 1000')
+    rows = conn.execution_options(stream_results=True).execute('select image, descriptor from faces order by tournaments desc limit 1000')
     ids = []
     activations = []
     for row in rows:
-        id = row[0]
+        image = row[0]
         descriptor = row[1]
-        ids.append(id)
+        ids.append(image)
         activations.append(descriptor)
         # if len(img_collection) > 100:
         #     break
