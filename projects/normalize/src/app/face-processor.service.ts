@@ -89,7 +89,7 @@ export class FaceProcessorService {
       canvas.height = el.height;  
     }
     console.log('CANVAS', canvas);
-    const ratio = Math.min(el.offsetWidth / canvas.width);
+    const ratio = 1;//Math.min(el.offsetWidth / canvas.width, el.offsetHeight / canvas.height);
     console.log('RATIO', ratio);
     const context = canvas.getContext('2d');
     const progress = new ReplaySubject<any>(1);
@@ -156,7 +156,7 @@ export class FaceProcessorService {
         const sub = topPoint.sub(bottomPoint);
         const rotation = Math.atan(sub.x / (sub.y ? sub.y : 0.00001));
         const orientation = rotation / Math.PI * 180;
-        let scale = 0.3 * canvas.height / sub.magnitude();
+        let scale = 0.2 * canvas.height / sub.magnitude();
         // if (scale < 1) {
         //   scale = 1;
         // }
@@ -237,7 +237,7 @@ export class FaceProcessorService {
         const rightEyeBrow = landmarks.getRightEyeBrow()
         const box = result.detection.box;
         const forehead = [{x: box.x, y: box.y}, {x: box.x + box.width, y: this.extent(...leftEyeBbrow, ...rightEyeBrow)[1]}];
-        forehead[0].y -= 2 * this.extent(...forehead as Point[])[3];
+        forehead[0].y -= 1.8 * this.extent(...forehead as Point[])[3];
         const face = [{x: box.x, y: box.y}, {x: box.x + box.width, y: box.y + box.height}] as Point[];
         
         const features = [
@@ -245,7 +245,7 @@ export class FaceProcessorService {
           {feature: 'eyes', points: [...leftEye, ...rightEye, ...leftEyeBbrow, ...rightEyeBrow], padding: [0.25, 0]},
           {feature: 'mouth', points: [...mouth], padding: [0.25, 0]},
           {feature: 'forehead', points: [...forehead as Point[]], padding: [0, 0]},
-          {feature: 'face', points: [...face, ...forehead as Point[]], padding: [0, 0]},
+          {feature: 'face', points: [...face, ...forehead as Point[]], padding: [0, 0.1]},
         ];
 
         const context = compositionFrame.getContext('2d');

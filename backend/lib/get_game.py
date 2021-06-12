@@ -6,7 +6,14 @@ from flask import Request, Response
 from .db import connection
 from .net import HEADERS
 
-fetch_random = text("WITH a as (SELECT id, votes, tournaments, descriptor from faces ORDER BY tournaments LIMIT 100) SELECT * FROM a ORDER BY RANDOM() limit 5")
+fetch_random = text('''
+    WITH a as (
+        SELECT id, votes, tournaments, descriptor
+        FROM faces
+        ORDER BY tournaments
+        LIMIT 20)
+    SELECT * FROM a ORDER BY RANDOM() limit 5
+''')
 PREFIX = 'data:image/png;base64,'
 
 

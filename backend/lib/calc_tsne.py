@@ -1,7 +1,6 @@
 import os
 import math
 import json
-from botocore import endpoint
 import numpy as np
 from PIL import Image, ImageOps
 from lapjv import lapjv
@@ -11,7 +10,8 @@ from scipy.spatial.distance import cdist
 from tensorflow.python.keras.preprocessing import image
 from io import BytesIO
 from sqlalchemy import create_engine
-import boto3
+
+from .net import upload_fileobj_s3
 
 engine = create_engine(os.environ['DATABASE_URL'])
 conn = engine.connect()
@@ -131,22 +131,8 @@ def main():
     json_buff.write(json.dumps(info).encode('utf8'))
     json_buff.seek(0)
 
-    s3_client = boto3.client(
-        's3',
-        endpoint_url='https://fra1.digitaloceanspaces.com',
-        aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
-        aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
-        region_name='fra1',
-    )
-    response = s3_client.upload_fileobj(
-        buff, os.environ['BUCKET_NAME'], 'tsne.png',
-        ExtraArgs={'ACL': 'public-read', 'ContentType': 'image/png'}
-    )
-    response = s3_client.upload_fileobj(
-        json_buff, os.environ['BUCKET_NAME'], 'tsne.json',
-        ExtraArgs={'ACL': 'public-read', 'ContentType': 'application/json'}
-    )
-    print(response)
+    upload_fileobj_s3(buff, 'tsne.png', 'image/png')
+    upload_fileobj_s3(json_buff, 'tsne.json', 'application/json')
     # for filename, img_size, img_location in IMAGES:
     #     create_tsne_image(grid, ids, out_dim, to_plot, img_size, 
     #         img_location, 0.3, 'tsne-' + filename + '.png')

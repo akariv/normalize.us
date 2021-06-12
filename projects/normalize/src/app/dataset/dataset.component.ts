@@ -24,6 +24,7 @@ export class DatasetComponent implements OnInit, AfterViewInit {
     size: 100,
     distance: 10
   };
+  imageUrl = '';
 
   constructor(private faceProcessor: FaceProcessorService, private faceApi: FaceApiService, private api: ApiService, private http: HttpClient) { }
 
@@ -56,6 +57,7 @@ export class DatasetComponent implements OnInit, AfterViewInit {
     .pipe(
       switchMap(() => {
         const imageUrl = this.pullImage();
+        this.imageUrl = imageUrl;
         return faceapi.fetchImage(imageUrl);
       }),
       switchMap((img) => {
