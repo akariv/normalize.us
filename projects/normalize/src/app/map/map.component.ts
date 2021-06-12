@@ -1,10 +1,13 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 import * as L from 'leaflet';
+import * as geojson from 'geojson';
+
 import { ReplaySubject } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { ApiService } from '../api.service';
 import { ImageFetcherService } from '../image-fetcher.service';
+import { features } from 'node:process';
 
 @Component({
   selector: 'app-map',
@@ -31,14 +34,19 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.api.getMapConfiguration().subscribe((config) => {
       this.configuration = config;
       this.dim = this.configuration.dim;
+      this.configuration.grid.forEach((g) => {
+        g.pos.x = Math.round(g.pos.x * (this.dim - 1));
+        g.pos.y = Math.round(g.pos.y * (this.dim - 1));
+      });
       this.ready.next();
     });
   }
 
   ngAfterViewInit() {
     this.ready.pipe(first()).subscribe(() => {
-      const host = this.hostElement.nativeElement as HTMLElement;
+      const host = this.mapElement.nativeElement as HTMLElement;
       this.maxZoom = Math.log2(Math.min(host.offsetHeight, host.offsetWidth));
+      console.log(host.offsetHeight, host.offsetWidth, this.maxZoom);
       this.map = L.map(this.mapElement.nativeElement, {
         crs: L.CRS.Simple,
         maxZoom: this.maxZoom
@@ -48,6 +56,37 @@ export class MapComponent implements OnInit, AfterViewInit {
       this.map.fitBounds(bounds);
       this.map.on('zoomend', (ev) => { return this.onZoomChange(); });
       this.map.on('moveend', (ev) => { return this.onBoundsChange(); });
+      const features: geojson.Feature[] = [];
+      this.configuration.grid.forEach((g) => {
+        const x = g.pos.x;
+        const y = this.dim - g.pos.y - 1;
+        const r = Math.random() * 0.24;
+        features.push({
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'Polygon',
+            coordinates: [
+              [
+                [x + r, y + r], [x + 1 - r, y + r], [x + 1 - r, y + 1 - r], [x + r, y + 1 - r]
+              ],
+              [
+                [x + 0.25, y + 0.25], [x + 0.75, y + 0.25], [x + 0.75, y + 0.75], [x + 0.25, y + 0.75]
+              ],
+            ]              
+          }
+        });
+      });
+      const geoJson: geojson.FeatureCollection<any, any> = {type: 'FeatureCollection', features: features};
+      L.geoJSON(geoJson, {
+        style: {
+          fill: true,
+          fillColor: '#e5e5e5',
+          stroke: false,
+          fillOpacity: 1  
+        }
+      }).addTo(this.map);
+      console.log('ADDED GEOJSON');
     });
   }
 
@@ -75,8 +114,8 @@ export class MapComponent implements OnInit, AfterViewInit {
       }
       if (x >= 0 && y >= 0) {
         for (const item of this.configuration.grid) {
-          const posX = Math.round((this.dim - 1) * item.pos.x);
-          const posY = Math.round((this.dim - 1) * item.pos.y);
+          const posX = item.pos.x;
+          const posY = item.pos.y;
           // console.log(x, y, posX, posY);
           if (x === posX && y === posY) {
             const id = item.id;
