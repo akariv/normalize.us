@@ -28,3 +28,4 @@ def upload_fileobj_s3(buff, filename, content_type):
         buff, os.environ['BUCKET_NAME'], filename,
         ExtraArgs={'ACL': 'public-read', 'ContentType': content_type}
     )
+    print('UPLOADED', filename)
