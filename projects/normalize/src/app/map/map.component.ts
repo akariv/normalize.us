@@ -47,11 +47,15 @@ export class MapComponent implements OnInit, AfterViewInit {
         crs: L.CRS.Simple,
         maxZoom: this.maxZoom,
         minZoom: this.configuration.min_zoom,
+        maxBounds: [[-this.configuration.dim - 1, 0], [-1, this.configuration.dim]],
         center: [-this.configuration.dim/2, this.configuration.dim/2],
         zoom: this.maxZoom - Math.log2(this.configuration.dim)
       });
-      L.tileLayer('https://normalizing-us-files.fra1.digitaloceanspaces.com/tiles/{z}/{x}/{y}', {
+      L.tileLayer('https://normalizing-us-files.fra1.cdn.digitaloceanspaces.com/tiles/{z}/{x}/{y}', {
           maxZoom: 18,
+          minZoom: this.configuration.min_zoom,
+          bounds: [[-this.configuration.dim - 1, 0], [-1, this.configuration.dim]],
+          errorTileUrl: '/assets/img/empty.png'
       }).addTo(this.map);
       // const bounds: L.LatLngTuple[] = [[0,0], [this.dim, this.dim]];
       // const image = L.imageOverlay('https://normalizing-us-files.fra1.digitaloceanspaces.com/tsne.png', bounds).addTo(this.map);
