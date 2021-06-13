@@ -81,7 +81,7 @@ export class MapComponent implements OnInit, AfterViewInit {
       L.geoJSON(geoJson, {
         style: {
           fill: true,
-          fillColor: '#e5e5e5',
+          fillColor: '#eae7df',
           stroke: false,
           fillOpacity: 1  
         }
