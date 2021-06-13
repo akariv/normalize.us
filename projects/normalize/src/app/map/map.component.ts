@@ -43,14 +43,14 @@ export class MapComponent implements OnInit, AfterViewInit {
       const host = this.mapElement.nativeElement as HTMLElement;
       this.maxZoom = Math.log2(Math.min(host.offsetHeight, host.offsetWidth));
       console.log('this.maxZoom', this.maxZoom);
-      this.configuration.minZoom = 4;
+      // this.configuration.minZoom = 4;
       console.log(host.offsetHeight, host.offsetWidth, this.maxZoom);
       this.map = L.map(this.mapElement.nativeElement, {
         crs: L.CRS.Simple,
         maxZoom: this.maxZoom,
-        minZoom: this.configuration.minZoom,
-        center: [this.configuration.dim/2, this.configuration.dim/2],
-        zoom: this.configuration.minZoom
+        minZoom: this.configuration.min_zoom,
+        center: [-this.configuration.dim/2, this.configuration.dim/2],
+        zoom: this.maxZoom - Math.log2(this.configuration.dim)
       });
       L.tileLayer('https://normalizing-us-files.fra1.digitaloceanspaces.com/tiles/{z}/{x}/{y}', {
           maxZoom: 18,
