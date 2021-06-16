@@ -1,11 +1,44 @@
-.candidates {
+:host {
+    width: 100%;
+    height: 100%;
     display: flex;
-    flex-flow: row;
+    flex-flow: column;
+    align-items: stretch;
+    justify-content: flex-start;
 
-    .candidate {
+    .candidates {
         display: flex;
-        flex-flow: column;
-        align-items: center;
-        margin: 0 20px;
+        flex-flow: row;
+        align-items: flex-end;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+
+        &.forward {
+            justify-content: flex-start;
+        }
+
+        &.backward {
+            justify-content: flex-end;
+        }
+    
+        .candidate {
+            display: flex;
+            flex-flow: row;
+            justify-content: center;
+            flex: 0 0 auto;
+            width: 50%;
+            transition: width 100ms linear;
+
+            app-moving-image {
+                width: 100%;
+                transform-origin: 0 100%;
+                transition: transform 100ms linear;
+            }
+        }
+    }
+
+    app-slider {
+        margin-top: auto;
     }
 }

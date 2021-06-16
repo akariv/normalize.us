@@ -1,7 +1,7 @@
 <!-- <div [style.background-image]='"url(" + src + ")"' [style.background-position-x]='x + "px"' [style.background-position-y]='y + "px"'>
 
 </div> -->
-<div class='wrapper'
+<div class='wrapper' *ngIf='loaded'
     [style.width]='config.IMAGE_SIZE + "px"'
     [style.height]='config.IMAGE_SIZE + "px"'>
     <div class='mover' [class.active]='current === 0' [style.top]='y[0] + "px"' [style.left]='x[0] + "px"'>
@@ -11,3 +11,7 @@
         <img [src]='src'>
     </div>
 </div>
+<img *ngIf='!loaded' [src]='src' (load)='loaded = true' class='placeholder'
+    [style.width]='config.IMAGE_SIZE + "px"'
+    [style.height]='config.IMAGE_SIZE + "px"'
+>

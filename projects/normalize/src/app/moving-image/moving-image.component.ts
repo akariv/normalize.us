@@ -20,6 +20,7 @@ export class MovingImageComponent implements OnChanges, OnDestroy {
   count = 0;
   current = 0;
   animationId = '';
+  loaded = false;
 
   constructor(public config: ConfigService, private animation: AnimationManagerService) { }
 

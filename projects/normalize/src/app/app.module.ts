@@ -11,6 +11,7 @@ import { GameComponent } from './tournament/game/game.component';
 import { SingleTournamentComponent } from './tournament/single-tournament/single-tournament.component';
 import { MapComponent } from './map/map.component';
 import { MainComponent } from './main/main.component';
+import { SliderComponent } from './tournament/slider/slider.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { MainComponent } from './main/main.component';
     GameComponent,
     SingleTournamentComponent,
     MapComponent,
-    MainComponent
+    MainComponent,
+    SliderComponent
   ],
   imports: [
     BrowserModule,
