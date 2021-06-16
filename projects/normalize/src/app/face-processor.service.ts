@@ -89,7 +89,7 @@ export class FaceProcessorService {
       canvas.height = el.height;  
     }
     console.log('CANVAS', canvas);
-    const ratio = 1;//Math.min(el.offsetWidth / canvas.width, el.offsetHeight / canvas.height);
+    const ratio = Math.min(el.offsetWidth / canvas.width, el.offsetHeight / canvas.height);
     console.log('RATIO', ratio);
     const context = canvas.getContext('2d');
     const progress = new ReplaySubject<any>(1);
@@ -121,7 +121,7 @@ export class FaceProcessorService {
         return from([false]);
       }),
       filter((result: any) => {
-        console.log('RESULTTT', result.detection.score);
+        console.log('RESULTTT', result && result.detection.score);
         if (!result) {
           animationObs.continue();
           this.detectorOptions = this.scoreThresholdHigh;

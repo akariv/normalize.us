@@ -10,6 +10,7 @@ import { DatasetComponent } from './dataset/dataset.component';
 import { GameComponent } from './tournament/game/game.component';
 import { SingleTournamentComponent } from './tournament/single-tournament/single-tournament.component';
 import { MapComponent } from './map/map.component';
+import { MainComponent } from './main/main.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { MapComponent } from './map/map.component';
     DatasetComponent,
     GameComponent,
     SingleTournamentComponent,
-    MapComponent
+    MapComponent,
+    MainComponent
   ],
   imports: [
     BrowserModule,
