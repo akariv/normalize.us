@@ -10,5 +10,13 @@
         position: absolute;
         top: 0;
         height: 0;
+        opacity: 0;
+        transition: opacity 250ms ease-in-out;
+        z-index: 1;
+        &.active {
+            opacity: 1;
+            transition-duration: 0ms;
+            z-index: 0;
+        }
     }
 }

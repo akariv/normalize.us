@@ -36,6 +36,7 @@ export class SelfieComponent implements OnInit, AfterViewInit {
   async init() {
     const videoEl: HTMLVideoElement = this.inputVideo.nativeElement;
     const supportedConstraints = navigator.mediaDevices.getSupportedConstraints();
+    console.log('SUPPORTED', supportedConstraints);
     const videoConstraints: any = {};
     let audioConstraints: any = {};
     if (supportedConstraints.facingMode) { videoConstraints.facingMode = 'user'; }

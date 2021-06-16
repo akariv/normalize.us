@@ -4,7 +4,10 @@
 <div class='wrapper'
     [style.width]='config.IMAGE_SIZE + "px"'
     [style.height]='config.IMAGE_SIZE + "px"'>
-    <div class='mover' [style.top]='y + "px"' [style.left]='x + "px"'>
+    <div class='mover' [class.active]='current === 0' [style.top]='y[0] + "px"' [style.left]='x[0] + "px"'>
+        <img [src]='src'>
+    </div>
+    <div class='mover' [class.active]='current === 1' [style.top]='y[1] + "px"' [style.left]='x[1] + "px"'>
         <img [src]='src'>
     </div>
 </div>

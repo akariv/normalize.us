@@ -80,6 +80,7 @@ export class FaceProcessorService {
   processFaces(el: HTMLVideoElement | HTMLImageElement, skipFramesStart=20, snap=this.defaultSnap) {
     const compositionFrame = this.getCompositionFrame();
     const canvas = document.createElement('canvas');
+    const windowHeight = window.innerHeight;
     if (el instanceof HTMLVideoElement) {
       canvas.width = el.videoWidth;
       canvas.height = el.videoHeight;  
@@ -152,11 +153,12 @@ export class FaceProcessorService {
         const landmarks: FaceLandmarks68 = result.landmarks;
         const topPoint = landmarks.positions[27];
         const bottomPoint = landmarks.positions[8];
-        const center = topPoint.add(bottomPoint).div(new Point(2, 2));
+        const center = topPoint;
         const sub = topPoint.sub(bottomPoint);
         const rotation = Math.atan(sub.x / (sub.y ? sub.y : 0.00001));
         const orientation = rotation / Math.PI * 180;
-        let scale = 0.2 * canvas.height / sub.magnitude();
+        const scale = 0.3 * canvas.height / sub.magnitude();
+        const magnification = windowHeight / (canvas.height * ratio) * scale;
         // if (scale < 1) {
         //   scale = 1;
         // }
@@ -183,8 +185,9 @@ export class FaceProcessorService {
           context.restore();
   
           progress.next({
-            transformOrigin: `${center.x * ratio}px ${center.y * ratio}px`,
-            transform: `translate(${el.offsetWidth*0.5-center.x * ratio}px,${el.offsetHeight*0.5-center.y * ratio}px)rotate(${rotation}rad)scale(${scale})`,
+            // transformOrigin: `${center.x * ratio}px ${center.y * ratio}px`,
+            transformOrigin: `${el.offsetWidth*0.5 - (center.x - canvas.width/2)* ratio}px ${el.offsetHeight*0.5 - (center.y-canvas.height/2) * ratio}px`,
+            transform: `translate(${-(center.x - canvas.width/2)* ratio}px,${-(center.y-canvas.height/2) * ratio}px)rotate(${rotation}rad)scale(${magnification})`,
             // preview: canvas.toDataURL(),
             kind: 'transform',
             snapped: true,
@@ -235,17 +238,17 @@ export class FaceProcessorService {
         const rightEye = landmarks.getRightEye()
         const leftEyeBbrow = landmarks.getLeftEyeBrow()
         const rightEyeBrow = landmarks.getRightEyeBrow()
-        const box = result.detection.box;
-        const forehead = [{x: box.x, y: box.y}, {x: box.x + box.width, y: this.extent(...leftEyeBbrow, ...rightEyeBrow)[1]}];
-        forehead[0].y -= 1.8 * this.extent(...forehead as Point[])[3];
-        const face = [{x: box.x, y: box.y}, {x: box.x + box.width, y: box.y + box.height}] as Point[];
+        const box = this.extent(...landmarks.positions);
+        const forehead = [{x: box[0], y: box[1]}, {x: box[0] + box[2], y: this.extent(...leftEyeBbrow, ...rightEyeBrow)[1]}];
+        forehead[0].y = forehead[1].y - 1.2 * this.extent(...nose)[3];
+        // const face = [{x: box[0], y: box[1]}, {x: box[0] + box[2], y: box[1] + box[3]}] as Point[];
         
         const features = [
           {feature: 'nose', points: [...nose], padding: [0.5, 0.25]},
           {feature: 'eyes', points: [...leftEye, ...rightEye, ...leftEyeBbrow, ...rightEyeBrow], padding: [0.25, 0]},
           {feature: 'mouth', points: [...mouth], padding: [0.25, 0]},
           {feature: 'forehead', points: [...forehead as Point[]], padding: [0, 0]},
-          {feature: 'face', points: [...face, ...forehead as Point[]], padding: [0, 0.1]},
+          {feature: 'face', points: [...landmarks.positions, ...forehead as Point[]], padding: [0, 0.1]},
         ];
 
         const context = compositionFrame.getContext('2d');

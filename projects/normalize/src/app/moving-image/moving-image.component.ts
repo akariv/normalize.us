@@ -12,18 +12,20 @@ export class MovingImageComponent implements OnChanges, OnDestroy {
   @Input() src: string;
   @Input() index: number;
 
-  ANIMATION_DIVIDER = 1;
+  ANIMATION_DIVIDER = 10;
 
-  x = 0;
-  y = 0;
+  x = [0, 0];
+  y = [0, 0];
   frame = 0;
   count = 0;
+  current = 0;
   animationId = '';
 
   constructor(public config: ConfigService, private animation: AnimationManagerService) { }
 
   ngOnChanges(): void {
-    this.x = -this.config.IMAGE_SIZE * this.index;
+    this.x[0] = -this.config.IMAGE_SIZE * this.index;
+    this.x[1] = -this.config.IMAGE_SIZE * this.index;
     const animationId = 'moving-image-' + this.index;
     if (this.animationId !== animationId) {
       if (this.animationId) {
@@ -43,10 +45,11 @@ export class MovingImageComponent implements OnChanges, OnDestroy {
     this.count -= 1;
     if (this.count <= 0) {
       this.frame += 1;
+      this.current = 1 - this.current;
       if (this.frame >= this.config.COLLECTED_FRAMES) {
         this.frame = -this.config.COLLECTED_FRAMES + 2;
       }
-      this.y = -Math.abs(this.frame) * this.config.IMAGE_SIZE;
+      this.y[this.current] = -Math.abs(this.frame) * this.config.IMAGE_SIZE;
       this.count = this.ANIMATION_DIVIDER;
     }
     this.animation.go();
