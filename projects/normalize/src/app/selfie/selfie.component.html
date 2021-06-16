@@ -2,11 +2,31 @@
        [style.transform]='transform' [style.transform-origin]='transformOrigin'
        [class.no-detection]='!detected'
 ></video>
-<div class='moving-images' *ngIf='src'>
+<div class='face-mask-container' [style.height]='0.8*videoHeight + "px"' [class.detected]='detected'>
+    <svg viewBox="0 0 194 291" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g style="mix-blend-mode:lighten" filter="url(#filter0_d)">
+            <text x='97' y='60'>{{countdownText}}</text>
+            <path class='face-mask' d="M173.029 96.5255L173.013 193.525L181.013 193.527L181.029 96.5268L173.029 96.5255ZM20.0132 193.501L20.0289 96.5007L12.0289 96.4994L12.0132 193.499L20.0132 193.501ZM96.5007 270.013C54.251 270.006 20.0063 235.75 20.0132 193.501L12.0132 193.499C12.0056 240.167 49.8314 278.005 96.4994 278.013L96.5007 270.013ZM173.013 193.525C173.006 235.775 138.751 270.02 96.5007 270.013L96.4994 278.013C143.168 278.021 181.006 240.195 181.013 193.527L173.013 193.525ZM96.5413 20.0131C138.791 20.0199 173.036 54.2757 173.029 96.5255L181.029 96.5268C181.036 49.8587 143.211 12.0206 96.5426 12.0131L96.5413 20.0131ZM96.5426 12.0131C49.8746 12.0055 12.0365 49.8313 12.0289 96.4994L20.0289 96.5007C20.0358 54.2509 54.2916 20.0062 96.5413 20.0131L96.5426 12.0131Z"/>
+        </g>
+        <defs>
+            <filter id="filter0_d" x="0" y="0" width="193.042" height="290.026" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/>
+                <feOffset/>
+                <feGaussianBlur stdDeviation="8"/>
+                <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0"/>
+                <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+                <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+            </filter>
+        </defs>
+    </svg>    
+</div>
+<div class='flash' [class.active]='flashActive'></div>
+<!-- <div class='moving-images' *ngIf='src'>
     <app-moving-image *ngFor='let idx of [0,1,2,3,4]' [src]='src' [index]='idx'></app-moving-image>
 </div>
 <div class='stats'>
     <span>Rot: {{orientation}}</span>
     <span>Scl: {{scale}}</span>
     <span>Dst: {{distance}}</span>
-</div>
+</div> -->

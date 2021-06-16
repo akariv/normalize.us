@@ -89,9 +89,9 @@ export class FaceProcessorService {
       canvas.width = el.width;
       canvas.height = el.height;  
     }
-    console.log('CANVAS', canvas);
+    // console.log('CANVAS', canvas);
     const ratio = Math.min(el.offsetWidth / canvas.width, el.offsetHeight / canvas.height);
-    console.log('RATIO', ratio);
+    // console.log('RATIO', ratio);
     const context = canvas.getContext('2d');
     const progress = new ReplaySubject<any>(1);
 
@@ -108,13 +108,13 @@ export class FaceProcessorService {
     });
     this.faceapi.ready.pipe(
       switchMap(() => {
-        console.log('FP: READY');
+        // console.log('FP: READY');
         return animationObs.start();  
       }),
       switchMap(() => {
-        console.log('FP: animationObs');
+        // console.log('FP: animationObs');
         context.drawImage(el, 0, 0, canvas.width, canvas.height);
-        console.log('FP: drawn');
+        // console.log('FP: drawn');
         return detectSingleFace(canvas, this.detectorOptions).withFaceLandmarks(this.config.TINY).run();
       }),
       catchError((e, caught) => {
@@ -122,7 +122,7 @@ export class FaceProcessorService {
         return from([false]);
       }),
       filter((result: any) => {
-        console.log('RESULTTT', result && result.detection.score);
+        // console.log('RESULTTT', result && result.detection.score);
         if (!result) {
           animationObs.continue();
           this.detectorOptions = this.scoreThresholdHigh;
@@ -141,6 +141,7 @@ export class FaceProcessorService {
             score: result ? result.detection.score : 0,
             detected: false
           });
+          frames = 0;
         }
         return !!result || animationObs.cancelled;
       }),
@@ -153,7 +154,7 @@ export class FaceProcessorService {
         const landmarks: FaceLandmarks68 = result.landmarks;
         const topPoint = landmarks.positions[27];
         const bottomPoint = landmarks.positions[8];
-        const center = landmarks.positions[28];
+        const center = landmarks.positions[30];
         const sub = topPoint.sub(bottomPoint);
         const rotation = Math.atan(sub.x / (sub.y ? sub.y : 0.00001));
         const orientation = rotation / Math.PI * 180;
@@ -173,7 +174,7 @@ export class FaceProcessorService {
         );
         snapped = shouldSnap;
 
-        console.log('SHOULD SNAP', shouldSnap, orientation, scale, distance);
+        // console.log('SHOULD SNAP', shouldSnap, orientation, scale, distance);
         if (shouldSnap) {
           context.save();
           context.clearRect(0, 0, canvas.width, canvas.height);
@@ -208,7 +209,7 @@ export class FaceProcessorService {
       }),
       filter((result) => {
         animationObs.continue();
-        console.log('DETECTION2', result ? result.detection.score : 0);
+        // console.log('DETECTION2', result ? result.detection.score : 0);
         progress.next({
           kind: 'detection',
           score: result ? result.detection.score : 0,
@@ -216,6 +217,7 @@ export class FaceProcessorService {
         });
         if (!result) {
           skipFrames = skipFramesStart;
+          frames = 0;
         }
         return !!result || animationObs.cancelled;
       }),
@@ -258,10 +260,10 @@ export class FaceProcessorService {
           let extent = this.extent(...points);
           extent = this.applyPadding(padding as [number, number], extent);
           extent = this.applyRatio(ratio, extent);
-          console.log('RATIO', ratio, extent[3]/extent[2]);
+          // console.log('RATIO', ratio, extent[3]/extent[2]);
           const center = this.center(index, frames, extent[2], extent[3]);
           try {
-            console.log('COPYING', extent, '-> ', center);
+            // console.log('COPYING', extent, '-> ', center);
             context.drawImage(canvas, ...extent, ...center);
           } catch (exception) {
             console.log('FAILED TO COPY', extent, center);
@@ -273,7 +275,7 @@ export class FaceProcessorService {
       }),
       filter(() => (frames === this.config.COLLECTED_FRAMES) || animationObs.cancelled),
     ).subscribe(() => {
-      console.log('COLLECTED FRAMES');
+      // console.log('COLLECTED FRAMES');
       animationObs.stop();
       progress.next({
         kind: 'done',

@@ -1,8 +1,11 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { defer, fromEvent } from 'rxjs';
+import { defer, fromEvent, interval, ReplaySubject, Subscription } from 'rxjs';
 import { ConfigService } from '../config.service';
-import { first } from 'rxjs/operators';
+import { filter, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { FaceProcessorService } from '../face-processor.service';
+import { ApiService } from '../api.service';
+import { StateService } from '../state.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-selfie',
@@ -14,6 +17,13 @@ export class SelfieComponent implements OnInit, AfterViewInit {
   @ViewChild('inputVideo') inputVideo: ElementRef;
 
   private videoStream: MediaStream;
+  private completed = new ReplaySubject(1);
+  private countdown: Subscription = null;
+
+  public flashActive = false;
+  public countdownText = '';
+  public videoHeight = 0;
+
   public detected = false;
   public src = '';
   public transform = '';
@@ -23,7 +33,8 @@ export class SelfieComponent implements OnInit, AfterViewInit {
   public scale = '';
   public distance = '';
 
-  constructor(private faceProcessor: FaceProcessorService) {}
+
+  constructor(private faceProcessor: FaceProcessorService, private api: ApiService, private state: StateService, private router: Router) {}
 
   ngOnInit(): void { }
 
@@ -48,6 +59,7 @@ export class SelfieComponent implements OnInit, AfterViewInit {
     videoEl.srcObject = this.videoStream;
     fromEvent(videoEl, 'play').pipe(first()).subscribe(() => {
       setTimeout(() => {
+        this.videoHeight = videoEl.offsetHeight;
         this.triggerDetectFaces();
       }, 1000);
     });
@@ -55,7 +67,7 @@ export class SelfieComponent implements OnInit, AfterViewInit {
 
   triggerDetectFaces() {
     const videoEl: HTMLVideoElement = this.inputVideo.nativeElement;
-    this.faceProcessor.processFaces(videoEl, 50)
+    this.faceProcessor.processFaces(videoEl, 5)
       .subscribe((event) => {
         if (event.kind === 'transform') {
           this.transform = event.transform;
@@ -63,15 +75,60 @@ export class SelfieComponent implements OnInit, AfterViewInit {
           this.distance = (event.distance as Number).toFixed(2);
           this.orientation = (event.orientation as Number).toFixed(1);;
           this.scale = (event.scale as Number).toFixed(2);;
+          this.detected = event.snapped;
         } else if (event.kind === 'detection') {
-          this.detected = event.detected;
+          if (event.detected) {
+            console.log('DETECTED');
+            if (!this.countdown) {
+              console.log('STARTING COUNTDOWN');
+              this.countdown = this.doCountdown().subscribe((x) => {
+                console.log('COUNTDOWN DONE', x);
+                this.completed.next();
+              })
+            }
+          } else {
+            if (this.countdown) {
+              this.countdown.unsubscribe();
+              this.countdown = null;
+              this.countdownText = '';
+            }
+          }
+          // this.detected = event.detected;
         } else if (event.kind === 'done') {
           console.log('GOT EVENT DONE');
-          this.src = event.content;
-          this.videoStream.getVideoTracks()[0].stop();
-          (this.inputVideo.nativeElement as HTMLVideoElement).remove();      
+          // this.src = event.content;
+          this.api.createNew(event.content, event.descriptor)
+              .pipe(
+                switchMap((result: any) => {
+                  if (result.success) {
+                    this.state.setOwnId(result.id);
+                  }
+                  return this.completed;
+                })
+              ).subscribe(() => {
+                console.log('completed');
+                (this.inputVideo.nativeElement as HTMLVideoElement).remove();
+                this.videoStream.getVideoTracks()[0].stop();
+                this.router.navigate(['/']);
+              });
         }
       });
+  }
+
+  doCountdown() {
+    this.countdownText = '3';
+    return interval(1000).pipe(
+      take(3),
+      map((num) => {
+        const count = 2 - num;
+        this.countdownText = '' + count;
+        if (count === 0) {
+          this.flashActive = true;
+        }
+        return count;
+      }),
+      filter((count) => count === 0)
+    );
   }
 
 }

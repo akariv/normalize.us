@@ -5,29 +5,11 @@
     height: 100%;
     display: flex;
     flex-flow: column;
-    align-items: flex-start;
+    align-items: center;
     overflow: hidden;
     justify-content: center;
     position: relative;
-
-    .stats {
-        position: absolute;
-        top: 50px;
-        left: 50px;
-        font-size: 40px;
-        color: rgba(0,0,0,.25);
-        text-shadow:
-            -1px -1px 0 #fff,  
-            1px -1px 0 #fff,
-            -1px 1px 0 #fff,
-            1px 1px 0 #fff;
-        display: flex;
-        flex-flow: row;
-        span {
-            display: inline-block;
-            margin: 20px;
-        }
-    }
+    background: #C0C6C6;
 
     video {
         width: 100%;
@@ -36,20 +18,94 @@
         transition-property: transform transform-origin;
         transition-duration: 75ms;
         transition-timing-function: linear;
+        
+        // &.no-detection {
+        //     filter: grayscale(1);
+        // }
+    }
 
-        &.no-detection {
-            filter: grayscale(1);
+    .face-mask-container {
+        width: 100%;
+        position: absolute;
+        display: flex;
+        flex-flow: row;
+        align-items: stretch;
+        justify-content: center;
+
+        text {
+            font: bold 40px sans-serif;
+            text-anchor: middle;
+        }
+
+        path.face-mask, text {
+            fill: #ff0000;
+        }
+
+        &.detected {
+            path.face-mask, text {
+                fill: #00ff00;
+            }
         }
     }
 
-    img {
-        width: 640px;
+    .flash {
+        opacity: 0;
+        filter: blur(100px);
+        position: absolute;
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        background-color: white;
+
+        &.active {
+            animation: 2000ms linear 0s 1 normal both flash-animation;
+        }
+    }
+    // .stats {
+    //     position: absolute;
+    //     top: 50px;
+    //     left: 50px;
+    //     font-size: 40px;
+    //     color: rgba(0,0,0,.25);
+    //     text-shadow:
+    //         -1px -1px 0 #fff,  
+    //         1px -1px 0 #fff,
+    //         -1px 1px 0 #fff,
+    //         1px 1px 0 #fff;
+    //     display: flex;
+    //     flex-flow: row;
+    //     span {
+    //         display: inline-block;
+    //         margin: 20px;
+    //     }
+    // }
+
+    // img {
+    //     width: 640px;
+    // }
+
+    // .moving-images {
+    //     width: 100%;
+    //     display: flex;
+    //     flex-flow: row wrap;
+    //     justify-content: center;
+    // }
+}
+
+@keyframes flash-animation {
+    from {
+        opacity: 0;
+        filter: blur(50px);
     }
 
-    .moving-images {
-        width: 100%;
-        display: flex;
-        flex-flow: row wrap;
-        justify-content: center;
+    50% {
+        opacity: 1;
+        filter: blur(50px);
     }
+
+    to {
+        opacity: 1;
+        filter: blur(0px);
+    }
+    
 }

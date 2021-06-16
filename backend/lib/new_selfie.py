@@ -41,7 +41,7 @@ def new_selfie_handler(request: Request):
             result = connection.execute(insert_new, image=filename_base, descriptor=descriptor)
             new_id = result.fetchone()[0]
             return Response(
-                json.dumps(dict(success=True, id=new_id)),
+                json.dumps(dict(success=True, id=new_id, image=filename_base)),
                 headers=HEADERS
             )
     return Response(
