@@ -21,7 +21,6 @@ export class SingleTournamentComponent implements OnInit, OnChanges, AfterViewIn
   constructor(public imageFetcher: ImageFetcherService, private el: ElementRef, private config: ConfigService) { }
 
   set location(value) {
-    console.log(value);
     if (value > 0) {
       this.direction = true;
     }
@@ -44,8 +43,10 @@ export class SingleTournamentComponent implements OnInit, OnChanges, AfterViewIn
   }
 
   ngAfterViewInit() {
-    this.baseScale = this.el.nativeElement.offsetWidth / (2 * this.config.IMAGE_SIZE);
-    this.scales = [this.baseScale, this.baseScale];
+    setTimeout(() => {
+      this.baseScale = this.el.nativeElement.offsetWidth / (2 * this.config.IMAGE_SIZE);
+      this.scales = [this.baseScale, this.baseScale];  
+    }, 0);
   }
 
   select(candidate) {

@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { fromEvent, Subscription } from 'rxjs';
+import { fromEvent, Subject, Subscription } from 'rxjs';
+import { debounceTime, throttle, throttleTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-slider',
@@ -17,11 +18,18 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   subscriptions: Subscription[] = [];
   moveSubscripion: Subscription = null;
+  throttled = new Subject<number>();
   width = 0;
   startX = 0;
   position = (window.innerWidth - 16 - this.HANDLE_SIZE) / 2;
 
-  constructor(private el: ElementRef) { }
+  constructor(private el: ElementRef) {
+    this.throttled.pipe(
+      throttleTime(33),
+    ).subscribe((loc) => {
+      this.location.next(loc);
+    });
+  }
 
   ngOnInit(): void {
   }
@@ -61,7 +69,7 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   mousedown(ev) {
-    this.startX = ev.x;
+    this.startX = this.getX(ev);
     if (this.moveSubscripion) {
       this.moveSubscripion.unsubscribe();
     }
@@ -73,10 +81,21 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   mousemove(ev) {
-    this.position = this.width/2 + ev.x - this.startX;
+    const x = this.getX(ev);
+    this.position = this.width/2 + x - this.startX;
     this.position = Math.min(this.position, this.width);
     this.position = Math.max(this.position, 0);
-    this.location.next((this.position - this.width/2) / (this.width/2));
+    this.throttled.next((this.position - this.width/2) / (this.width/2));
+  }
+
+  getX(ev) {
+    let x = 0;
+    if (ev instanceof MouseEvent) {
+      x = ev.clientX;
+    } else if (ev instanceof TouchEvent) {
+      x = ev.touches.item(0).clientX;
+    }
+    return x;
   }
 
 }
