@@ -130,16 +130,16 @@ export class FaceProcessorService {
         if (!result) {
           console.log('NO DETECTION');
           progress.next({
-            kind: 'detection',
-            score: result ? result.detection.score : 0,
-            detected: false
-          });
-          progress.next({
-            transformOrigin: `0px 0px`,
+            transformOrigin: `${el.offsetWidth*0.5}px ${el.offsetHeight*0.5}px`,
             transform: `translate(0px,0px)rotate(0rad)scale(1)`,
             kind: 'transform',
             snapped: false,
             orientation: NaN, scale: NaN, distance: NaN
+          });
+          progress.next({
+            kind: 'detection',
+            score: result ? result.detection.score : 0,
+            detected: false
           });
         }
         return !!result || animationObs.cancelled;
@@ -153,12 +153,12 @@ export class FaceProcessorService {
         const landmarks: FaceLandmarks68 = result.landmarks;
         const topPoint = landmarks.positions[27];
         const bottomPoint = landmarks.positions[8];
-        const center = topPoint;
+        const center = landmarks.positions[28];
         const sub = topPoint.sub(bottomPoint);
         const rotation = Math.atan(sub.x / (sub.y ? sub.y : 0.00001));
         const orientation = rotation / Math.PI * 180;
         const scale = 0.3 * canvas.height / sub.magnitude();
-        const magnification = windowHeight / (canvas.height * ratio) * scale;
+        const magnification = scale; //windowHeight / (canvas.height * ratio) * scale;
         // if (scale < 1) {
         //   scale = 1;
         // }
@@ -186,7 +186,7 @@ export class FaceProcessorService {
   
           progress.next({
             // transformOrigin: `${center.x * ratio}px ${center.y * ratio}px`,
-            transformOrigin: `${el.offsetWidth*0.5 - (center.x - canvas.width/2)* ratio}px ${el.offsetHeight*0.5 - (center.y-canvas.height/2) * ratio}px`,
+            transformOrigin: `${el.offsetWidth*0.5 + (center.x - canvas.width/2)* ratio}px ${el.offsetHeight*0.5 + (center.y-canvas.height/2) * ratio}px`,
             transform: `translate(${-(center.x - canvas.width/2)* ratio}px,${-(center.y-canvas.height/2) * ratio}px)rotate(${rotation}rad)scale(${magnification})`,
             // preview: canvas.toDataURL(),
             kind: 'transform',
@@ -196,7 +196,7 @@ export class FaceProcessorService {
           return detectSingleFace(canvas, this.detectorOptions).withFaceLandmarks(this.config.TINY).withFaceDescriptor().run();
         } else {
           progress.next({
-            transformOrigin: `0px 0px`,
+            transformOrigin: `${el.offsetWidth*0.5}px ${el.offsetHeight*0.5}px`,
             transform: `translate(0px,0px)rotate(0rad)scale(1)`,
             kind: 'transform',
             snapped: false,
