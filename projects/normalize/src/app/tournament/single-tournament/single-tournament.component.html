@@ -1,6 +1,6 @@
 <div class='texts'>
-    <span [style.right]='position + "vw"'>Swipe towards what looks</span>
-    <span [style.right]='position/2 + "vw"'><strong>more normal</strong></span>
+    <span [style.right]='position*1.75 + "vw"'>Swipe towards what looks</span>
+    <span [style.right]='position/3 + "vw"'><strong>more normal</strong></span>
 </div>
 <div class='candidates' [class.forward]='direction' [class.backward]='!direction' *ngIf='candidates'>
     <ng-container *ngFor='let candidate of candidates; let i = index'>
