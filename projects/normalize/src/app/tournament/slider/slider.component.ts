@@ -55,10 +55,10 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   mouseup() {
     if (this.position === this.width) {
-      this.selected.next(1);
+      this.selected.next(-1);
     }
     if (this.position === 0) {
-      this.selected.next(-1);
+      this.selected.next(1);
     }
     this.position = this.width / 2;
     if (this.moveSubscripion) {
@@ -85,7 +85,7 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.position = this.width/2 + x - this.startX;
     this.position = Math.min(this.position, this.width);
     this.position = Math.max(this.position, 0);
-    this.throttled.next((this.position - this.width/2) / (this.width/2));
+    this.throttled.next((this.width/2 - this.position) / (this.width/2));
   }
 
   getX(ev) {

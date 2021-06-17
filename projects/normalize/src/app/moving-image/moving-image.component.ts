@@ -16,6 +16,8 @@ export class MovingImageComponent implements OnChanges, OnDestroy {
 
   x = [0, 0];
   y = [0, 0];
+  width = 300;
+  height = 300;
   frame = 0;
   count = 0;
   current = 0;
@@ -27,6 +29,9 @@ export class MovingImageComponent implements OnChanges, OnDestroy {
   ngOnChanges(): void {
     this.x[0] = -this.config.IMAGE_SIZE * this.index;
     this.x[1] = -this.config.IMAGE_SIZE * this.index;
+    const dimensions = this.config.IMAGE_SIZE_BY_INDEX[this.index];
+    this.width = dimensions.width;
+    this.height = dimensions.height;
     const animationId = 'moving-image-' + this.index;
     if (this.animationId !== animationId) {
       if (this.animationId) {

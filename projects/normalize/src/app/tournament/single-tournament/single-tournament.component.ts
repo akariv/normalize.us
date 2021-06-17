@@ -15,12 +15,14 @@ export class SingleTournamentComponent implements OnInit, OnChanges, AfterViewIn
 
   scales = [1, 1];
   sizes = [50, 50];
+  position = 0;
   baseScale = 1;
   direction = true;
 
   constructor(public imageFetcher: ImageFetcherService, private el: ElementRef, private config: ConfigService) { }
 
   set location(value) {
+    this.position = 100 * value/2;
     if (value > 0) {
       this.direction = true;
     }
@@ -40,13 +42,20 @@ export class SingleTournamentComponent implements OnInit, OnChanges, AfterViewIn
   }
 
   ngOnChanges() {
+    if (this.el.nativeElement) {
+      this.updateScales();
+    }
   }
 
   ngAfterViewInit() {
     setTimeout(() => {
-      this.baseScale = this.el.nativeElement.offsetWidth / (2 * this.config.IMAGE_SIZE);
-      this.scales = [this.baseScale, this.baseScale];  
+      this.updateScales();
     }, 0);
+  }
+
+  updateScales() {
+    this.baseScale = this.el.nativeElement.offsetWidth / (2 * this.config.IMAGE_SIZE_BY_INDEX[this.index].width);
+    this.scales = [this.baseScale, this.baseScale];  
   }
 
   select(candidate) {

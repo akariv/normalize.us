@@ -2,8 +2,8 @@
 
 </div> -->
 <div class='wrapper' *ngIf='loaded'
-    [style.width]='config.IMAGE_SIZE + "px"'
-    [style.height]='config.IMAGE_SIZE + "px"'>
+    [style.width]='width + "px"'
+    [style.height]='height + "px"'>
     <div class='mover' [class.active]='current === 0' [style.top]='y[0] + "px"' [style.left]='x[0] + "px"'>
         <img [src]='src'>
     </div>
@@ -12,6 +12,6 @@
     </div>
 </div>
 <img *ngIf='!loaded' [src]='src' (load)='loaded = true' class='placeholder'
-    [style.width]='config.IMAGE_SIZE + "px"'
-    [style.height]='config.IMAGE_SIZE + "px"'
+    [style.width]='width + "px"'
+    [style.height]='height + "px"'
 >
