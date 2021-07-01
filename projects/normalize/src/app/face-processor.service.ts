@@ -80,7 +80,7 @@ export class FaceProcessorService {
   processFaces(el: HTMLVideoElement | HTMLImageElement, skipFramesStart=20, snap=this.defaultSnap) {
     const compositionFrame = this.getCompositionFrame();
     const canvas = document.createElement('canvas');
-    const windowHeight = window.innerHeight;
+    const elementHeight = el.offsetHeight;
     if (el instanceof HTMLVideoElement) {
       canvas.width = el.videoWidth;
       canvas.height = el.videoHeight;  
@@ -98,6 +98,7 @@ export class FaceProcessorService {
     let frames = 0;
     let skipFrames = skipFramesStart;
     let descriptor = [];
+    let firstLandmarks: any[] = [];
     let snapped = false;
 
     const id = 'fps' + Math.random();
@@ -159,7 +160,7 @@ export class FaceProcessorService {
         const rotation = Math.atan(sub.x / (sub.y ? sub.y : 0.00001));
         const orientation = rotation / Math.PI * 180;
         const scale = 0.3 * canvas.height / sub.magnitude();
-        const magnification = scale; //windowHeight / (canvas.height * ratio) * scale;
+        const magnification = 2.25 * sub.magnitude() / canvas.height * elementHeight / 291; // 291 = face-mask height
         // if (scale < 1) {
         //   scale = 1;
         // }
@@ -188,8 +189,9 @@ export class FaceProcessorService {
           progress.next({
             // transformOrigin: `${center.x * ratio}px ${center.y * ratio}px`,
             transformOrigin: `${el.offsetWidth*0.5 + (center.x - canvas.width/2)* ratio}px ${el.offsetHeight*0.5 + (center.y-canvas.height/2) * ratio}px`,
-            transform: `translate(${-(center.x - canvas.width/2)* ratio}px,${-(center.y-canvas.height/2) * ratio}px)rotate(${rotation}rad)scale(${magnification})`,
+            transform: `translate(${-(center.x - canvas.width/2)* ratio}px,${-(center.y-canvas.height/2) * ratio}px)rotate(${rotation}rad)scale(${scale})`,
             // preview: canvas.toDataURL(),
+            maskTransform: `translate(${canvas.width/2 * ratio}px,${canvas.height/2 * ratio}px)rotate(0rad)scale(${magnification})`,
             kind: 'transform',
             snapped: true,
             orientation, scale, distance: distance / canvas.height  
@@ -199,6 +201,8 @@ export class FaceProcessorService {
           progress.next({
             transformOrigin: `${el.offsetWidth*0.5}px ${el.offsetHeight*0.5}px`,
             transform: `translate(0px,0px)rotate(0rad)scale(1)`,
+            // maskTransform: `translate(0px,0px)rotate(0rad)scale(1)`,
+            maskTransform: `translate(${topPoint.x * ratio}px,${topPoint.y * ratio}px)rotate(${-rotation}rad)scale(${magnification})`,
             kind: 'transform',
             snapped: false,
             orientation, scale, distance: distance / canvas.height
@@ -233,6 +237,9 @@ export class FaceProcessorService {
           return;
         }
         const landmarks: FaceLandmarks68 = result.landmarks;
+        if (firstLandmarks.length === 0) {
+          firstLandmarks = landmarks.positions.map((p) => { return {x: p.x, y: p.y}; });
+        }
         descriptor = result.descriptor;
         const nose = landmarks.getNose()
         const mouth = landmarks.getMouth()
@@ -281,6 +288,7 @@ export class FaceProcessorService {
         kind: 'done',
         content: compositionFrame.toDataURL('png'),
         descriptor: [...descriptor],
+        landmarks: firstLandmarks,
         collected: frames
       });
       compositionFrame.remove();

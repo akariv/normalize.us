@@ -27,6 +27,7 @@ export class SelfieComponent implements OnInit, AfterViewInit {
   public detected = false;
   public src = '';
   public transform = '';
+  public maskTransform = '';
   public transformOrigin = '';
 
   public orientation = '';
@@ -49,12 +50,10 @@ export class SelfieComponent implements OnInit, AfterViewInit {
     const supportedConstraints = navigator.mediaDevices.getSupportedConstraints();
     console.log('SUPPORTED', supportedConstraints);
     const videoConstraints: any = {};
-    let audioConstraints: any = {};
     if (supportedConstraints.facingMode) { videoConstraints.facingMode = 'user'; }
     this.videoStream = await navigator.mediaDevices
       .getUserMedia({
         video: videoConstraints,
-        audio: audioConstraints,
       });
     videoEl.srcObject = this.videoStream;
     fromEvent(videoEl, 'play').pipe(first()).subscribe(() => {
@@ -72,6 +71,7 @@ export class SelfieComponent implements OnInit, AfterViewInit {
         if (event.kind === 'transform') {
           this.transform = event.transform;
           this.transformOrigin = event.transformOrigin;
+          this.maskTransform = event.maskTransform;
           this.distance = (event.distance as Number).toFixed(2);
           this.orientation = (event.orientation as Number).toFixed(1);;
           this.scale = (event.scale as Number).toFixed(2);;
@@ -97,7 +97,7 @@ export class SelfieComponent implements OnInit, AfterViewInit {
         } else if (event.kind === 'done') {
           console.log('GOT EVENT DONE');
           // this.src = event.content;
-          this.api.createNew(event.content, event.descriptor)
+          this.api.createNew(event.content, event.descriptor, event.landmarks)
               .pipe(
                 switchMap((result: any) => {
                   if (result.success) {

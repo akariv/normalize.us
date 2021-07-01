@@ -11,8 +11,8 @@ export class ApiService {
 
   constructor(private http: HttpClient) { }
 
-  createNew(image, descriptor) {
-    return this.http.post(environment.endpoints.new, {image, descriptor});
+  createNew(image, descriptor, landmarks) {
+    return this.http.post(environment.endpoints.new, {image, descriptor, landmarks});
   }
 
   getGame() {

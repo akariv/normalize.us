@@ -79,7 +79,7 @@ export class DatasetComponent implements OnInit, AfterViewInit {
           console.log('GOT EVENT DONE', event.collected);
           this.extracted = event.content;
           if (event.collected) {
-            return this.api.createNew(event.content, event.descriptor);
+            return this.api.createNew(event.content, event.descriptor, event.landmarks);
           } else {
             return from([false]);
           }
