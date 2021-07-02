@@ -160,7 +160,8 @@ export class FaceProcessorService {
         const rotation = Math.atan(sub.x / (sub.y ? sub.y : 0.00001));
         const orientation = rotation / Math.PI * 180;
         const scale = 0.3 * canvas.height / sub.magnitude();
-        const magnification = 2.25 * sub.magnitude() / canvas.height * elementHeight / 291; // 291 = face-mask height
+        const magnification = 0.657 / scale * elementHeight / 291; // 291 = face-mask height
+        // const templateMagnification = 
         // if (scale < 1) {
         //   scale = 1;
         // }

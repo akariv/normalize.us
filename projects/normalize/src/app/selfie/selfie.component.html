@@ -7,6 +7,9 @@
         <img *ngIf='!detected' src='assets/img/face-mask.svg' [style.transform]='maskTransform'>
         <img *ngIf='detected' src='assets/img/headspace.svg' [style.transform]='maskTransform'>
     </div>
+    <div class='face-mask-overlay'>
+        <img src='assets/img/frame-overlay2.svg' [style.transform]='"scale(" + inputVideo.offsetHeight * 0.675 / 254 + ")"'>
+    </div>
 </div>
 <!-- <div class='face-mask-container' [style.height]='0.8*videoHeight + "px"' [class.detected]='detected'>
     <svg viewBox="0 0 194 291" fill="none" xmlns="http://www.w3.org/2000/svg">
