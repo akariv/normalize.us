@@ -11,6 +11,7 @@ export class MovingImageComponent implements OnChanges, OnDestroy {
 
   @Input() src: string;
   @Input() index: number;
+  @Input() id: string;
 
   ANIMATION_DIVIDER = 10;
 
@@ -32,7 +33,7 @@ export class MovingImageComponent implements OnChanges, OnDestroy {
     const dimensions = this.config.IMAGE_SIZE_BY_INDEX[this.index];
     this.width = dimensions.width;
     this.height = dimensions.height;
-    const animationId = 'moving-image-' + this.index;
+    const animationId = 'moving-image-' + this.id;
     if (this.animationId !== animationId) {
       if (this.animationId) {
         this.animation.deregister(this.animationId);
@@ -53,7 +54,7 @@ export class MovingImageComponent implements OnChanges, OnDestroy {
       this.frame += 1;
       this.current = 1 - this.current;
       if (this.frame >= this.config.COLLECTED_FRAMES) {
-        this.frame = -this.config.COLLECTED_FRAMES + 2;
+        this.frame = 0
       }
       this.y[this.current] = -Math.abs(this.frame) * this.config.IMAGE_SIZE;
       this.count = this.ANIMATION_DIVIDER;

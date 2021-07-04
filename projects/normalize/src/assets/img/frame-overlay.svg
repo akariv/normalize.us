@@ -38,7 +38,7 @@
          id="feGaussianBlur24" />
       <feColorMatrix
          type="matrix"
-         values="0 0 0 0 0.02 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0"
+         values="0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0"
          id="feColorMatrix26" />
       <feBlend
          mode="normal"
@@ -79,6 +79,24 @@
      fill-opacity="0.33"
      id="path110"
      style="display:inline" />
+  <circle
+     cx="310.022"
+     cy="389.00699"
+     r="8"
+     transform="rotate(0.00930358,862482.77,-1139482.6)"
+     stroke="#ffffff"
+     stroke-width="2"
+     id="circle2"
+     style="display:inline;mix-blend-mode:lighten;filter:url(#filter0_d)" />
+  <circle
+     cx="380.022"
+     cy="389.01901"
+     r="8"
+     transform="rotate(0.00930358,862552.77,-1139560.3)"
+     stroke="#ffffff"
+     stroke-width="2"
+     id="circle4"
+     style="display:inline;mix-blend-mode:lighten;filter:url(#filter0_d)" />
   <path
      id="line6"
      clip-path="none"

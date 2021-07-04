@@ -84,13 +84,16 @@ export class MapComponent implements OnInit, AfterViewInit {
         });
       });
       const geoJson: geojson.FeatureCollection<any, any> = {type: 'FeatureCollection', features: features};
+      this.map.createPane('borders');
+      this.map.getPane('borders').style.zIndex = '10';
       L.geoJSON(geoJson, {
         style: {
           fill: true,
           fillColor: '#eae7df',
           stroke: false,
           fillOpacity: 1  
-        }
+        },
+        pane: 'borders'
       }).addTo(this.map);
     });
   }
@@ -103,34 +106,37 @@ export class MapComponent implements OnInit, AfterViewInit {
   onBoundsChange() {
     let x = -1;
     let y = -1;
-    // if (this.zoomedMax) {
-    //   const bounds = this.map.getBounds();
-    //   const pos = bounds.getCenter();
-    //   x = Math.floor(pos.lng);
-    //   y = this.dim - Math.ceil(pos.lat);
-    // }
-    // if (this.focusedLayerPos.x !== x || this.focusedLayerPos.x !== y) {
-    //   this.focusedLayerPos = {x, y};
-    //   if (this.focusedLayerPhoto) {
-    //     this.focusedLayerPhoto.remove();
-    //     this.focusedLayerPhoto = null;
-    //   }
-    //   if (x >= 0 && y >= 0) {
-    //     for (const item of this.configuration.grid) {
-    //       const posX = item.pos.x;
-    //       const posY = item.pos.y;
-    //       if (x === posX && y === posY) {
-    //         const id = item.id;
-    //         const lat = -y;
-    //         const lon = x;
-    //         const bounds: L.LatLngTuple[] = [[lat + 0.24, lon + 0.24], [lat + 0.76, lon + 0.76]];
-    //         this.focusedLayerPhoto = L.imageOverlay(
-    //           this.fetchImage.fetchFaceImage(id), bounds
-    //         ).addTo(this.map);
-    //         break;
-    //       }
-    //     }
-    //   }
-    // }
+    if (this.zoomedMax) {
+      const bounds = this.map.getBounds();
+      const pos = bounds.getCenter();
+      x = Math.floor(pos.lng);
+      y = -Math.ceil(pos.lat);
+    }
+    if (this.focusedLayerPos.x !== x || this.focusedLayerPos.x !== y) {
+      this.focusedLayerPos = {x, y};
+      if (this.focusedLayerPhoto) {
+        this.focusedLayerPhoto.remove();
+        this.focusedLayerPhoto = null;
+      }
+      if (x >= 0 && y >= 0) {
+        for (const item of this.configuration.grid) {
+          const posX = item.pos.x;
+          const posY = item.pos.y;
+          if (x === posX && y === posY) {
+            const id = item.id;
+            const lat = -1 - y;
+            const lon = x;
+            const imgTop = lat -0.09050195011;
+            const imgLeft = lon + 0.20588;
+            const imgSide = 1.08597721996;
+            const bounds: L.LatLngTuple[] = [[imgTop, imgLeft], [imgTop + imgSide, imgLeft + imgSide]];
+            this.focusedLayerPhoto = L.imageOverlay(
+              '/assets/img/normalizi.ng_arrest_card.svg', bounds, {zIndex: 2}
+            ).addTo(this.map);
+            break;
+          }
+        }
+      }
+    }
   }
 }

@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { from } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { ApiService } from '../../api.service';
 import { ImageFetcherService } from '../../image-fetcher.service';
+import { StateService } from '../../state.service';
 
 @Component({
   selector: 'app-game',
@@ -15,10 +19,14 @@ export class GameComponent implements OnInit {
   tuples = [];
   candidates = [];
   results = [];
+  loaded = 0;
 
-  constructor(private api: ApiService, private imageFetcher: ImageFetcherService) {
+  constructor(private api: ApiService, private state: StateService, public imageFetcher: ImageFetcherService, private router: Router) {
     api.getGame().subscribe((game) => {
       this.game = game;
+      if (state.ownRecord) {
+        this.game.records.push(state.ownRecord);
+      }
       console.log('GOT GAME', game);
       this.next();
     })
@@ -78,10 +86,22 @@ export class GameComponent implements OnInit {
 
   saveGameResults() {
     if (this.results && this.results.length) {
-      this.api.saveGameResults(this.results).subscribe(() => {
-        console.log('SAVED');
-        this.results = [];
-      });
+      this.state.pushRequest(
+        from([this.results]).pipe(
+          map((results) => {
+            return results.map((t) => t.map((c) => c === 'pending'? this.state.getOwnId() : c));
+          }),
+          switchMap((results) => {
+            return this.api.saveGameResults(results);
+          }),
+          tap(() => {
+            console.log('SAVED');
+            this.results = [];
+          })
+        )
+      );
+      this.state.setPlayed();
+      this.router.navigate(['/']);  
     }
   }
 }

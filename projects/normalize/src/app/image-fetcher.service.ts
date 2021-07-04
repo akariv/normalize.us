@@ -11,7 +11,10 @@ export class ImageFetcherService {
 
   constructor(private api: ApiService, private sanitizer: DomSanitizer) { }
 
-  fetchImage(id) {
+  fetchImage(id: string) {
+    if (id.indexOf('data:') === 0) {
+      return id;
+    }
     return `https://normalizing-us-files.fra1.cdn.digitaloceanspaces.com/${id}_full.png`;
   }
 

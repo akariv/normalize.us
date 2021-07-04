@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { defer, fromEvent, interval, ReplaySubject, Subscription } from 'rxjs';
 import { ConfigService } from '../config.service';
-import { filter, first, map, switchMap, take, tap } from 'rxjs/operators';
+import { delay, filter, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { FaceProcessorService } from '../face-processor.service';
 import { ApiService } from '../api.service';
 import { StateService } from '../state.service';
@@ -97,20 +97,24 @@ export class SelfieComponent implements OnInit, AfterViewInit {
         } else if (event.kind === 'done') {
           console.log('GOT EVENT DONE');
           // this.src = event.content;
-          this.api.createNew(event.content, event.descriptor, event.landmarks)
-              .pipe(
-                switchMap((result: any) => {
-                  if (result.success) {
-                    this.state.setOwnId(result.id);
-                  }
-                  return this.completed;
-                })
-              ).subscribe(() => {
-                console.log('completed');
-                (this.inputVideo.nativeElement as HTMLVideoElement).remove();
-                this.videoStream.getVideoTracks()[0].stop();
-                this.router.navigate(['/']);
-              });
+          this.state.setRecord({id: 'pending', descriptor: event.descriptor, image: event.content});
+          this.state.pushRequest(
+            this.api.createNew(event.content, event.descriptor, event.landmarks)
+            .pipe(
+              switchMap((result: any) => {
+                if (result.success) {
+                  this.state.setOwnId(result.id);
+                }
+                return this.completed;
+              })
+            )
+          );
+          this.completed.pipe(first()).subscribe(() => {
+            console.log('completed');
+            (this.inputVideo.nativeElement as HTMLVideoElement).remove();
+            this.videoStream.getVideoTracks()[0].stop();
+            this.router.navigate(['/']);  
+          });
         }
       });
   }
@@ -127,7 +131,8 @@ export class SelfieComponent implements OnInit, AfterViewInit {
         }
         return count;
       }),
-      filter((count) => count === 0)
+      filter((count) => count === 0),
+      delay(3000)
     );
   }
 

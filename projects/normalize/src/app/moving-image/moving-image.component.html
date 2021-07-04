@@ -11,7 +11,9 @@
         <img [src]='src'>
     </div>
 </div>
-<img *ngIf='!loaded' [src]='src' (load)='loaded = true' class='placeholder'
-    [style.width]='width + "px"'
-    [style.height]='height + "px"'
->
+<div *ngIf='!loaded'class='placeholder'>
+    <img
+        [src]='src' (load)='loaded = true' 
+        [style.width]='width + "px"'
+        [style.height]='height + "px"'>
+</div>

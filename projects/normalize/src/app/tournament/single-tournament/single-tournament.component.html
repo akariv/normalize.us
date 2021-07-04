@@ -5,7 +5,7 @@
 <div class='candidates' [class.forward]='direction' [class.backward]='!direction' *ngIf='candidates'>
     <ng-container *ngFor='let candidate of candidates; let i = index'>
         <div class='candidate' [style.width]='sizes[i] + "%"'>
-            <app-moving-image [style.transform]='"scale(" + scales[i] + ")"' [src]='imageFetcher.fetchImage(candidate.image)' [index]='index'></app-moving-image>
+            <app-moving-image [style.transform]='"scale(" + scales[i] + ")"' [src]='imageFetcher.fetchImage(candidate.image)' [index]='index' [id]='candidate.id'></app-moving-image>
         </div>    
     </ng-container>
 </div>
