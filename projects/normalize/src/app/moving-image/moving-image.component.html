@@ -1,7 +1,7 @@
 <!-- <div [style.background-image]='"url(" + src + ")"' [style.background-position-x]='x + "px"' [style.background-position-y]='y + "px"'>
 
 </div> -->
-<div class='wrapper' *ngIf='loaded'
+<div class='wrapper'
     [style.width]='width + "px"'
     [style.height]='height + "px"'>
     <div class='mover' [class.active]='current === 0' [style.top]='y[0] + "px"' [style.left]='x[0] + "px"'>
@@ -10,10 +10,4 @@
     <div class='mover' [class.active]='current === 1' [style.top]='y[1] + "px"' [style.left]='x[1] + "px"'>
         <img [src]='src'>
     </div>
-</div>
-<div *ngIf='!loaded'class='placeholder'>
-    <img
-        [src]='src' (load)='loaded = true' 
-        [style.width]='width + "px"'
-        [style.height]='height + "px"'>
 </div>

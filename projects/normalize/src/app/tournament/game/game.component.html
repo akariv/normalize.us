@@ -1,8 +1,13 @@
-<ng-container *ngIf='index < maxIndex && index >= 0'>
-    <app-single-tournament [candidates]='candidates' [index]='index' (results)='addResults($event)'></app-single-tournament>
+<ng-container *ngIf='game && game.records && loaded === game.records.length'>
+    <ng-container *ngIf='index < maxIndex && index >= 0'>
+        <app-single-tournament [candidates]='candidates' [index]='index' (results)='addResults($event)'></app-single-tournament>
+    </ng-container>
+    <ng-container *ngIf='index === maxIndex'>
+        <h2>Done!</h2>
+    </ng-container>
 </ng-container>
-<ng-container *ngIf='index === maxIndex'>
-    <h2>Done!</h2>
+<ng-container *ngIf='!game || !game.records || loaded < game.records.length'>
+    <h2>Preparing Tournament... {{progress}}</h2>
 </ng-container>
 <ng-container *ngIf='game && game.records && loaded < game.records.length'>
     <div class='placeholder' *ngFor='let candidate of game.records'>

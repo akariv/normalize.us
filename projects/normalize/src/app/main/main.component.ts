@@ -12,7 +12,8 @@ export class MainComponent implements OnInit {
   constructor(private state: StateService, private router: Router) { }
 
   ngOnInit(): void {
-    if (!this.state.imageID) {
+    const hasSelfie = this.state.imageID || this.state.ownRecord;
+    if (!hasSelfie) {
       this.router.navigate(['/selfie']);
     } else if (!this.state.played) {
       this.router.navigate(['/game']);

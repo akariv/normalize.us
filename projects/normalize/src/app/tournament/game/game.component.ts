@@ -104,4 +104,11 @@ export class GameComponent implements OnInit {
       this.router.navigate(['/']);  
     }
   }
+
+  get progress() {
+    if (this.game && this.game.records) {
+      return (100 / this.game.records.length * this.loaded).toFixed(0) + '%';
+    }
+    return '0%';
+  }
 }
