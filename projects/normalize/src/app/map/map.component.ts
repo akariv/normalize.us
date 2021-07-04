@@ -18,6 +18,7 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   map: L.Map;
   maxZoom: number;
+  maxZoom2: number;
   zoomedMax = false;
   focusedLayerPhoto: L.ImageOverlay;
   focusedLayerPos: {x: number, y: number} = {x: -1, y: -1};
@@ -42,6 +43,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.ready.pipe(first()).subscribe(() => {
       const host = this.mapElement.nativeElement as HTMLElement;
       this.maxZoom = Math.log2(Math.min(host.offsetHeight, host.offsetWidth));
+      this.maxZoom2 = this.maxZoom - 0.5;
       // this.configuration.minZoom = 4;
       this.map = L.map(this.mapElement.nativeElement, {
         crs: L.CRS.Simple,
@@ -99,7 +101,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   onZoomChange() {
-    this.zoomedMax = this.map.getZoom() === this.maxZoom;
+    this.zoomedMax = this.map.getZoom() >= this.maxZoom2;
     this.onBoundsChange();
   }
 
