@@ -113,7 +113,7 @@ export class SelfieComponent implements OnInit, AfterViewInit {
             console.log('completed');
             (this.inputVideo.nativeElement as HTMLVideoElement).remove();
             this.videoStream.getVideoTracks()[0].stop();
-            this.router.navigate(['/']);  
+            this.router.navigate(['/game']);  
           });
         }
       });
