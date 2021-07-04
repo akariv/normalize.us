@@ -43,7 +43,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.ready.pipe(first()).subscribe(() => {
       const host = this.mapElement.nativeElement as HTMLElement;
       this.maxZoom = Math.log2(Math.min(host.offsetHeight, host.offsetWidth));
-      this.maxZoom2 = this.maxZoom - 0.5;
+      this.maxZoom2 = this.maxZoom - 1;
       // this.configuration.minZoom = 4;
       this.map = L.map(this.mapElement.nativeElement, {
         crs: L.CRS.Simple,
