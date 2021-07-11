@@ -7,3 +7,4 @@ scipy
 tensorflow==2.2.0
 Pillow
 boto3
+scikit-image

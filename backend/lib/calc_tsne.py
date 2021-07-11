@@ -13,7 +13,7 @@ from io import BytesIO
 from sqlalchemy import create_engine
 from concurrent import futures
 import queue
-
+from skimage.transform import resize
 
 from .net import upload_fileobj_s3
 
@@ -124,8 +124,9 @@ def create_tsne_image(grid_jv, img_collection, out_dim, to_plot,
     # buff.seek(0)
     return out, alpha, info
 
-def crop(img, x, y, w, h):
-    return img[y:y+h, x:x+w]
+def crop(img, x, y, w, h, tw, th):
+    cropped = img[y:y+h, x:x+w]
+    return resize(cropped, (th, tw))
 
 def create_tiles(out, alpha, info, res):
     assert res[0] == res[1]
@@ -146,11 +147,11 @@ def create_tiles(out, alpha, info, res):
                 key = f'tiles/{zoom}/{x}/{y}'
                 left = math.floor(x * cut_size)
                 upper = math.floor(y * cut_size)
-                out_c = crop(out, left, upper, _cut_size, _cut_size)
-                alpha_c = crop(alpha, left, upper, _cut_size, _cut_size)
+                out_c = crop(out, left, upper, _cut_size, _cut_size, tile_size, tile_size)
+                alpha_c = crop(alpha, left, upper, _cut_size, _cut_size, tile_size, tile_size)
                 tile: Image = image.array_to_img(out_c)
                 tile.putalpha(image.array_to_img(alpha_c))
-                tile = tile.resize((tile_size, tile_size), resample=Image.BICUBIC)
+                # tile = tile.resize((tile_size, tile_size), resample=Image.BICUBIC)
 
                 buff = BytesIO()
                 tile.save(buff, format='png', quality=100)
