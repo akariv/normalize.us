@@ -178,6 +178,59 @@ def create_tiles(out, alpha, info, res):
                 upload_fileobj_s3(buff, key, 'image/png')
 
 
+def create_tiles_efficiently(grid_jv, img_collection, out_dim, to_plot, 
+                             res, offset, out_size,
+                             img_location, img_size):
+    assert res[0] == res[1]
+    info = dict()
+
+    info['dim'] = out_dim = 2**math.ceil(math.log2(out_dim))
+    dim_zoom = round(math.log2(out_dim))
+    edge = out_dim * res[0]
+    tile_size = 256
+
+    max_zoom = 10
+    info['min_zoom'] = min_zoom = 8 - dim_zoom
+
+    # with ThreadPoolExecutorWithQueueSizeLimit(max_workers=1, maxsize=1) as executor:
+    print(f'{out_dim=}, {dim_zoom=}, {edge=}, {min_zoom=}')
+    for zoom in range(min_zoom, max_zoom + 1):
+        num_cuts = (2**(zoom - min_zoom))
+        target_edge = num_cuts * tile_size
+        scaledown = math.floor(edge / target_edge)
+        scaleddown_res = (math.ceil(res[0] * scaledown), math.ceil(res[1] * scaledown))
+        out, alpha, _info = create_tsne_image(
+            grid_jv, img_collection, out_dim, to_plot, 
+            scaleddown_res, offset, out_size,
+            img_location, img_size
+        )
+        info['grid'] = _info['grid']
+        scaleddown_edge = out_dim * scaleddown_res[0]
+        scaleedown_cut_size = scaleddown_res / num_cuts
+        scaleedown_cut_size_ = math.floor(scaleedown_cut_size)
+
+        print(f'{zoom=}, {num_cuts=}, {scaleedown_cut_size=}, {scaleedown_cut_size_=}, {scaledown=}, {scaleddown_res=}, {scaleddown_edge=}')
+        for x in range(num_cuts):
+            for y in range(num_cuts):
+                key = f'tiles/{zoom}/{x}/{y}'
+                left = math.floor(x * scaleedown_cut_size)
+                upper = math.floor(y * scaleedown_cut_size)
+                out_c = crop(out, left, upper, scaleedown_cut_size_, scaleedown_cut_size_, tile_size, tile_size)
+                alpha_c = crop(alpha, left, upper, scaleedown_cut_size_, scaleedown_cut_size_, tile_size, tile_size)
+                tile: Image = image.array_to_img(out_c)
+                tile.putalpha(image.array_to_img(alpha_c))
+                # tile = tile.resize((tile_size, tile_size), resample=Image.BICUBIC)
+
+                buff = BytesIO()
+                tile.save(buff, format='png', quality=100)
+                del tile
+
+                buff.seek(0)
+                # executor.submit(upload_fileobj_s3, buff, key, 'image/png')
+                upload_fileobj_s3(buff, key, 'image/png')
+    return info
+    
+
 
 IMAGES = [
     # ('noses', (200, 300), (0, 0)),
@@ -206,18 +259,26 @@ def main():
     #                                (1200, 0), (300, 300))
     # upload_fileobj_s3(buff, 'tsne.png', 'image/png')
 
-    print("Generating output image (%dx%d, %d images)" % (out_dim, out_dim // 2, len(ids)))
-    out, alpha, info = create_tsne_image(grid, ids, out_dim, to_plot, 
-                                   (600, 600), 
-                                   (144, 144),
-                                   (312, 312),
-                                   (1200, 0), (300, 300))
+    # print("Generating output image (%dx%d, %d images)" % (out_dim, out_dim // 2, len(ids)))
+    # out, alpha, info = create_tsne_image(grid, ids, out_dim, to_plot, 
+    #                                (600, 600), 
+    #                                (144, 144),
+    #                                (312, 312),
+    #                                (1200, 0), (300, 300))
 
-    print('Creating tiles, out shape={}'.format(out.shape))
-    create_tiles(out, alpha, info, (600, 600))
-    # for filename, img_size, img_location in IMAGES:
-    #     create_tsne_image(grid, ids, out_dim, to_plot, img_size, 
-    #         img_location, 0.3, 'tsne-' + filename + '.png')
+    # print('Creating tiles, out shape={}'.format(out.shape))
+    # create_tiles(out, alpha, info, (600, 600))
+    # # for filename, img_size, img_location in IMAGES:
+    # #     create_tsne_image(grid, ids, out_dim, to_plot, img_size, 
+    # #         img_location, 0.3, 'tsne-' + filename + '.png')
+
+    info = create_tiles_efficiently(grid, ids, out_dim, to_plot, 
+                                    (600, 600), 
+                                    (144, 144),
+                                    (312, 312),
+                                    (1200, 0),
+                                    (300, 300))
+
 
     json_buff = BytesIO()
     json_buff.write(json.dumps(info).encode('utf8'))
