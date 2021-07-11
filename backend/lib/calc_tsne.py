@@ -210,7 +210,7 @@ def main():
                                    (312, 312),
                                    (1200, 0), (300, 300))
 
-    print('Creating tiles, out shape=%s' % out.shape)
+    print('Creating tiles, out shape={}'.format(out.shape))
     create_tiles(out, alpha, info, (600, 600))
     # for filename, img_size, img_location in IMAGES:
     #     create_tsne_image(grid, ids, out_dim, to_plot, img_size, 
