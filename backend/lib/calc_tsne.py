@@ -11,13 +11,22 @@ from scipy.spatial.distance import cdist
 from tensorflow.python.keras.preprocessing import image
 from io import BytesIO
 from sqlalchemy import create_engine
-import concurrent.futures
+from concurrent import futures
+import queue
+
 
 from .net import upload_fileobj_s3
 
 engine = create_engine(os.environ['DATABASE_URL'])
 conn = engine.connect()
 image_fetches = 0
+
+
+class ThreadPoolExecutorWithQueueSizeLimit(futures.ThreadPoolExecutor):
+    def __init__(self, maxsize=50, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._work_queue = queue.Queue(maxsize=maxsize)
+
 
 def load_image(id, out_res_x, out_res_y, img_location, img_size):
     global image_fetches
@@ -126,7 +135,7 @@ def create_tiles(out, alpha, info, res):
     tile_size = 256
     max_zoom = 10
     min_zoom = info['min_zoom'] = 8 - dim_zoom
-    with concurrent.futures.ThreadPoolExecutor(max_workers=16) as executor:
+    with ThreadPoolExecutorWithQueueSizeLimit(max_workers=16, maxsize=1) as executor:
         for zoom in range(min_zoom, max_zoom + 1):
             num_cuts = (2**(zoom - min_zoom))
             cut_size = edge / num_cuts
