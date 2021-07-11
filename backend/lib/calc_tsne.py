@@ -72,7 +72,7 @@ def generate_tsne(activations, to_plot, perplexity=50, tsne_iter=5000):
     return X_2d
 
 def calc_tsne_grid(X_2d, out_dim):
-    grid = np.dstack(np.meshgrid(np.linspace(0, 1, out_dim), np.linspace(0, 1, out_dim))).reshape(-1, 2)
+    grid = np.dstack(np.meshgrid(np.linspace(0, 1, out_dim), np.linspace(0.25, 0.75, out_dim))).reshape(-1, 2)
     cost_matrix = cdist(grid, X_2d, "sqeuclidean").astype(np.float32)
     cost_matrix = cost_matrix * (100000 / cost_matrix.max())
     shp = cost_matrix.shape
@@ -155,7 +155,7 @@ def main():
     perplexity = 50
     tsne_iter = 5000
     ids, activations = load_activations()
-    out_dim = math.ceil(math.sqrt(len(activations)) * 1.25)
+    out_dim = math.ceil(math.sqrt(len(activations)) * 2)
     to_plot = int(out_dim ** 2)
     ids = ids[:to_plot]
     print("Generating 2D representation.")
