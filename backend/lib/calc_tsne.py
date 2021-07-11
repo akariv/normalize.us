@@ -72,13 +72,15 @@ def generate_tsne(activations, to_plot, perplexity=50, tsne_iter=5000):
     return X_2d
 
 def calc_tsne_grid(X_2d, out_dim):
-    grid = np.dstack(np.meshgrid(np.linspace(0, 1, out_dim), np.linspace(0, 1, out_dim//2))).reshape(-1, 2)
+    grid = np.dstack(np.meshgrid(np.linspace(0, 1, out_dim//2), np.linspace(0, 1, out_dim))).reshape(-1, 2)
     cost_matrix = cdist(grid, X_2d, "sqeuclidean").astype(np.float32)
     cost_matrix = cost_matrix * (100000 / cost_matrix.max())
     shp = cost_matrix.shape
     cost_matrix = np.hstack((cost_matrix, np.zeros((shp[0], shp[0] - shp[1]))))
     _, col_asses, _ = lapjv(cost_matrix)
     grid_jv = grid[col_asses]
+    print(out_dim)
+    print(grid_jv)
     return grid_jv
 
 def create_tsne_image(grid_jv, img_collection, out_dim, to_plot, 
@@ -97,7 +99,7 @@ def create_tsne_image(grid_jv, img_collection, out_dim, to_plot,
     for pos, item in zip(grid_jv, img_collection[0:to_plot]):
         pos_x = round(pos[1] * (out_dim - 1)) + img_ofs
         pos_y = round(pos[0] * (out_dim//2 - 1)) + img_ofs
-        assert (pos_x, pos_y) not in used
+        assert (pos_x, pos_y) not in used, 'POSITIONS: %d, %d' % (pos_x, pos_y)
         used.add((pos_x, pos_y))
         image_id = item['image']
         img = load_image(image_id, out_size_x, out_size_y, img_location, img_size)
