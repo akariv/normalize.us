@@ -79,8 +79,6 @@ def calc_tsne_grid(X_2d, out_dim):
     cost_matrix = np.hstack((cost_matrix, np.zeros((shp[0], shp[0] - shp[1]))))
     _, col_asses, _ = lapjv(cost_matrix)
     grid_jv = grid[col_asses]
-    print(out_dim)
-    print(grid_jv)
     return grid_jv
 
 def create_tsne_image(grid_jv, img_collection, out_dim, to_plot, 
@@ -97,6 +95,7 @@ def create_tsne_image(grid_jv, img_collection, out_dim, to_plot,
     alpha = np.zeros((img_dim*out_res_y // 2, img_dim*out_res_x, 1))
     used = set()
     for pos, item in zip(grid_jv, img_collection[0:to_plot]):
+        print('POS', pos)
         pos_x = round(pos[1] * (out_dim - 1)) + img_ofs
         pos_y = round(pos[0] * (out_dim//2 - 1)) + img_ofs
         assert (pos_x, pos_y) not in used, 'POSITIONS: %d, %d' % (pos_x, pos_y)
@@ -109,6 +108,7 @@ def create_tsne_image(grid_jv, img_collection, out_dim, to_plot,
         alpha[h_range:h_range + out_size_y, w_range:w_range + out_size_x] = 255*np.ones((out_size_y, out_size_x, 1))
         info['grid'].append(dict(pos=dict(x=pos_x, y=pos_y), item=item))
 
+    print('Converting to image')
     im = image.array_to_img(out)
     im.putalpha(image.array_to_img(alpha))
     # buff = BytesIO()
@@ -157,12 +157,13 @@ def main():
     perplexity = 50
     tsne_iter = 5000
     ids, activations = load_activations()
-    out_dim = math.ceil(math.sqrt(len(activations)) * 2)
-    to_plot = int(0.33 * (out_dim ** 2))
+    out_dim = max(math.ceil(math.sqrt(len(activations))), 10)
+    to_plot = 1.5 * int(out_dim ** 2)
     ids = ids[:to_plot]
+    out_dim = out_dim * 2
     print("Generating 2D representation.")
     X_2d = generate_tsne(activations, to_plot, perplexity, tsne_iter)
-    print("Generating image grid (%dx%d, %d images)" % (out_dim, out_dim, len(ids)))
+    print("Generating image grid (%dx%d, %d images)" % (out_dim, out_dim // 2, len(ids)))
     grid = calc_tsne_grid(X_2d, out_dim)
     # buff, info = create_tsne_image(grid, ids, out_dim, to_plot, 
     #                                (100, 100), 
@@ -171,6 +172,7 @@ def main():
     #                                (1200, 0), (300, 300))
     # upload_fileobj_s3(buff, 'tsne.png', 'image/png')
 
+    print("Generating output image (%dx%d, %d images)" % (out_dim, out_dim // 2, len(ids)))
     image, info = create_tsne_image(grid, ids, out_dim, to_plot, 
                                    (600, 600), 
                                    (144, 144),
