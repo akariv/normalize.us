@@ -13,7 +13,7 @@ from io import BytesIO
 from sqlalchemy import create_engine
 from concurrent import futures
 import queue
-from skimage.transform import resize, downscale_local_mean
+from skimage.transform import resize, rescale
 
 from .net import upload_fileobj_s3
 
@@ -129,10 +129,8 @@ def crop(img, x, y, w, h, tw, th):
         h = img.shape[0] - y
     if img.shape[1] < w + x:
         w = img.shape[1] - x
-    if (h, w) == img.shape:
-        cropped = img
-    else:
-        cropped = img[y:y+h, x:x+w]
+    if (h, w) != img.shape:
+        img = img[y:y+h, x:x+w]
     if w / h > tw / th:
         th = tw * h / w
     elif w / h < tw / th:
@@ -140,10 +138,10 @@ def crop(img, x, y, w, h, tw, th):
     scale = math.floor(min(w/tw, h/th))
     print(f'crop/resize {img.shape=}, {x=}, {y=}, {w=}, {h=}, {tw=}, {th=}, {scale=}')
     if scale > 1:
-        scaled = downscale_local_mean(cropped, (scale, scale, 1))
-    else:
-        scaled = cropped
-    return resize(scaled, (th, tw))
+        img = rescale(img, (scale, scale, 1))
+    img = resize(img, (th, tw))
+    print('done!', img.shape)
+    return img
 
 def create_tiles(out, alpha, info, res):
     assert res[0] == res[1]
