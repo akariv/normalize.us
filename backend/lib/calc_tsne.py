@@ -109,14 +109,17 @@ def create_tsne_image(grid_jv, img_collection, out_dim, to_plot,
         info['grid'].append(dict(pos=dict(x=pos_x, y=pos_y), item=item))
 
     print('Converting to image')
-    im = image.array_to_img(out)
-    im.putalpha(image.array_to_img(alpha))
+    # im = image.array_to_img(out)
+    # im.putalpha(image.array_to_img(alpha))
     # buff = BytesIO()
     # im.save(buff, format='png', quality=90)
     # buff.seek(0)
-    return im, info
+    return out, alpha, info
 
-def create_tiles(image: Image, info, res):
+def crop(img, x, y, w, h):
+    return img[y:y+h, x:x+w]
+
+def create_tiles(out, alpha, info, res):
     assert res[0] == res[1]
     out_dim = info['dim']
     dim_zoom = round(math.log2(out_dim))
@@ -133,9 +136,10 @@ def create_tiles(image: Image, info, res):
                     key = f'tiles/{zoom}/{x}/{y}'
                     left = math.floor(x * cut_size)
                     upper = math.floor(y * cut_size)
-                    right = math.ceil((x+1) * cut_size - 1)
-                    lower = math.ceil((y+1) * cut_size - 1)
-                    tile: Image = image.crop((left, upper, right, lower))
+                    out_c = crop(out, left, upper, cut_size, cut_size)
+                    alpha_c = crop(alpha, left, upper, cut_size, cut_size)
+                    tile: Image = image.array_to_img(out_c)
+                    tile.putalpha(image.array_to_img(alpha_c))
                     tile = tile.resize((tile_size, tile_size), resample=Image.BICUBIC)
 
                     buff = BytesIO()
@@ -173,13 +177,13 @@ def main():
     # upload_fileobj_s3(buff, 'tsne.png', 'image/png')
 
     print("Generating output image (%dx%d, %d images)" % (out_dim, out_dim // 2, len(ids)))
-    image, info = create_tsne_image(grid, ids, out_dim, to_plot, 
+    out, alpha, info = create_tsne_image(grid, ids, out_dim, to_plot, 
                                    (600, 600), 
                                    (144, 144),
                                    (312, 312),
                                    (1200, 0), (300, 300))
 
-    create_tiles(image, info, (600, 600))
+    create_tiles(out, alpha, info, (600, 600))
     # for filename, img_size, img_location in IMAGES:
     #     create_tsne_image(grid, ids, out_dim, to_plot, img_size, 
     #         img_location, 0.3, 'tsne-' + filename + '.png')
