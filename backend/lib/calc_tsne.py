@@ -29,7 +29,7 @@ def load_image(id, out_res_x, out_res_y, img_location, img_size):
     img = img.resize((out_res_x, out_res_y), Image.NEAREST)
     # img = ImageOps.autocontrast(img)
     image_fetches += 1
-    if image_fetches % 100 == 0:
+    if image_fetches % 25 == 0:
         print('...', image_fetches)
     return img
 
@@ -95,7 +95,6 @@ def create_tsne_image(grid_jv, img_collection, out_dim, to_plot,
     alpha = np.zeros((img_dim*out_res_y // 2, img_dim*out_res_x, 1))
     used = set()
     for pos, item in zip(grid_jv, img_collection[0:to_plot]):
-        print('POS', pos)
         pos_x = round(pos[1] * (out_dim - 1)) + img_ofs
         pos_y = round(pos[0] * (out_dim//2 - 1)) + img_ofs
         assert (pos_x, pos_y) not in used, 'POSITIONS: %d, %d' % (pos_x, pos_y)
@@ -131,13 +130,14 @@ def create_tiles(out, alpha, info, res):
         for zoom in range(min_zoom, max_zoom + 1):
             num_cuts = (2**(zoom - min_zoom))
             cut_size = edge / num_cuts
+            _cut_size = math.floor(cut_size)
             for x in range(num_cuts):
                 for y in range(num_cuts):
                     key = f'tiles/{zoom}/{x}/{y}'
                     left = math.floor(x * cut_size)
                     upper = math.floor(y * cut_size)
-                    out_c = crop(out, left, upper, cut_size, cut_size)
-                    alpha_c = crop(alpha, left, upper, cut_size, cut_size)
+                    out_c = crop(out, left, upper, _cut_size, _cut_size)
+                    alpha_c = crop(alpha, left, upper, _cut_size, _cut_size)
                     tile: Image = image.array_to_img(out_c)
                     tile.putalpha(image.array_to_img(alpha_c))
                     tile = tile.resize((tile_size, tile_size), resample=Image.BICUBIC)
