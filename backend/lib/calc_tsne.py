@@ -199,8 +199,8 @@ def create_tiles_efficiently(grid_jv, img_collection, out_dim, to_plot,
         target_edge = num_cuts * tile_size
         scaledown = math.floor(edge / target_edge)
         scaleddown_res = (math.ceil(res[0] / scaledown / 4)*4, math.ceil(res[1] / scaledown / 4)*4)
-        scaleddown_ofs = scaleddown_res[0]//4, scaleddown_res[1]//4
-        scaleddown_size = scaleddown_res[0]//2, scaleddown_res[1]//2
+        scaleddown_ofs = int(scaleddown_res[0]/4), int(scaleddown_res[1]/4)
+        scaleddown_size = int(scaleddown_res[0]/2), int(scaleddown_res[1]/2)
         print(f'{zoom=}, {scaledown=}, {scaleddown_res=}, {scaleddown_ofs=}, {scaleddown_size=}')
         out, alpha, _info = create_tsne_image(
             grid_jv, img_collection, out_dim, to_plot, 
