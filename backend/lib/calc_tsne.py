@@ -137,11 +137,12 @@ def create_tiles(out, alpha, info, res):
     max_zoom = 10
     min_zoom = info['min_zoom'] = 8 - dim_zoom
     # with ThreadPoolExecutorWithQueueSizeLimit(max_workers=1, maxsize=1) as executor:
+    print(f'{out_dim=}, {dim_zoom=}, {edge=}, {min_zoom=}')
     for zoom in range(min_zoom, max_zoom + 1):
         num_cuts = (2**(zoom - min_zoom))
         cut_size = edge / num_cuts
         _cut_size = math.floor(cut_size)
-        print('ZOOM', zoom, _cut_size)
+        print(f'{zoom=}, {num_cuts=}, {cut_size=}, {_cut_size=}')
         for x in range(num_cuts):
             for y in range(num_cuts):
                 key = f'tiles/{zoom}/{x}/{y}'
