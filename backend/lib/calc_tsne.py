@@ -125,7 +125,19 @@ def create_tsne_image(grid_jv, img_collection, out_dim, to_plot,
     return out, alpha, info
 
 def crop(img, x, y, w, h, tw, th):
-    cropped = img[y:y+h, x:x+w]
+    if img.shape[0] < h + y:
+        h = img.shape[0] - y
+    if img.shape[1] < w + x:
+        w = img.shape[1] - x
+    if (h, w) == img.shape:
+        cropped = img
+    else:
+        cropped = img[y:y+h, x:x+w]
+    if w / h > tw / th:
+        th = tw * h / w
+    elif w / h < tw / th:
+        tw = w * th / h
+    print(f'crop/resize {img.shape=}, {x=}, {y=}, {w=}, {h=}, {tw=}, {th=}')
     return resize(cropped, (th, tw))
 
 def create_tiles(out, alpha, info, res):
@@ -198,7 +210,7 @@ def main():
                                    (312, 312),
                                    (1200, 0), (300, 300))
 
-    print('Creating tiles')
+    print('Creating tiles, out shape=%s' & out.shape)
     create_tiles(out, alpha, info, (600, 600))
     # for filename, img_size, img_location in IMAGES:
     #     create_tsne_image(grid, ids, out_dim, to_plot, img_size, 
