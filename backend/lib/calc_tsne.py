@@ -93,8 +93,8 @@ def create_tsne_image(grid_jv, img_collection, out_dim, to_plot,
     out_res_x, out_res_y = res
     offset_x, offset_y = offset
     out_size_x, out_size_y = out_size
-    out = np.zeros((img_dim*out_res_y, img_dim*out_res_x, 3))
-    alpha = np.zeros((img_dim*out_res_y, img_dim*out_res_x, 1))
+    out = np.zeros((img_dim*out_res_y // 2, img_dim*out_res_x, 3))
+    alpha = np.zeros((img_dim*out_res_y // 2, img_dim*out_res_x, 1))
     used = set()
     for pos, item in zip(grid_jv, img_collection[0:to_plot]):
         pos_x = round(pos[1] * (out_dim - 1)) + img_ofs
@@ -158,7 +158,7 @@ def main():
     tsne_iter = 5000
     ids, activations = load_activations()
     out_dim = math.ceil(math.sqrt(len(activations)) * 2)
-    to_plot = int(out_dim ** 2)
+    to_plot = int(0.33 * (out_dim ** 2))
     ids = ids[:to_plot]
     print("Generating 2D representation.")
     X_2d = generate_tsne(activations, to_plot, perplexity, tsne_iter)
