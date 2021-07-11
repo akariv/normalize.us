@@ -126,9 +126,11 @@ def create_tsne_image(grid_jv, img_collection, out_dim, to_plot,
 
 def crop(img, x, y, w, h, tw, th):
     if img.shape[0] < h + y:
-        h = img.shape[0] - y
+        h = max(img.shape[0] - y, 0)
     if img.shape[1] < w + x:
-        w = img.shape[1] - x
+        w = max(img.shape[1] - x, 0)
+    if w == 0 or h == 0:
+        return np.zeros((th, tw, img.shape[2]))
     if (h, w) != img.shape:
         img = img[y:y+h, x:x+w]
     if w / h > tw / th:
