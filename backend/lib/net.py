@@ -1,3 +1,4 @@
+from io import BytesIO
 import os
 import boto3
 
@@ -22,10 +23,11 @@ def get_client():
     return s3_client
 
 
-def upload_fileobj_s3(buff, filename, content_type):
+def upload_fileobj_s3(buff: BytesIO, filename, content_type):
     client = get_client()
     client.upload_fileobj(
         buff, os.environ['BUCKET_NAME'], filename,
         ExtraArgs={'ACL': 'public-read', 'ContentType': content_type}
     )
+    del buff
     print('UPLOADED', filename)

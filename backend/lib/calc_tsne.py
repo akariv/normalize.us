@@ -116,7 +116,7 @@ def create_tsne_image(grid_jv, img_collection, out_dim, to_plot,
         alpha[h_range:h_range + out_size_y, w_range:w_range + out_size_x] = 255*np.ones((out_size_y, out_size_x, 1))
         info['grid'].append(dict(pos=dict(x=pos_x, y=pos_y), item=item))
 
-    print('Converting to image')
+    # print('Converting to image')
     # im = image.array_to_img(out)
     # im.putalpha(image.array_to_img(alpha))
     # buff = BytesIO()
@@ -135,8 +135,9 @@ def create_tiles(out, alpha, info, res):
     tile_size = 256
     max_zoom = 10
     min_zoom = info['min_zoom'] = 8 - dim_zoom
-    with ThreadPoolExecutorWithQueueSizeLimit(max_workers=16, maxsize=1) as executor:
+    with ThreadPoolExecutorWithQueueSizeLimit(max_workers=4, maxsize=1) as executor:
         for zoom in range(min_zoom, max_zoom + 1):
+            print('ZOOM', zoom)
             num_cuts = (2**(zoom - min_zoom))
             cut_size = edge / num_cuts
             _cut_size = math.floor(cut_size)
@@ -153,6 +154,8 @@ def create_tiles(out, alpha, info, res):
 
                     buff = BytesIO()
                     tile.save(buff, format='png', quality=100)
+                    del tile
+
                     buff.seek(0)
                     executor.submit(upload_fileobj_s3, buff, key, 'image/png')
 
@@ -192,6 +195,7 @@ def main():
                                    (312, 312),
                                    (1200, 0), (300, 300))
 
+    print('Creating tiles')
     create_tiles(out, alpha, info, (600, 600))
     # for filename, img_size, img_location in IMAGES:
     #     create_tsne_image(grid, ids, out_dim, to_plot, img_size, 
