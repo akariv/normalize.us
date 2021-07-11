@@ -158,7 +158,7 @@ def main():
     tsne_iter = 5000
     ids, activations = load_activations()
     out_dim = max(math.ceil(math.sqrt(len(activations))), 10)
-    to_plot = 1.5 * int(out_dim ** 2)
+    to_plot = int(1.5 * (out_dim ** 2))
     ids = ids[:to_plot]
     out_dim = out_dim * 2
     print("Generating 2D representation.")
