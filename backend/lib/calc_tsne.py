@@ -179,7 +179,7 @@ def create_tiles(out, alpha, info, res):
 
 
 def create_tiles_efficiently(grid_jv, img_collection, out_dim, to_plot, 
-                             res, offset, out_size,
+                             res,
                              img_location, img_size):
     assert res[0] == res[1]
     info = dict()
@@ -198,11 +198,13 @@ def create_tiles_efficiently(grid_jv, img_collection, out_dim, to_plot,
         num_cuts = (2**(zoom - min_zoom))
         target_edge = num_cuts * tile_size
         scaledown = math.floor(edge / target_edge)
-        scaleddown_res = (math.ceil(res[0] / scaledown), math.ceil(res[1] / scaledown))
-        print(f'{zoom=}, {scaledown=}, {scaleddown_res=}')
+        scaleddown_res = (math.ceil(res[0] / scaledown / 4)*4, math.ceil(res[1] / scaledown / 4)*4)
+        scaleddown_ofs = scaleddown_res[0]/4, scaleddown_res[1]/4
+        scaleddown_size = scaleddown_res[0]/2, scaleddown_res[1]/2
+        print(f'{zoom=}, {scaledown=}, {scaleddown_res=}, {scaleddown_ofs=}, {scaleddown_size=}')
         out, alpha, _info = create_tsne_image(
             grid_jv, img_collection, out_dim, to_plot, 
-            scaleddown_res, offset, out_size,
+            scaleddown_res, scaleddown_ofs, scaleddown_size,
             img_location, img_size
         )
         info['grid'] = _info['grid']
@@ -274,9 +276,7 @@ def main():
     # #         img_location, 0.3, 'tsne-' + filename + '.png')
 
     info = create_tiles_efficiently(grid, ids, out_dim, to_plot, 
-                                    (600, 600), 
-                                    (144, 144),
-                                    (312, 312),
+                                    (600, 600),
                                     (1200, 0),
                                     (300, 300))
 
