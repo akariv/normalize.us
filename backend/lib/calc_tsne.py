@@ -135,29 +135,30 @@ def create_tiles(out, alpha, info, res):
     tile_size = 256
     max_zoom = 10
     min_zoom = info['min_zoom'] = 8 - dim_zoom
-    with ThreadPoolExecutorWithQueueSizeLimit(max_workers=4, maxsize=1) as executor:
-        for zoom in range(min_zoom, max_zoom + 1):
-            print('ZOOM', zoom)
-            num_cuts = (2**(zoom - min_zoom))
-            cut_size = edge / num_cuts
-            _cut_size = math.floor(cut_size)
-            for x in range(num_cuts):
-                for y in range(num_cuts):
-                    key = f'tiles/{zoom}/{x}/{y}'
-                    left = math.floor(x * cut_size)
-                    upper = math.floor(y * cut_size)
-                    out_c = crop(out, left, upper, _cut_size, _cut_size)
-                    alpha_c = crop(alpha, left, upper, _cut_size, _cut_size)
-                    tile: Image = image.array_to_img(out_c)
-                    tile.putalpha(image.array_to_img(alpha_c))
-                    tile = tile.resize((tile_size, tile_size), resample=Image.BICUBIC)
+    # with ThreadPoolExecutorWithQueueSizeLimit(max_workers=1, maxsize=1) as executor:
+    for zoom in range(min_zoom, max_zoom + 1):
+        print('ZOOM', zoom)
+        num_cuts = (2**(zoom - min_zoom))
+        cut_size = edge / num_cuts
+        _cut_size = math.floor(cut_size)
+        for x in range(num_cuts):
+            for y in range(num_cuts):
+                key = f'tiles/{zoom}/{x}/{y}'
+                left = math.floor(x * cut_size)
+                upper = math.floor(y * cut_size)
+                out_c = crop(out, left, upper, _cut_size, _cut_size)
+                alpha_c = crop(alpha, left, upper, _cut_size, _cut_size)
+                tile: Image = image.array_to_img(out_c)
+                tile.putalpha(image.array_to_img(alpha_c))
+                tile = tile.resize((tile_size, tile_size), resample=Image.BICUBIC)
 
-                    buff = BytesIO()
-                    tile.save(buff, format='png', quality=100)
-                    del tile
+                buff = BytesIO()
+                tile.save(buff, format='png', quality=100)
+                del tile
 
-                    buff.seek(0)
-                    executor.submit(upload_fileobj_s3, buff, key, 'image/png')
+                buff.seek(0)
+                # executor.submit(upload_fileobj_s3, buff, key, 'image/png')
+                upload_fileobj_s3(buff, key, 'image/png')
 
 
 
