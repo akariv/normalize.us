@@ -206,7 +206,7 @@ def create_tiles_efficiently(grid_jv, img_collection, out_dim, to_plot,
         )
         info['grid'] = _info['grid']
         scaleddown_edge = out_dim * scaleddown_res[0]
-        scaleedown_cut_size = scaleddown_res / num_cuts
+        scaleedown_cut_size = scaleddown_edge / num_cuts
         scaleedown_cut_size_ = math.floor(scaleedown_cut_size)
 
         print(f'{zoom=}, {num_cuts=}, {scaleedown_cut_size=}, {scaleedown_cut_size_=}, {scaledown=}, {scaleddown_res=}, {scaleddown_edge=}')
