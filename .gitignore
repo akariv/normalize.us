@@ -47,3 +47,4 @@ Thumbs.db
 
 secrets.env
 
+__pycache__

@@ -120,9 +120,15 @@ def create_tiles(filename, image: Image, out_dim, res, info):
     edge = 2**math.ceil(math.log2(out_dim)) * res[0]
     tile_size = 256
     max_cut_size = tile_size * 4
-    max_zoom = info['min_zoom'] = 8
+    max_zoom = info['max_zoom'] = 8
     min_zoom = info['min_zoom'] = 8 - dim_zoom
+
     with concurrent.futures.ThreadPoolExecutor(max_workers=16) as executor:
+        json_buff = BytesIO()
+        json_buff.write(json.dumps(info).encode('utf8'))
+        json_buff.seek(0)
+        executor.submit(upload_fileobj_s3, json_buff, 'tsne.json', 'application/json')
+
         for zoom in range(min_zoom, max_zoom + 1):
             num_cuts = (2**(zoom - min_zoom))
             cut_size = edge / num_cuts
@@ -151,10 +157,10 @@ def create_tiles(filename, image: Image, out_dim, res, info):
 
 
 IMAGES = [
-    # ('noses', (200, 300), (0, 0)),
-    # ('eyes', (300, 150), (300, 0)),
-    # ('mouths', (300, 150), (600, 0)),
-    # ('foreheads', (300, 150), (900, 0)),
+    ('noses', (200, 300), (0, 0)),
+    ('eyes', (300, 150), (300, 0)),
+    ('mouths', (300, 150), (600, 0)),
+    ('foreheads', (300, 150), (900, 0)),
     ('faces', (300, 300), (1200, 0)),
 ]
 
@@ -187,10 +193,6 @@ def main():
                                         img_location,
                                         img_size)
         create_tiles(filename, image, out_dim, (side, side), info)
-    json_buff = BytesIO()
-    json_buff.write(json.dumps(info).encode('utf8'))
-    json_buff.seek(0)
-    upload_fileobj_s3(json_buff, 'tsne.json', 'application/json')
 
 
 def calc_tsne_handler(event, context):
