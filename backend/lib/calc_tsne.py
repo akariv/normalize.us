@@ -119,16 +119,17 @@ def create_tiles(filename, image: Image, out_dim, res, info):
     dim_zoom = round(math.log2(out_dim))
     edge = 2**math.ceil(math.log2(out_dim)) * res[0]
     tile_size = 256
-    max_zoom = 7
+    max_cut_size = tile_size * 4
+    max_zoom = info['min_zoom'] = 8
     min_zoom = info['min_zoom'] = 8 - dim_zoom
     with concurrent.futures.ThreadPoolExecutor(max_workers=16) as executor:
         for zoom in range(min_zoom, max_zoom + 1):
             num_cuts = (2**(zoom - min_zoom))
             cut_size = edge / num_cuts
-            if cut_size > tile_size * 4:
-                cut_size = tile_size * 4
-                new_edge = cut_size * num_cuts
-                scaledown = image.resize((new_edge, new_edge), Image.NEAREST)
+            if cut_size > max_cut_size:
+                scaledown_size = math.ceil((max_cut_size * num_cuts * out_dim * res[0]) / edge)
+                cut_size = max_cut_size
+                scaledown = image.resize((scaledown_size, scaledown_size), Image.NEAREST)
             else:
                 scaledown = image
 
@@ -143,7 +144,7 @@ def create_tiles(filename, image: Image, out_dim, res, info):
                     tile = tile.resize((tile_size, tile_size), resample=Image.BICUBIC)
 
                     buff = BytesIO()
-                    tile.save(buff, format='png', quality=100)
+                    tile.save(buff, format='png', quality=90)
                     buff.seek(0)
                     executor.submit(upload_fileobj_s3, buff, key, 'image/png')
 

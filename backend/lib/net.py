@@ -8,6 +8,7 @@ HEADERS = {
 }
 
 s3_client = None
+_uploaded = 0
 
 
 def get_client():
@@ -24,10 +25,13 @@ def get_client():
 
 
 def upload_fileobj_s3(buff: BytesIO, filename, content_type):
+    global _uploaded
     client = get_client()
     client.upload_fileobj(
         buff, os.environ['BUCKET_NAME'], filename,
         ExtraArgs={'ACL': 'public-read', 'ContentType': content_type}
     )
     del buff
-    print('UPLOADED', filename)
+    _uploaded += 1
+    if _uploaded % 100 == 0 or _uploaded == 1:
+        print('UPLOADED #{}: {}'.format(_uploaded, filename))
