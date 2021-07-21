@@ -85,8 +85,8 @@ def create_tsne_image(grid_jv, img_collection, out_dim, to_plot,
         res, offset, out_size,
         img_location, img_size):
     # print('>>>', filename)
-    img_dim = 2**math.ceil(math.log2(out_dim))
-    img_ofs = math.floor((img_dim - out_dim)/2)
+    img_dim = out_dim # 2**math.ceil(math.log2(out_dim))
+    # img_ofs = math.floor((img_dim - out_dim)/2)
     info = dict(dim=img_dim, grid=[])
     out_res_x, out_res_y = res
     offset_x, offset_y = offset
@@ -95,8 +95,8 @@ def create_tsne_image(grid_jv, img_collection, out_dim, to_plot,
     alpha = np.zeros((img_dim*out_res_y, img_dim*out_res_x, 1))
     used = set()
     for pos, item in zip(grid_jv, img_collection[0:to_plot]):
-        pos_x = round(pos[1] * (out_dim - 1)) + img_ofs
-        pos_y = round(pos[0] * (out_dim - 1)) + img_ofs
+        pos_x = round(pos[1] * (out_dim - 1))# + img_ofs
+        pos_y = round(pos[0] * (out_dim - 1))# + img_ofs
         assert (pos_x, pos_y) not in used
         used.add((pos_x, pos_y))
         image_id = item['image']
@@ -114,26 +114,32 @@ def create_tsne_image(grid_jv, img_collection, out_dim, to_plot,
     # buff.seek(0)
     return im, info
 
-def create_tiles(image: Image, info, res):
+def create_tiles(filename, image: Image, out_dim, res, info):
     assert res[0] == res[1]
-    out_dim = info['dim']
     dim_zoom = round(math.log2(out_dim))
-    edge = out_dim * res[0]
+    edge = 2**math.ceil(math.log2(out_dim)) * res[0]
     tile_size = 256
-    max_zoom = 10
+    max_zoom = 7
     min_zoom = info['min_zoom'] = 8 - dim_zoom
     with concurrent.futures.ThreadPoolExecutor(max_workers=16) as executor:
         for zoom in range(min_zoom, max_zoom + 1):
             num_cuts = (2**(zoom - min_zoom))
             cut_size = edge / num_cuts
+            if cut_size > tile_size * 4:
+                cut_size = tile_size * 4
+                new_edge = cut_size * num_cuts
+                scaledown = image.resize((new_edge, new_edge), Image.NEAREST)
+            else:
+                scaledown = image
+
             for x in range(num_cuts):
                 for y in range(num_cuts):
-                    key = f'tiles/{zoom}/{x}/{y}'
+                    key = f'feature-tiles/0/{filename}/{zoom}/{x}/{y}'
                     left = math.floor(x * cut_size)
                     upper = math.floor(y * cut_size)
                     right = math.ceil((x+1) * cut_size - 1)
                     lower = math.ceil((y+1) * cut_size - 1)
-                    tile: Image = image.crop((left, upper, right, lower))
+                    tile: Image = scaledown.crop((left, upper, right, lower))
                     tile = tile.resize((tile_size, tile_size), resample=Image.BICUBIC)
 
                     buff = BytesIO()
@@ -155,8 +161,8 @@ def main():
     perplexity = 50
     tsne_iter = 5000
     ids, activations = load_activations()
-    out_dim = math.ceil(math.sqrt(len(activations)) * 1.25)
-    to_plot = int(out_dim ** 2)
+    out_dim = 25
+    to_plot = 500
     ids = ids[:to_plot]
     print("Generating 2D representation.")
     X_2d = generate_tsne(activations, to_plot, perplexity, tsne_iter)
@@ -169,17 +175,17 @@ def main():
     #                                (1200, 0), (300, 300))
     # upload_fileobj_s3(buff, 'tsne.png', 'image/png')
 
-    image, info = create_tsne_image(grid, ids, out_dim, to_plot, 
-                                   (600, 600), 
-                                   (144, 144),
-                                   (312, 312),
-                                   (1200, 0), (300, 300))
-
-    create_tiles(image, info, (600, 600))
-    # for filename, img_size, img_location in IMAGES:
-    #     create_tsne_image(grid, ids, out_dim, to_plot, img_size, 
-    #         img_location, 0.3, 'tsne-' + filename + '.png')
-
+    for filename, img_size, img_location in IMAGES:
+        side = 256
+        offset = int(side / 4)
+        size = side - offset*2
+        image, info = create_tsne_image(grid, ids, out_dim, to_plot,
+                                        (side, side),  # res
+                                        (offset, offset),  # offset
+                                        (size, size),  # out_size
+                                        img_location,
+                                        img_size)
+        create_tiles(filename, image, out_dim, (side, side), info)
     json_buff = BytesIO()
     json_buff.write(json.dumps(info).encode('utf8'))
     json_buff.seek(0)
