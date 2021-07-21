@@ -184,12 +184,14 @@ def main():
 
     for filename, img_size, img_location in IMAGES:
         side = 256
-        offset = int(side / 4)
-        size = side - offset*2
+        w, h = img_size
+        dim = max(w, h)
+        size = side/2
+        size = (int(size*w/dim), int(size*h/dim))
+        offset = (int((side - size[0])/2), int((side - size[1])/2))
         image, info = create_tsne_image(grid, ids, out_dim, to_plot,
                                         (side, side),  # res
-                                        (offset, offset),  # offset
-                                        (size, size),  # out_size
+                                        offset, size,
                                         img_location,
                                         img_size)
         create_tiles(filename, image, out_dim, (side, side), info)
