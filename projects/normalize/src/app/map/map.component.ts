@@ -42,8 +42,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.ready.pipe(first()).subscribe(() => {
       const host = this.mapElement.nativeElement as HTMLElement;
-      this.maxZoom = Math.log2(Math.min(host.offsetHeight, host.offsetWidth)) + 1;
-      this.maxZoom2 = this.maxZoom - 2;
+      this.maxZoom = this.configuration.max_zoom;//Math.log2(Math.min(host.offsetHeight, host.offsetWidth)) + 1;
       // this.configuration.minZoom = 4;
       this.map = L.map(this.mapElement.nativeElement, {
         crs: L.CRS.Simple,
@@ -53,8 +52,8 @@ export class MapComponent implements OnInit, AfterViewInit {
         center: [-this.configuration.dim/2, this.configuration.dim/2],
         zoom: this.maxZoom - Math.log2(this.configuration.dim)
       });
-      L.tileLayer('https://normalizing-us-files.fra1.cdn.digitaloceanspaces.com/tiles/{z}/{x}/{y}', {
-          maxZoom: 18,
+      L.tileLayer('https://normalizing-us-files.fra1.cdn.digitaloceanspaces.com/feature-tiles/0/eyes/{z}/{x}/{y}', {
+          maxZoom: 9,
           minZoom: this.configuration.min_zoom,
           bounds: [[-this.configuration.dim - 1, 0], [-1, this.configuration.dim]],
           errorTileUrl: '/assets/img/empty.png'
@@ -101,7 +100,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   onZoomChange() {
-    this.zoomedMax = this.map.getZoom() >= this.maxZoom2;
+    this.zoomedMax = this.map.getZoom() >= this.maxZoom;
     this.onBoundsChange();
   }
 
