@@ -258,7 +258,7 @@ export class FaceProcessorService {
           {feature: 'eyes', points: [...leftEye, ...rightEye, ...leftEyeBbrow, ...rightEyeBrow], padding: [0.25, 0]},
           {feature: 'mouth', points: [...mouth], padding: [0.25, 0]},
           {feature: 'forehead', points: [...forehead as Point[]], padding: [0, 0]},
-          {feature: 'face', points: [...landmarks.positions, ...forehead as Point[]], padding: [0, 0.1]},
+          {feature: 'face', points: [...landmarks.positions, ...forehead as Point[]], padding: [0, 0.2]},
         ];
 
         const context = compositionFrame.getContext('2d');
