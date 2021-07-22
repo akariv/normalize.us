@@ -13,7 +13,7 @@ fetch_latest = text('''
 ''')
 
 
-def get_game_handler(request: Request):
+def get_latest(request: Request):
     if request.method == 'OPTIONS':
         return Response('', headers=HEADERS)
     if request.method == 'GET':

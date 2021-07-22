@@ -20,7 +20,7 @@ export class ApiService {
   }
 
   getImage(id) {
-    return this.http.get(environment.endpoints.getImage, {params: {id}, responseType: 'text'});
+    return this.http.get(environment.endpoints.getImage, {params: {id}});
   }
 
   saveGameResults(results) {
