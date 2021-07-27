@@ -1,0 +1,21 @@
+svg {
+    width: 100%;
+    height: auto;
+    g {
+        rect {
+            fill: #EAE7DF;
+            fill-opacity: 0.1;
+        }
+        line, path {
+            stroke: #EAE7DF;
+        }
+        &.active {
+            rect {
+                fill-opacity: 1;
+            }
+            line, path {
+                stroke: #2D2C29;
+            }
+        }
+    }
+}

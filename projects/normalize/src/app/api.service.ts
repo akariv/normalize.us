@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 
 import { environment } from '../environments/environment';
+import { ImageItem } from './datatypes';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +12,9 @@ export class ApiService {
 
   constructor(private http: HttpClient) { }
 
-  createNew(image, descriptor, landmarks) {
-    return this.http.post(environment.endpoints.new, {image, descriptor, landmarks});
+  createNew(imageItem: ImageItem) {
+    const params = {image: imageItem.image, descriptor: imageItem.descriptor, landmarks: imageItem.landmarks};
+    return this.http.post(environment.endpoints.new, params);
   }
 
   getGame() {

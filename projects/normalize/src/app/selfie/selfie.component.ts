@@ -97,9 +97,9 @@ export class SelfieComponent implements OnInit, AfterViewInit {
         } else if (event.kind === 'done') {
           console.log('GOT EVENT DONE');
           // this.src = event.content;
-          this.state.setRecord({id: 'pending', descriptor: event.descriptor, image: event.content});
+          this.state.setRecord({id: 'pending', descriptor: event.descriptor, image: event.image});
           this.state.pushRequest(
-            this.api.createNew(event.content, event.descriptor, event.landmarks)
+            this.api.createNew(event)
             .pipe(
               switchMap((result: any) => {
                 if (result.success) {

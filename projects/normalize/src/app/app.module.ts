@@ -12,6 +12,7 @@ import { SingleTournamentComponent } from './tournament/single-tournament/single
 import { MapComponent } from './map/map.component';
 import { MainComponent } from './main/main.component';
 import { SliderComponent } from './tournament/slider/slider.component';
+import { FeatureSelectorComponent } from './map/feature-selector/feature-selector.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { SliderComponent } from './tournament/slider/slider.component';
     SingleTournamentComponent,
     MapComponent,
     MainComponent,
-    SliderComponent
+    SliderComponent,
+    FeatureSelectorComponent
   ],
   imports: [
     BrowserModule,

@@ -3,11 +3,11 @@ import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angula
 import * as L from 'leaflet';
 import * as geojson from 'geojson';
 
-import { ReplaySubject } from 'rxjs';
+import { ReplaySubject, Subject } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { ApiService } from '../api.service';
 import { ImageFetcherService } from '../image-fetcher.service';
-import { features } from 'node:process';
+import { NormalityLayer } from './normality-layer';
 
 @Component({
   selector: 'app-map',
@@ -25,6 +25,10 @@ export class MapComponent implements OnInit, AfterViewInit {
   dim = 13;
   ready = new ReplaySubject(1);
   configuration: any = {};
+  tileLayers: any = {};
+  _feature = null;
+  normalityLayer: NormalityLayer;
+  grid = new Subject<any[]>();
 
   @ViewChild('map') mapElement:  ElementRef;
 
@@ -41,78 +45,51 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.ready.pipe(first()).subscribe(() => {
-      const host = this.mapElement.nativeElement as HTMLElement;
-      this.maxZoom = this.configuration.max_zoom;//Math.log2(Math.min(host.offsetHeight, host.offsetWidth)) + 1;
-      // this.configuration.minZoom = 4;
+      this.maxZoom = this.configuration.max_zoom;
+      // Create map
       this.map = L.map(this.mapElement.nativeElement, {
         crs: L.CRS.Simple,
         maxZoom: this.maxZoom,
         minZoom: this.configuration.min_zoom,
         maxBounds: [[-this.configuration.dim - 1, 0], [-1, this.configuration.dim]],
         center: [-this.configuration.dim/2, this.configuration.dim/2],
-        zoom: this.maxZoom - Math.log2(this.configuration.dim)
+        zoom: this.maxZoom - Math.log2(this.configuration.dim),
+        zoomControl: false,
       });
-      L.tileLayer('https://normalizing-us-files.fra1.cdn.digitaloceanspaces.com/feature-tiles/0/eyes/{z}/{x}/{y}', {
+      new L.Control.Zoom({ position: 'bottomleft' }).addTo(this.map);
+      // Tile layers
+      for (const feature of ['faces', 'mouths', 'eyes', 'noses', 'foreheads']) {
+        this.tileLayers[feature] = L.tileLayer(`https://normalizing-us-files.fra1.cdn.digitaloceanspaces.com/feature-tiles/0/${feature}/{z}/{x}/{y}`, {
           maxZoom: 9,
           minZoom: this.configuration.min_zoom,
           bounds: [[-this.configuration.dim - 1, 0], [-1, this.configuration.dim]],
           errorTileUrl: '/assets/img/empty.png'
-      }).addTo(this.map);
-      // const bounds: L.LatLngTuple[] = [[0,0], [this.dim, this.dim]];
-      // const image = L.imageOverlay('https://normalizing-us-files.fra1.digitaloceanspaces.com/tsne.png', bounds).addTo(this.map);
-      // this.map.fitBounds(bounds);
+        });
+      }
+      this.feature = 'faces';
+      // Map events
       this.map.on('zoomend', (ev) => { return this.onZoomChange(); });
       this.map.on('moveend', (ev) => { return this.onBoundsChange(); });
-      const features: geojson.Feature[] = [];
-      this.configuration.grid.forEach((g) => {
-        const x = g.pos.x;
-        const y = - 1 - g.pos.y;
-        const r = 0.24 * (1.0 - (g.item.tournaments ? (g.item.votes * 1.0) / g.item.tournaments : 0));
-        features.push({
-          type: 'Feature',
-          properties: {},
-          geometry: {
-            type: 'Polygon',
-            coordinates: [
-              [
-                [x + r, y + r], [x + 1 - r, y + r], [x + 1 - r, y + 1 - r], [x + r, y + 1 - r]
-              ],
-              [
-                [x + 0.25, y + 0.25], [x + 0.75, y + 0.25], [x + 0.75, y + 0.75], [x + 0.25, y + 0.75]
-              ],
-            ]              
-          }
-        });
-      });
-      const geoJson: geojson.FeatureCollection<any, any> = {type: 'FeatureCollection', features: features};
-      this.map.createPane('borders');
-      this.map.getPane('borders').style.zIndex = '10';
-      L.geoJSON(geoJson, {
-        style: {
-          fill: true,
-          fillColor: '#eae7df',
-          stroke: false,
-          fillOpacity: 1  
-        },
-        pane: 'borders'
-      }).addTo(this.map);
+      // Normality layer
+      this.normalityLayer = new NormalityLayer(this.map, this.grid);
+      this.grid.next(this.configuration.grid);
     });
   }
 
   onZoomChange() {
-    this.zoomedMax = this.map.getZoom() >= this.maxZoom;
+    // this.zoomedMax = this.map.getZoom() >= this.maxZoom;
     this.onBoundsChange();
   }
 
   onBoundsChange() {
     let x = -1;
     let y = -1;
-    if (this.zoomedMax) {
-      const bounds = this.map.getBounds();
-      const pos = bounds.getCenter();
-      x = Math.floor(pos.lng);
-      y = -Math.ceil(pos.lat);
-    }
+    // if (this.zoomedMax) {
+    //   const bounds = this.map.getBounds();
+    //   const pos = bounds.getCenter();
+    //   x = Math.floor(pos.lng);
+    //   y = -Math.ceil(pos.lat);
+    // }
     if (this.focusedLayerPos.x !== x || this.focusedLayerPos.x !== y) {
       this.focusedLayerPos = {x, y};
       if (this.focusedLayerPhoto) {
@@ -139,5 +116,17 @@ export class MapComponent implements OnInit, AfterViewInit {
         }
       }
     }
+  }
+
+  set feature(feature: string) {
+    if (this._feature) {
+      this.map.removeLayer(this.tileLayers[this._feature]);
+    }
+    this._feature = feature;
+    this.tileLayers[this._feature].addTo(this.map);
+  }
+
+  get feature(): string {
+    return this._feature;
   }
 }

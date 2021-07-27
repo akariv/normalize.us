@@ -287,7 +287,7 @@ export class FaceProcessorService {
       animationObs.stop();
       progress.next({
         kind: 'done',
-        content: compositionFrame.toDataURL('png'),
+        image: compositionFrame.toDataURL('png'),
         descriptor: [...descriptor],
         landmarks: firstLandmarks,
         collected: frames
