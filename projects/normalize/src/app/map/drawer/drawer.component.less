@@ -1,0 +1,39 @@
+@import '../../../common.less';
+
+.drawer {
+    position: absolute;
+    left: 0;
+    top: ~'calc(100% - 70px)';
+    width: 100%;
+    background-color: @color-offwhite;
+    border-radius: 8px 8px 0px 0px;
+    display: flex;
+    flex-flow: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    transition: top 250ms ease-in-out;
+
+    &.open {
+        top: 26.25vh;
+    }
+
+    .handle {
+        flex: 0 0 auto;
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+        justify-content: flex-start;
+        cursor: pointer;
+        height: 35px;
+        width: 100%;
+        padding: 6.5px;
+    }
+
+    .content {
+        height: ~'calc(73.75vh - 35px)';
+        width: 100%;
+        overflow-y: scroll;
+        .no-scrollbars;
+        border: 1px solid red;
+    }
+}

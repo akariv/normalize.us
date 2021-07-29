@@ -7,11 +7,11 @@ import { SelfieComponent } from './selfie/selfie.component';
 import { GameComponent } from './tournament/game/game.component';
 
 const routes: Routes = [
-  {path: 'map', component: MapComponent},
   {path: 'game', component: GameComponent},
   {path: 'dataset-uploader', component: DatasetComponent},
   {path: 'selfie', component: SelfieComponent},
-  {path: '', component: MainComponent},
+  {path: '', component: MapComponent},
+  // {path: '', component: MainComponent},
 ];
 
 @NgModule({

@@ -8,6 +8,9 @@ import { first } from 'rxjs/operators';
 import { ApiService } from '../api.service';
 import { ImageFetcherService } from '../image-fetcher.service';
 import { NormalityLayer } from './normality-layer';
+import { StateService } from '../state.service';
+import { LayoutService } from '../layout.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-map',
@@ -18,22 +21,31 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   map: L.Map;
   maxZoom: number;
-  maxZoom2: number;
   zoomedMax = false;
+
   focusedLayerPhoto: L.ImageOverlay;
   focusedLayerPos: {x: number, y: number} = {x: -1, y: -1};
+
   dim = 13;
+
   ready = new ReplaySubject(1);
+
   configuration: any = {};
   tileLayers: any = {};
   _feature = null;
   normalityLayer: NormalityLayer;
   grid = new Subject<any[]>();
 
+  hasSelfie = false;
+  info = true;
+
   @ViewChild('map') mapElement:  ElementRef;
 
   constructor(private hostElement: ElementRef, private api: ApiService,
-              private fetchImage: ImageFetcherService) { }
+              private fetchImage: ImageFetcherService, private state: StateService,
+              private layout: LayoutService, private router: Router) {
+    this.hasSelfie = this.state.imageID || this.state.ownRecord;
+  }
 
   ngOnInit(): void {
     this.api.getMapConfiguration().subscribe((config) => {
@@ -51,12 +63,15 @@ export class MapComponent implements OnInit, AfterViewInit {
         crs: L.CRS.Simple,
         maxZoom: this.maxZoom,
         minZoom: this.configuration.min_zoom,
-        maxBounds: [[-this.configuration.dim - 1, 0], [-1, this.configuration.dim]],
+        maxBounds: [[-this.configuration.dim, 0], [0, this.configuration.dim]],
         center: [-this.configuration.dim/2, this.configuration.dim/2],
-        zoom: this.maxZoom - Math.log2(this.configuration.dim),
+        zoom: this.maxZoom,
         zoomControl: false,
       });
-      new L.Control.Zoom({ position: 'bottomleft' }).addTo(this.map);
+      if (this.layout.desktop) {
+        new L.Control.Zoom({ position: 'bottomleft' }).addTo(this.map);
+      }
+
       // Tile layers
       for (const feature of ['faces', 'mouths', 'eyes', 'noses', 'foreheads']) {
         this.tileLayers[feature] = L.tileLayer(`https://normalizing-us-files.fra1.cdn.digitaloceanspaces.com/feature-tiles/0/${feature}/{z}/{x}/{y}`, {
@@ -128,5 +143,9 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   get feature(): string {
     return this._feature;
+  }
+
+  start() {
+    this.router.navigate(['/selfie']);
   }
 }

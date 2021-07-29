@@ -13,6 +13,8 @@ import { MapComponent } from './map/map.component';
 import { MainComponent } from './main/main.component';
 import { SliderComponent } from './tournament/slider/slider.component';
 import { FeatureSelectorComponent } from './map/feature-selector/feature-selector.component';
+import { DrawerComponent } from './map/drawer/drawer.component';
+import { StartButtonComponent } from './map/start-button/start-button.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +27,9 @@ import { FeatureSelectorComponent } from './map/feature-selector/feature-selecto
     MapComponent,
     MainComponent,
     SliderComponent,
-    FeatureSelectorComponent
+    FeatureSelectorComponent,
+    DrawerComponent,
+    StartButtonComponent
   ],
   imports: [
     BrowserModule,
