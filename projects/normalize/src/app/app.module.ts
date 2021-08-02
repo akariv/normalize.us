@@ -15,6 +15,7 @@ import { SliderComponent } from './tournament/slider/slider.component';
 import { FeatureSelectorComponent } from './map/feature-selector/feature-selector.component';
 import { DrawerComponent } from './map/drawer/drawer.component';
 import { StartButtonComponent } from './map/start-button/start-button.component';
+import { ReportCardComponent } from './map/report-card/report-card.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { StartButtonComponent } from './map/start-button/start-button.component'
     SliderComponent,
     FeatureSelectorComponent,
     DrawerComponent,
-    StartButtonComponent
+    StartButtonComponent,
+    ReportCardComponent
   ],
   imports: [
     BrowserModule,

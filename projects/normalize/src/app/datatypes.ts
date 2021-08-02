@@ -7,9 +7,10 @@ export class ImageItem {
     landmarks: number[];
 }
 
-export class GridItem extends ImageItem {
+export class GridItem {
     pos: {
         x: number;
         y: number;
-    }
+    };
+    item: ImageItem;
 }

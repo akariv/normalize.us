@@ -1,8 +1,6 @@
-<div class='drawer' [class.open]='open'>
-    <div class='handle' (click)='open = !open'>
-        <img src='assets/img/handle.svg'/>
-    </div>
-    <div class='content'>
-        <ng-content></ng-content>
-    </div>
+<div class='handle' (click)='state(!open)'>
+    <img src='assets/img/handle.svg'/>
+</div>
+<div class='content'>
+    <ng-content></ng-content>
 </div>

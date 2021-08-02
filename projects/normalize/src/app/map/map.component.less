@@ -21,6 +21,16 @@
         z-index: 20;
     }
 
+    .overlay {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 20;
+    }
+
     .info {
 
         .content {
@@ -60,5 +70,16 @@
                 align-self: center;
             }
         }
+    }
+
+    > app-drawer {
+        z-index: 30;
+    }
+
+    > app-start-button {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        z-index: 30;
     }
 }

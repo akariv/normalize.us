@@ -24,6 +24,7 @@ export class MovingImageComponent implements OnChanges, OnDestroy {
   current = 0;
   animationId = '';
   loaded = false;
+  _src = '';
 
   constructor(public config: ConfigService, private animation: AnimationManagerService) { }
 
@@ -40,8 +41,15 @@ export class MovingImageComponent implements OnChanges, OnDestroy {
       }
       this.animationId = animationId;
       this.animation.register(this.animationId, () => this.animationFrame());
-      this.animation.enable(this.animationId);  
     }
+    this._src = '';
+    setTimeout(() => {
+      this._src = this.src;
+    }, 0);
+  }
+
+  onLoaded() {
+    this.animation.enable(this.animationId);  
   }
 
   ngOnDestroy(): void {

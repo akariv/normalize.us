@@ -5,9 +5,9 @@
     [style.width]='width + "px"'
     [style.height]='height + "px"'>
     <div class='mover' [class.active]='current === 0' [style.top]='y[0] + "px"' [style.left]='x[0] + "px"'>
-        <img [src]='src'>
+        <img [src]='_src' (load)='onLoaded()'>
     </div>
     <div class='mover' [class.active]='current === 1' [style.top]='y[1] + "px"' [style.left]='x[1] + "px"'>
-        <img [src]='src'>
+        <img [src]='_src'>
     </div>
 </div>

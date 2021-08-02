@@ -11,6 +11,7 @@ import { NormalityLayer } from './normality-layer';
 import { StateService } from '../state.service';
 import { LayoutService } from '../layout.service';
 import { Router } from '@angular/router';
+import { GridItem, ImageItem } from '../datatypes';
 
 @Component({
   selector: 'app-map',
@@ -34,10 +35,12 @@ export class MapComponent implements OnInit, AfterViewInit {
   tileLayers: any = {};
   _feature = null;
   normalityLayer: NormalityLayer;
-  grid = new Subject<any[]>();
+  grid = new Subject<GridItem[]>();
 
   hasSelfie = false;
-  info = true;
+  focusedItem: ImageItem = null;
+  overlay = true;
+  drawerOpen = true;
 
   @ViewChild('map') mapElement:  ElementRef;
 
@@ -65,7 +68,7 @@ export class MapComponent implements OnInit, AfterViewInit {
         minZoom: this.configuration.min_zoom,
         maxBounds: [[-this.configuration.dim, 0], [0, this.configuration.dim]],
         center: [-this.configuration.dim/2, this.configuration.dim/2],
-        zoom: this.maxZoom,
+        zoom: this.maxZoom - 2,
         zoomControl: false,
       });
       if (this.layout.desktop) {
@@ -85,6 +88,30 @@ export class MapComponent implements OnInit, AfterViewInit {
       // Map events
       this.map.on('zoomend', (ev) => { return this.onZoomChange(); });
       this.map.on('moveend', (ev) => { return this.onBoundsChange(); });
+      this.map.on('click', (ev: L.LeafletMouseEvent) => {
+        const latlng = ev.latlng;
+        const x = Math.floor(latlng.lng);
+        const y = -Math.ceil(latlng.lat);
+        const current = this.focusedItem;
+        this.focusedItem = null;
+        if (x >= 0 && y >= 0) {
+          for (const item of this.configuration.grid) {
+            const posX = item.pos.x;
+            const posY = item.pos.y;
+            if (x === posX && y === posY) {
+              this.focusedItem = item.item;
+              this.drawerOpen = true;
+              break;
+            }
+          }
+        }
+        if (current !== this.focusedItem && this.focusedItem !== null) {
+          this.drawerOpen = false;
+          setTimeout(() => {
+            this.drawerOpen = true;
+          }, 500);
+        }
+      });
       // Normality layer
       this.normalityLayer = new NormalityLayer(this.map, this.grid);
       this.grid.next(this.configuration.grid);

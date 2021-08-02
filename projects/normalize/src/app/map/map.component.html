@@ -1,7 +1,8 @@
 <div #map class='map'></div>
 <app-feature-selector [feature]='feature' (selected)='feature = $event'></app-feature-selector>
-<app-drawer [open]='true'>
-    <ng-container *ngIf='info'>
+<div class='overlay' *ngIf='overlay' (click)='overlay = false; drawerOpen = false'></div>
+<app-drawer [open]='drawerOpen' (changed)='overlay = false; drawerOpen = $event'>
+    <ng-container *ngIf='!focusedItem'>
         <div class='info'>
             <div class='content'>
                 <div class='title'>Normalizi.ng</div>
@@ -11,4 +12,8 @@
             </div>
         </div>
     </ng-container>
+    <ng-container *ngIf='focusedItem'>
+        <app-report-card [item]='focusedItem'></app-report-card>
+    </ng-container>
 </app-drawer>
+<app-start-button label='start' (click)='start()'></app-start-button>
