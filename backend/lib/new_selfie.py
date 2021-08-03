@@ -24,15 +24,15 @@ def new_selfie_handler(request: Request):
             filename_base = uuid.uuid4().hex
             magic = uuid.uuid4().hex
 
+            face = Image.open(BytesIO(image))
             full_image = BytesIO()
-            full_image.write(image)
+            face.save(full_image, format='png', optimize=True)
             full_image.seek(0)
             upload_fileobj_s3(full_image, filename_base + '_full.png', 'image/png')
 
-            face = Image.open(BytesIO(image))
             face = face.crop((1200, 0, 1500, 300))
             face_image = BytesIO()
-            face.save(face_image, format='png')
+            face.save(face_image, format='png', optimize=True)
             face_image.seek(0)
             upload_fileobj_s3(face_image, 'photos/' + filename_base + '_face.png', 'image/png')
 
