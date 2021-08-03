@@ -35,13 +35,13 @@ def load_image(id, out_res_x, out_res_y, img_location, img_size):
 
 def load_activations():
     print('Fetching descriptors')
-    rows = conn.execution_options(stream_results=True).execute('select id, image, tournaments, votes, descriptor from faces order by id desc limit 500')
+    rows = conn.execution_options(stream_results=True).execute('select id, image, tournaments, votes, descriptor, landmarks from faces order by id desc limit 500')
     ids = []
     activations = []
     for row in rows:
-        id, image, tournaments, votes, descriptor = row
+        id, image, tournaments, votes, descriptor, landmarks = row
         ids.append(dict(
-            id=id, image=image, tournaments=tournaments, votes=votes
+            id=id, image=image, tournaments=tournaments, votes=votes, landmarks=landmarks, descriptor=descriptor
         ))
         activations.append(descriptor)
         # if len(img_collection) > 100:
