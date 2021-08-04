@@ -113,9 +113,7 @@ export class FaceProcessorService {
         return animationObs.start();  
       }),
       switchMap(() => {
-        // console.log('FP: animationObs');
         context.drawImage(el, 0, 0, canvas.width, canvas.height);
-        // console.log('FP: drawn');
         return detectSingleFace(canvas, this.detectorOptions).withFaceLandmarks(this.config.TINY).run();
       }),
       catchError((e, caught) => {
@@ -287,7 +285,7 @@ export class FaceProcessorService {
       animationObs.stop();
       progress.next({
         kind: 'done',
-        image: compositionFrame.toDataURL('png'),
+        image: compositionFrame.toDataURL('png', 90),
         descriptor: [...descriptor],
         landmarks: firstLandmarks,
         collected: frames

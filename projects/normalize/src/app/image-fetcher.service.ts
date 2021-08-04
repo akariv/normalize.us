@@ -15,10 +15,10 @@ export class ImageFetcherService {
     if (id.indexOf('data:') === 0) {
       return id;
     }
-    return `https://normalizing-us-files.fra1.cdn.digitaloceanspaces.com/${id}_full.png`;
+    return `https://normalizing-us-files.fra1.cdn.digitaloceanspaces.com/photos/${id}_full.png`;
   }
 
   fetchFaceImage(id) {
-    return `https://normalizing-us-files.fra1.cdn.digitaloceanspaces.com/${id}_face.png`;
+    return `https://normalizing-us-files.fra1.cdn.digitaloceanspaces.com/photos/${id}_face.png`;
   }
 }

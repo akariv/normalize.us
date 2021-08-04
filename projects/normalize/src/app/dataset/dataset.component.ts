@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { defer, from, fromEvent } from 'rxjs';
+import { defer, from, fromEvent, Subject } from 'rxjs';
 import { first, switchMap } from 'rxjs/operators';
 import { ApiService } from '../api.service';
 import { FaceApiService } from '../face-api.service';
@@ -25,6 +25,7 @@ export class DatasetComponent implements OnInit, AfterViewInit {
     distance: 10
   };
   imageUrl = '';
+  imageLoaded = new Subject<EventTarget>();
 
   constructor(private faceProcessor: FaceProcessorService, private faceApi: FaceApiService, private api: ApiService, private http: HttpClient) { }
 
@@ -36,6 +37,16 @@ export class DatasetComponent implements OnInit, AfterViewInit {
 
   testUrl(event: Event) {
     const name = (event.target as HTMLInputElement).value;
+    if (name === 'tpdne') {
+      this.images = [];
+      for (let i = 0 ; i < 1000 ; i++) {
+        this.images.push(`http://127.0.0.1:5000/#${i}`)
+      }
+      setTimeout(() => {
+        this.getNextImage();
+      }, 0);
+      return;
+    }
     const index_url = `https://storage.googleapis.com/selfie-datasets/${name}/index.json?a`;
     this.http.get(index_url).subscribe((results: any[]) => {
       this.images = results.map(x => `https://storage.googleapis.com/selfie-datasets/${name}/${x}`);
@@ -58,11 +69,12 @@ export class DatasetComponent implements OnInit, AfterViewInit {
       switchMap(() => {
         const imageUrl = this.pullImage();
         this.imageUrl = imageUrl;
-        return faceapi.fetchImage(imageUrl);
+        return this.imageLoaded.pipe(first());
+        // return faceapi.fetchImage(imageUrl);
       }),
       switchMap((img) => {
-        console.log('LOADED!');
-        return this.faceProcessor.processFaces(img, 0, this.datasetSnap);
+        console.log('LOADED!', img);
+        return this.faceProcessor.processFaces(img as HTMLImageElement, 0, this.datasetSnap);
       }),
       switchMap((event) => {
         if (event.kind === 'start') {

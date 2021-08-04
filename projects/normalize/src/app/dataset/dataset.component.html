@@ -1,4 +1,5 @@
 <input (change)='testUrl($event)' placeholder="name of dataset to load...">
+<img [src]='imageUrl' (load)='imageLoaded.next($event.target)' crossorigin='anonymous'/>
 <!-- <button (click)='getNextImage()'>next</button> -->
 <p>{{images.length}}: {{url}}</p>
 <!-- <img [src]='preview || imageUrl'/> -->
