@@ -21,7 +21,7 @@ conn = engine.connect()
 class ImageLoader():
     def __init__(self, images, args):
         self.concurrency = 32
-        self.queue = Queue(maxsize=self.concurrency)
+        self.queue = Queue(maxsize=self.concurrency*4)
         self.images = images
         self.args = args
         assert len(set(self.images)) == len(images), 'Duplicate image id'
