@@ -66,12 +66,12 @@ class ImageLoader():
             # print('got', id)
             self.cache[id] = img
             self.queue_recv += 1
-            if self.queue_recv % 20 == 0:
-                print('...', self.queue_recv, len(self.cache))
+            # if self.queue_recv % 100 == 0:
+            #     print('...', self.queue_recv, len(self.cache))
 
         self.image_fetches += 1
-        if self.image_fetches % 20 == 0:
-            print('...', self.image_fetches, len(self.cache))
+        if self.image_fetches % 100 == 0:
+            print('...', self.image_fetches, self.queue_recv, len(self.cache))
         return self.cache.pop(need_id)
 
 
