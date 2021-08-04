@@ -20,7 +20,7 @@ engine = create_engine(os.environ['DATABASE_URL'])
 conn = engine.connect()
 class ImageLoader():
     def __init__(self, images, args):
-        self.concurrency = 16
+        self.concurrency = 32
         self.queue = Queue(maxsize=self.concurrency)
         self.images = images
         self.args = args
@@ -168,7 +168,7 @@ def create_tiles(filename, image: Image, out_dim, res, info):
     max_zoom = info['max_zoom'] = 8
     min_zoom = info['min_zoom'] = 8 - dim_zoom
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=16) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=32) as executor:
         json_buff = BytesIO()
         json_buff.write(json.dumps(info).encode('utf8'))
         json_buff.seek(0)
