@@ -40,7 +40,7 @@ class ImageLoader():
         resp = requests.get(img_url)
         if resp.status_code != 200:
             print('FAILED to fetch', img_url, 'status code', resp.status_code)
-        img_data = requests.get(img_url).content
+        img_data = resp.content
         img = Image.open(BytesIO(img_data))
         img = img.crop((*img_location, img_location[0] + img_size[0], img_location[1] + img_size[1]))
         img = img.convert('RGB')
