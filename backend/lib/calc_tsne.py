@@ -47,7 +47,7 @@ class ImageLoader():
         img_url = f'https://normalizing-us-files.fra1.cdn.digitaloceanspaces.com/photos/{id}_full.png'
         for retry in range(3):
             try:
-                resp = requests.get(img_url, timeout=3)
+                resp = requests.get(img_url, timeout=10)
                 if resp.status_code != 200:
                     print('FAILED', retry, 'to fetch', img_url, 'status code', resp.status_code)
                 break
