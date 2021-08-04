@@ -23,6 +23,8 @@ class ImageLoader():
         self.concurrency = 16
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=self.concurrency)
         self.queue = Queue(maxsize=self.concurrency)
+        self.images = set(images)
+        assert len(self.images) == len(images), 'Duplicate image id'
 
         self.image_fetches = 0
         self.cache = dict()
@@ -32,7 +34,9 @@ class ImageLoader():
         print('Done submitting')
 
     def fini(self):
+        print('Finalizing executor')
         del self.executor
+        print('Finalizing executor done')
 
     def load_image(self, id, out_res_x, out_res_y, img_location, img_size, queue):
         # print('Fetching %s' % id)
@@ -49,6 +53,7 @@ class ImageLoader():
         self.queue.put((id, img))
 
     def get_image(self, need_id):
+        assert need_id in self.images, 'Image %s not in set' % need_id
         while need_id not in self.cache:
             id, img = self.queue.get()
             # print('got', id)
