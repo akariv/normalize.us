@@ -126,6 +126,10 @@ def calc_tsne_grid(X_2d, out_dim):
     grid_jv = grid[col_asses]
     return grid_jv
 
+def process_item(item):
+    item['descriptor'] = [int(x*1000)/1000.0 for x in item['descriptor']]
+    item['landmarks'] = [int(x) for x in item['landmarks']]
+
 def create_tsne_image(grid_jv, img_collection, out_dim, to_plot, 
         res, offset, out_size,
         loader):
@@ -149,7 +153,7 @@ def create_tsne_image(grid_jv, img_collection, out_dim, to_plot,
         w_range = pos_x * out_res_x + offset_x
         out[h_range:h_range + out_size_y, w_range:w_range + out_size_x] = image.img_to_array(img)
         alpha[h_range:h_range + out_size_y, w_range:w_range + out_size_x] = 255*np.ones((out_size_y, out_size_x, 1))
-        info['grid'].append(dict(pos=dict(x=pos_x, y=pos_y), item=item))
+        info['grid'].append(dict(pos=dict(x=pos_x, y=pos_y), item=process_item(item)))
     loader.fini()
 
     im = image.array_to_img(out)
