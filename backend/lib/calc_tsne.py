@@ -129,6 +129,7 @@ def calc_tsne_grid(X_2d, out_dim):
 def process_item(item):
     item['descriptor'] = [int(x*1000)/1000.0 for x in item['descriptor']]
     item['landmarks'] = [dict(x=int(x['x']), y=int(x['y'])) for x in item['landmarks']]
+    return item
 
 def create_tsne_image(grid_jv, img_collection, out_dim, to_plot, 
         res, offset, out_size,
