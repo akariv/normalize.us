@@ -21,17 +21,20 @@ conn = engine.connect()
 class ImageLoader():
     def __init__(self, images, args):
         self.concurrency = 16
-        self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=self.concurrency)
         self.queue = Queue(maxsize=self.concurrency)
-        self.images = set(images)
-        assert len(self.images) == len(images), 'Duplicate image id'
+        self.images = images
+        self.args = args
+        assert len(set(self.images)) == len(images), 'Duplicate image id'
 
         self.image_fetches = 0
         self.queue_recv = 0
         self.cache = dict()
-        print('Fetching %d images' % len(images))
-        for image in images:
-            self.executor.submit(self.load_image, image, *args, self.queue)
+
+    def start(self):
+        print('Fetching %d images' % len(self.images))
+        self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=self.concurrency)
+        for image in self.images:
+            self.executor.submit(self.load_image, image, *self.args, self.queue)
         print('Done submitting')
 
     def fini(self):
@@ -44,7 +47,7 @@ class ImageLoader():
         img_url = f'https://normalizing-us-files.fra1.cdn.digitaloceanspaces.com/photos/{id}_full.png'
         for retry in range(3):
             try:
-                resp = requests.get(img_url, timeout=10)
+                resp = requests.get(img_url, timeout=3)
                 if resp.status_code != 200:
                     print('FAILED', retry, 'to fetch', img_url, 'status code', resp.status_code)
                 break
@@ -125,7 +128,7 @@ def calc_tsne_grid(X_2d, out_dim):
 
 def create_tsne_image(grid_jv, img_collection, out_dim, to_plot, 
         res, offset, out_size,
-        img_location, img_size):
+        loader):
     # print('>>>', filename)
     img_dim = out_dim # 2**math.ceil(math.log2(out_dim))
     # img_ofs = math.floor((img_dim - out_dim)/2)
@@ -136,7 +139,6 @@ def create_tsne_image(grid_jv, img_collection, out_dim, to_plot,
     out = np.zeros((img_dim*out_res_y, img_dim*out_res_x, 3))
     alpha = np.zeros((img_dim*out_res_y, img_dim*out_res_x, 1))
     used = set()
-    loader = ImageLoader([item['image'] for item in img_collection[0:to_plot]], [out_size_x, out_size_y, img_location, img_size])
     for pos, item in zip(grid_jv, img_collection[0:to_plot]):
         pos_x = round(pos[1] * (out_dim - 1))# + img_ofs
         pos_y = round(pos[0] * (out_dim - 1))# + img_ofs
@@ -225,8 +227,16 @@ def main():
     #                                (1200, 0), (300, 300))
     # upload_fileobj_s3(buff, 'tsne.png', 'image/png')
 
+    side = 256
+    loaders = []
     for filename, img_size, img_location in IMAGES:
-        side = 256
+        w, h = img_size
+        dim = max(w, h)
+        size = side/2
+        loaders.append(ImageLoader([item['image'] for item in ids[0:to_plot]], [int(size*w/dim), int(size*h/dim), img_location, img_size]))
+    loaders[0].start()
+
+    for filename, img_size, img_location in IMAGES:
         w, h = img_size
         dim = max(w, h)
         size = side/2
@@ -234,9 +244,9 @@ def main():
         offset = (int((side - size[0])/2), int((side - size[1])/2))
         image, info = create_tsne_image(grid, ids, out_dim, to_plot,
                                         (side, side),  # res
-                                        offset, size,
-                                        img_location,
-                                        img_size)
+                                        offset, size, loaders.pop(0))
+        if len(loaders) > 0:
+            loaders[0].start()
         create_tiles(filename, image, out_dim, (side, side), info)
 
 
