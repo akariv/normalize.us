@@ -21,7 +21,7 @@ conn = engine.connect()
 class ImageLoader():
     def __init__(self, images, args):
         self.concurrency = 32
-        self.queue = Queue(maxsize=self.concurrency*4)
+        self.queue = Queue()
         self.images = images
         self.args = args
         assert len(set(self.images)) == len(images), 'Duplicate image id'
@@ -215,7 +215,16 @@ def main():
     ids, activations = load_activations()
     out_dim = 25
     to_plot = 500
+    side = 256
     ids = ids[:to_plot]
+    loaders = []
+    for filename, img_size, img_location in IMAGES:
+        w, h = img_size
+        dim = max(w, h)
+        size = side/2
+        loaders.append(ImageLoader([item['image'] for item in ids[0:to_plot]], [int(size*w/dim), int(size*h/dim), img_location, img_size]))
+    loaders[0].start()
+
     print("Generating 2D representation.")
     X_2d = generate_tsne(activations, to_plot, perplexity, tsne_iter)
     print("Generating image grid (%dx%d, %d images)" % (out_dim, out_dim, len(ids)))
@@ -226,15 +235,6 @@ def main():
     #                                (52, 52),
     #                                (1200, 0), (300, 300))
     # upload_fileobj_s3(buff, 'tsne.png', 'image/png')
-
-    side = 256
-    loaders = []
-    for filename, img_size, img_location in IMAGES:
-        w, h = img_size
-        dim = max(w, h)
-        size = side/2
-        loaders.append(ImageLoader([item['image'] for item in ids[0:to_plot]], [int(size*w/dim), int(size*h/dim), img_location, img_size]))
-    loaders[0].start()
 
     for filename, img_size, img_location in IMAGES:
         w, h = img_size
