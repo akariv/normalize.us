@@ -12,29 +12,52 @@ from tensorflow.python.keras.preprocessing import image
 from io import BytesIO
 from sqlalchemy import create_engine
 import concurrent.futures
+from queue import Queue
 
 from .net import upload_fileobj_s3
 
 engine = create_engine(os.environ['DATABASE_URL'])
 conn = engine.connect()
-image_fetches = 0
+class ImageLoader():
+    def __init__(self, images, args):
+        self.concurrency = 16
+        self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=self.concurrency)
+        self.queue = Queue(maxsize=self.concurrency)
 
-def load_image(id, out_res_x, out_res_y, img_location, img_size):
-    global image_fetches
-    img_url = f'https://normalizing-us-files.fra1.cdn.digitaloceanspaces.com/photos/{id}_full.png'
-    resp = requests.get(img_url)
-    if resp.status_code != 200:
-        print('FAILED to fetch', img_url, 'status code', resp.status_code)
-    img_data = requests.get(img_url).content
-    img = Image.open(BytesIO(img_data))
-    img = img.crop((*img_location, img_location[0] + img_size[0], img_location[1] + img_size[1]))
-    img = img.convert('RGB')
-    img = img.resize((out_res_x, out_res_y), Image.NEAREST)
-    # img = ImageOps.autocontrast(img)
-    image_fetches += 1
-    if image_fetches % 100 == 0:
-        print('...', image_fetches)
-    return img
+        self.image_fetches = 0
+        self.cache = dict()
+        print('Fetching %d images' % len(images))
+        for image in images:
+            self.executor.submit(self.load_image, image, *args, self.queue)
+        print('Done submitting')
+
+    def fini(self):
+        del self.executor
+
+    def load_image(self, id, out_res_x, out_res_y, img_location, img_size, queue):
+        # print('Fetching %s' % id)
+        img_url = f'https://normalizing-us-files.fra1.cdn.digitaloceanspaces.com/photos/{id}_full.png'
+        resp = requests.get(img_url)
+        if resp.status_code != 200:
+            print('FAILED to fetch', img_url, 'status code', resp.status_code)
+        img_data = requests.get(img_url).content
+        img = Image.open(BytesIO(img_data))
+        img = img.crop((*img_location, img_location[0] + img_size[0], img_location[1] + img_size[1]))
+        img = img.convert('RGB')
+        img = img.resize((out_res_x, out_res_y), Image.NEAREST)
+        # img = ImageOps.autocontrast(img)
+        self.queue.put((id, img))
+
+    def get_image(self, need_id):
+        while need_id not in self.cache:
+            id, img = self.queue.get()
+            # print('got', id)
+            self.cache[id] = img
+        self.image_fetches += 1
+        if self.image_fetches % 100 == 0:
+            print('...', self.image_fetches, len(self.cache))
+        return self.cache.pop(need_id)
+
 
 def load_activations():
     print('Fetching descriptors')
@@ -97,18 +120,19 @@ def create_tsne_image(grid_jv, img_collection, out_dim, to_plot,
     out = np.zeros((img_dim*out_res_y, img_dim*out_res_x, 3))
     alpha = np.zeros((img_dim*out_res_y, img_dim*out_res_x, 1))
     used = set()
+    loader = ImageLoader([item['image'] for item in img_collection[0:to_plot]], [out_size_x, out_size_y, img_location, img_size])
     for pos, item in zip(grid_jv, img_collection[0:to_plot]):
         pos_x = round(pos[1] * (out_dim - 1))# + img_ofs
         pos_y = round(pos[0] * (out_dim - 1))# + img_ofs
         assert (pos_x, pos_y) not in used
         used.add((pos_x, pos_y))
-        image_id = item['image']
-        img = load_image(image_id, out_size_x, out_size_y, img_location, img_size)
+        img = loader.get_image(item['image'])
         h_range = pos_y * out_res_y + offset_y
         w_range = pos_x * out_res_x + offset_x
         out[h_range:h_range + out_size_y, w_range:w_range + out_size_x] = image.img_to_array(img)
         alpha[h_range:h_range + out_size_y, w_range:w_range + out_size_x] = 255*np.ones((out_size_y, out_size_x, 1))
         info['grid'].append(dict(pos=dict(x=pos_x, y=pos_y), item=item))
+    loader.fini()
 
     im = image.array_to_img(out)
     im.putalpha(image.array_to_img(alpha))
