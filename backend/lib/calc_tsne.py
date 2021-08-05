@@ -218,7 +218,7 @@ def main():
     perplexity = 50
     tsne_iter = 5000
     ids, activations = load_activations()
-    out_dim = 25
+    out_dim = 30
     to_plot = 500
     side = 256
     ids = ids[:to_plot]
