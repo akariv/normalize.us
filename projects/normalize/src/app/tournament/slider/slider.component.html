@@ -1,5 +1,5 @@
 <div class='slider'>
-    <div class='endpoint left'></div>
-    <div class='endpoint right'></div>
-    <div class='handle' [class.moving]='!!moveSubscripion' #handle [style.left]='position + "px"'></div>
+    <div class='handle left' [class.moving]='!!moveSubscripion' #handleLeft [style.left]='position + "px"' [style.opacity]='opacity[0]'></div>
+    <div class='endpoint'></div>
+    <div class='handle right' [class.moving]='!!moveSubscripion' #handleRight [style.right]='-position + "px"' [style.opacity]='opacity[1]'></div>
 </div>

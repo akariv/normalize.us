@@ -28,13 +28,13 @@ def new_selfie_handler(request: Request):
             full_image = BytesIO()
             face.save(full_image, format='png', optimize=True)
             full_image.seek(0)
-            upload_fileobj_s3(full_image, 'photos/' + filename_base + '_full.png', 'image/png')
+            assert upload_fileobj_s3(full_image, 'photos/' + filename_base + '_full.png', 'image/png')
 
             face = face.crop((1200, 0, 1500, 300))
             face_image = BytesIO()
             face.save(face_image, format='png', optimize=True)
             face_image.seek(0)
-            upload_fileobj_s3(face_image, 'photos/' + filename_base + '_face.png', 'image/png')
+            assert upload_fileobj_s3(face_image, 'photos/' + filename_base + '_face.png', 'image/png')
 
             descriptor = content.get('descriptor')
             descriptor = json.dumps(descriptor)

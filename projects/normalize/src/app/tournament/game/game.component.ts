@@ -13,6 +13,8 @@ import { StateService } from '../../state.service';
 })
 export class GameComponent implements OnInit {
 
+  TUPLES_PER_FEATURE = 5;
+
   game: any;
   index = -1;
   maxIndex = 5;
@@ -20,6 +22,7 @@ export class GameComponent implements OnInit {
   candidates = [];
   results = [];
   loaded = 0;
+  Array = Array;
 
   constructor(private api: ApiService, private state: StateService, public imageFetcher: ImageFetcherService, private router: Router) {
     api.getGame().subscribe((game) => {
@@ -40,7 +43,7 @@ export class GameComponent implements OnInit {
       if (this.tuples.length === 0) {
         this.index += 1;
         console.log('INDEX = ', this.index);
-        this.tuples = this.randomTuples(5)
+        this.tuples = this.randomTuples(this.TUPLES_PER_FEATURE);
         // for (const t of this.tuples) {
         //   this.imageFetcher.fetchImage(t[0]);
         //   this.imageFetcher.fetchImage(t[1]);
@@ -105,10 +108,10 @@ export class GameComponent implements OnInit {
     }
   }
 
-  get progress() {
-    if (this.game && this.game.records) {
-      return (100 / this.game.records.length * this.loaded).toFixed(0) + '%';
-    }
-    return '0%';
-  }
+  // get progress() {
+  //   if (this.game && this.game.records) {
+  //     return (100 / this.game.records.length * this.loaded).toFixed(0) + '%';
+  //   }
+  //   return '0%';
+  // }
 }

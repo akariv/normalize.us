@@ -35,7 +35,8 @@ export class SelfieComponent implements OnInit, AfterViewInit {
   public distance = '';
 
 
-  constructor(private faceProcessor: FaceProcessorService, private api: ApiService, private state: StateService, private router: Router) {}
+  constructor(private faceProcessor: FaceProcessorService, private api: ApiService, private state: StateService,
+              private router: Router, private el: ElementRef) {}
 
   ngOnInit(): void { }
 
@@ -48,9 +49,11 @@ export class SelfieComponent implements OnInit, AfterViewInit {
   async init() {
     const videoEl: HTMLVideoElement = this.inputVideo.nativeElement;
     const supportedConstraints = navigator.mediaDevices.getSupportedConstraints();
-    console.log('SUPPORTED', supportedConstraints);
+    console.log('SUPPORTED', JSON.stringify(supportedConstraints));
     const videoConstraints: any = {};
     if (supportedConstraints.facingMode) { videoConstraints.facingMode = 'user'; }
+    if (supportedConstraints.height) { videoConstraints.height = this.el.nativeElement.offsetHeight; }
+    if (supportedConstraints.width) { videoConstraints.width = this.el.nativeElement.offsetWidth; }
     this.videoStream = await navigator.mediaDevices
       .getUserMedia({
         video: videoConstraints,

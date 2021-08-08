@@ -14,14 +14,16 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
   @Output() location = new EventEmitter<number>();
   @Output() selected = new EventEmitter<number>();
 
-  @ViewChild('handle') handle: ElementRef;
+  @ViewChild('handleLeft') handleLeft: ElementRef;
+  @ViewChild('handleRight') handleright: ElementRef;
 
   subscriptions: Subscription[] = [];
   moveSubscripion: Subscription = null;
   throttled = new Subject<number>();
   width = 0;
   startX = 0;
-  position = (window.innerWidth - 16 - this.HANDLE_SIZE) / 2;
+  position = 0;
+  opacity = [1, 1]
 
   constructor(private el: ElementRef) {
     this.throttled.pipe(
@@ -35,16 +37,18 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    const handle = this.handle.nativeElement;
-    this.width = this.el.nativeElement.offsetWidth - 16 - this.HANDLE_SIZE;
-    this.position = this.width / 2;
-    this.subscriptions = [
-      fromEvent(handle, 'mousedown').subscribe((ev: MouseEvent) => { if (ev.button === 0) { this.mousedown(ev); }}),
-      fromEvent(handle, 'touchstart').subscribe((ev: MouseEvent) => { this.mousedown(ev); }),
-      
-      fromEvent(window, 'mouseup').subscribe((ev: Event) => { this.mouseup(); }),
-      fromEvent(window, 'touchend').subscribe((ev: Event) => { this.mouseup(); }),  
-    ];
+    const handles = [this.handleLeft, this.handleright];
+    this.width = this.el.nativeElement.offsetWidth - 128 - this.HANDLE_SIZE;
+    for (const idx of [0, 1]) {
+      const handle = handles[idx].nativeElement;
+      this.subscriptions.push(...[
+        fromEvent(handle, 'mousedown').subscribe((ev: MouseEvent) => { if (ev.button === 0) { this.mousedown(idx, ev); }}),
+        fromEvent(handle, 'touchstart').subscribe((ev: MouseEvent) => { this.mousedown(idx, ev); }),
+        
+        fromEvent(window, 'mouseup').subscribe((ev: Event) => { this.mouseup(idx); }),
+        fromEvent(window, 'touchend').subscribe((ev: Event) => { this.mouseup(idx); }),  
+      ]);
+    }
   }
 
   ngOnDestroy() {
@@ -53,14 +57,15 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  mouseup() {
-    if (this.position === this.width) {
+  mouseup(idx) {
+    if (this.position === this.width / 2) {
       this.selected.next(-1);
     }
-    if (this.position === 0) {
+    if (this.position === -this.width / 2) {
       this.selected.next(1);
     }
-    this.position = this.width / 2;
+    this.position = 0;
+    this.opacity = [1, 1];
     if (this.moveSubscripion) {
       this.moveSubscripion.unsubscribe();
       this.moveSubscripion = null;
@@ -68,24 +73,31 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.location.next(0);
   }
 
-  mousedown(ev) {
+  mousedown(idx, ev) {
     this.startX = this.getX(ev);
     if (this.moveSubscripion) {
       this.moveSubscripion.unsubscribe();
     }
     if (ev instanceof MouseEvent) {
-      this.moveSubscripion = fromEvent(window, 'mousemove').subscribe((ev: MouseEvent) => { this.mousemove(ev); });
+      this.moveSubscripion = fromEvent(window, 'mousemove').subscribe((ev: MouseEvent) => { this.mousemove(idx, ev); });
     } else {
-      this.moveSubscripion = fromEvent(window, 'touchmove').subscribe((ev: MouseEvent) => { this.mousemove(ev); });
+      this.moveSubscripion = fromEvent(window, 'touchmove').subscribe((ev: MouseEvent) => { this.mousemove(idx, ev); });
     }
   }
 
-  mousemove(ev) {
+  mousemove(idx, ev) {
     const x = this.getX(ev);
-    this.position = this.width/2 + x - this.startX;
-    this.position = Math.min(this.position, this.width);
-    this.position = Math.max(this.position, 0);
-    this.throttled.next((this.width/2 - this.position) / (this.width/2));
+    this.position = x - this.startX;
+    this.position = Math.min(this.position, this.width/2);
+    this.position = Math.max(this.position, -this.width/2);
+    if (this.position > 0) {
+      this.opacity[0] = 1;
+      this.opacity[1] = 1 - this.position / (this.width/2);
+    } else {
+      this.opacity[0] = 1 + this.position / (this.width/2);
+      this.opacity[1] = 1;
+    }
+    this.throttled.next(this.position / (this.width/2));
   }
 
   getX(ev) {

@@ -22,7 +22,7 @@ export class SingleTournamentComponent implements OnInit, OnChanges, AfterViewIn
   constructor(public imageFetcher: ImageFetcherService, private el: ElementRef, private config: ConfigService) { }
 
   set location(value) {
-    this.position = 100 * value/2;
+    this.position = Math.abs(value);
     if (value > 0) {
       this.direction = true;
     }
@@ -68,14 +68,14 @@ export class SingleTournamentComponent implements OnInit, OnChanges, AfterViewIn
         break;
       }
     }
-    this.results.emit([winner, loser]);
+    this.results.emit([winner, loser, this.index]);
   }
 
   finish(sliderPosition) {
     if (sliderPosition === 1) {
-      this.select(this.candidates[0]);
-    } else if (sliderPosition === -1) {
       this.select(this.candidates[1]);
+    } else if (sliderPosition === -1) {
+      this.select(this.candidates[0]);
     }
   }
 }

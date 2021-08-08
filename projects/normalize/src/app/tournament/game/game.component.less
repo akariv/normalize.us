@@ -7,7 +7,40 @@
     flex-flow: column;
     align-items: stretch;
     justify-content: flex-start;
-    background-color: black;
+    background-color: @color-dark-brown;
+    position: relative;
+
+    .progress {
+        position: absolute;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 12px;
+        display: flex;
+        flex-flow: row;
+        justify-content: stretch;
+
+        .progress-group {
+            flex: 1 1 auto;
+            
+            display: flex;
+            flex-flow: row;
+            justify-content: stretch;
+            padding: 0 3px;
+            
+            .progress-item {
+                flex: 1 1 auto;
+                margin: 1px;
+                background: #999999;
+                height: 2px;
+
+                &.done {
+                    background: #FFFFFF;
+                }
+            }
+        }
+    }
 
     .placeholder {
         width: 0px;

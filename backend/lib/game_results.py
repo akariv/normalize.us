@@ -15,7 +15,7 @@ def game_results_handler(request: Request):
         results = content['results']
         updates = dict()
         for item in results:
-            winner, loser = tuple(item)
+            winner, loser, *_ = tuple(item)
             updates.setdefault(winner, dict(t=0, v=0))['t'] += 1
             updates.setdefault(loser, dict(t=0, v=0))['t'] += 1
             updates[winner]['v'] += 1

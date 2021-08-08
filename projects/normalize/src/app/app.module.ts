@@ -16,6 +16,7 @@ import { FeatureSelectorComponent } from './map/feature-selector/feature-selecto
 import { DrawerComponent } from './map/drawer/drawer.component';
 import { StartButtonComponent } from './map/start-button/start-button.component';
 import { ReportCardComponent } from './map/report-card/report-card.component';
+import { LoaderComponent } from './tournament/loader/loader.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { ReportCardComponent } from './map/report-card/report-card.component';
     FeatureSelectorComponent,
     DrawerComponent,
     StartButtonComponent,
-    ReportCardComponent
+    ReportCardComponent,
+    LoaderComponent
   ],
   imports: [
     BrowserModule,

@@ -1,6 +1,7 @@
 from io import BytesIO
 import os
 import boto3
+import logging
 
 HEADERS = {
     'Access-Control-Allow-Origin': '*',
@@ -26,12 +27,25 @@ def get_client():
 
 def upload_fileobj_s3(buff: BytesIO, filename, content_type):
     global _uploaded
+    bucket = os.environ['BUCKET_NAME']
     client = get_client()
-    client.upload_fileobj(
-        buff, os.environ['BUCKET_NAME'], filename,
-        ExtraArgs={'ACL': 'public-read', 'ContentType': content_type}
-    )
+
+    success = False
+    for _ in range(3):
+        client.upload_fileobj(
+            buff, bucket, filename,
+            ExtraArgs={'ACL': 'public-read', 'ContentType': content_type}
+        )
+        head = client.head_object(Bucket=bucket, Key=filename)
+        success = bool(head['ContentLength'])
+        if success:
+            break
+    
+    if success:
+        _uploaded += 1
+        if _uploaded % 100 == 0 or _uploaded == 1:
+            print('UPLOADED #{}: {}'.format(_uploaded, filename))
+    else:
+        logging.error('FAILED TO UPLOAD {} to {} ({} bytes)'.format(filename, bucket, buff.getbuffer().nbytes))
     del buff
-    _uploaded += 1
-    if _uploaded % 100 == 0 or _uploaded == 1:
-        print('UPLOADED #{}: {}'.format(_uploaded, filename))
+    return success
