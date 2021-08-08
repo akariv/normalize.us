@@ -55,10 +55,19 @@ export class SelfieComponent implements OnInit, AfterViewInit {
     if (supportedConstraints.height) { videoConstraints.height = {min: this.el.nativeElement.offsetHeight}; }
     if (supportedConstraints.width) { videoConstraints.width = {min: this.el.nativeElement.offsetWidth}; }
     console.log('CONSTRAINTS', JSON.stringify(supportedConstraints));
-    this.videoStream = await navigator.mediaDevices
-      .getUserMedia({
-        video: videoConstraints,
-      });
+    try {
+      this.videoStream = await navigator.mediaDevices
+        .getUserMedia({
+          video: videoConstraints,
+        });
+    } catch (e) {
+      delete videoConstraints.width;
+      delete videoConstraints.height;
+      this.videoStream = await navigator.mediaDevices
+        .getUserMedia({
+          video: videoConstraints,
+        });
+    }
     console.log('STREAM', this.videoStream);
     videoEl.srcObject = this.videoStream;
     fromEvent(videoEl, 'play').pipe(first()).subscribe(() => {
