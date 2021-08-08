@@ -219,7 +219,7 @@ def main():
     tsne_iter = 5000
     ids, activations = load_activations()
     out_dim = 30
-    to_plot = 500
+    to_plot = 450
     side = 256
     ids = ids[:to_plot]
     loaders = []
