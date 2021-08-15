@@ -18,7 +18,7 @@ def get_image_handler(request: Request):
         rows = connection.execute(fetch_image, id=id)
         for row in rows:
             return Response(
-                json.dumps(row),
+                json.dumps(dict(row)),
                 headers={
                     **HEADERS,
                 }
