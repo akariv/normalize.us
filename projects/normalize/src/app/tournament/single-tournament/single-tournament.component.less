@@ -13,9 +13,10 @@
         flex-flow: column;
         align-items: center;
         justify-content: center;
-        flex: 1 1 100%;
+        flex: 0 0 auto;
         position: relative;
         z-index: 2;
+        margin: 32px 0;
 
         span {
             .font-source-sans;
@@ -32,12 +33,11 @@
         flex: 100 1 100vw;
         display: flex;
         flex-flow: row;
-        align-items: flex-end;
+        align-items: center;
         overflow: hidden;
         width: 100%;
         height: 100%;
-        margin-bottom: 64px;
-        overflow: clip visible;
+        overflow: visible;
 
         &.forward {
             justify-content: flex-start;
@@ -69,5 +69,6 @@
 
     app-slider {
         margin-top: auto;
+        flex: 0 0 auto;
     }
 }

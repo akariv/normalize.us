@@ -24,6 +24,7 @@ export class SelfieComponent implements OnInit, AfterViewInit {
   public countdownText = '';
   public videoHeight = 0;
 
+  public started = false;
   public detected = false;
   public src = '';
   public transform = '';
@@ -33,6 +34,7 @@ export class SelfieComponent implements OnInit, AfterViewInit {
   public orientation = '';
   public scale = '';
   public distance = '';
+  public maskOverlayTransform = 'scale(1)';
 
 
   constructor(private faceProcessor: FaceProcessorService, private api: ApiService, private state: StateService,
@@ -51,9 +53,9 @@ export class SelfieComponent implements OnInit, AfterViewInit {
     const supportedConstraints = navigator.mediaDevices.getSupportedConstraints();
     console.log('SUPPORTED', JSON.stringify(supportedConstraints));
     const videoConstraints: any = {};
-    if (supportedConstraints.facingMode) { videoConstraints.facingMode = 'user'; }
-    if (supportedConstraints.height) { videoConstraints.height = {min: this.el.nativeElement.offsetHeight}; }
-    if (supportedConstraints.width) { videoConstraints.width = {min: this.el.nativeElement.offsetWidth}; }
+    if (supportedConstraints.facingMode) { videoConstraints.facingMode = {exact: 'user'}; }
+    if (supportedConstraints.height) { videoConstraints.height = {exact: 1280}; }
+    if (supportedConstraints.width) { videoConstraints.width = {exact: 720}; }
     console.log('CONSTRAINTS', JSON.stringify(supportedConstraints));
     try {
       this.videoStream = await navigator.mediaDevices
@@ -68,11 +70,20 @@ export class SelfieComponent implements OnInit, AfterViewInit {
           video: videoConstraints,
         });
     }
-    console.log('STREAM', this.videoStream);
+    console.log('STREAM', this.videoStream.getVideoTracks()[0].getSettings());
+    console.log('STREAM SIZE', this.videoStream.getVideoTracks()[0].getSettings().width, this.videoStream.getVideoTracks()[0].getSettings().height);
+
     videoEl.srcObject = this.videoStream;
     fromEvent(videoEl, 'play').pipe(first()).subscribe(() => {
       setTimeout(() => {
         this.videoHeight = videoEl.offsetHeight;
+        console.log('DEFAULT SCALE:', this.el.nativeElement.offsetHeight, videoEl.offsetHeight, this.el.nativeElement.offsetHeight/videoEl.offsetHeight);
+        this.faceProcessor.defaultScale = Math.max(
+          this.el.nativeElement.offsetWidth/videoEl.offsetWidth,
+          this.el.nativeElement.offsetHeight/videoEl.offsetHeight,
+          1
+        );
+        this.maskOverlayTransform = `scale(${videoEl.offsetHeight * 0.675 / 254 * this.faceProcessor.defaultScale})`;
         this.triggerDetectFaces();
       }, 1000);
     });
@@ -82,7 +93,11 @@ export class SelfieComponent implements OnInit, AfterViewInit {
     const videoEl: HTMLVideoElement = this.inputVideo.nativeElement;
     this.faceProcessor.processFaces(videoEl, 5)
       .subscribe((event) => {
-        if (event.kind === 'transform') {
+        console.log('EVENT', event);
+        if (event.kind === 'start') {
+          console.log('STARTED!');
+          this.started = true;
+        } else if (event.kind === 'transform') {
           this.transform = event.transform;
           this.transformOrigin = event.transformOrigin;
           this.maskTransform = event.maskTransform;
@@ -90,27 +105,32 @@ export class SelfieComponent implements OnInit, AfterViewInit {
           this.orientation = (event.orientation as Number).toFixed(1);;
           this.scale = (event.scale as Number).toFixed(2);;
           this.detected = event.snapped;
-        } else if (event.kind === 'detection') {
-          if (event.detected) {
-            console.log('DETECTED');
-            if (!this.countdown) {
-              console.log('STARTING COUNTDOWN');
-              this.countdown = this.doCountdown().subscribe((x) => {
-                console.log('COUNTDOWN DONE', x);
-                this.completed.next();
-              })
-            }
-          } else {
-            if (this.countdown) {
-              this.countdown.unsubscribe();
-              this.countdown = null;
-              this.countdownText = '';
-            }
-          }
+        // } else if (event.kind === 'detection') {
+          // if (event.detected) {
+          //   console.log('DETECTED');
+          //   if (!this.countdown) {
+          //     console.log('STARTING COUNTDOWN');
+          //     this.countdown = this.doCountdown().subscribe((x) => {
+          //       console.log('COUNTDOWN DONE', x);
+          //       this.completed.next();
+          //     })
+          //   }
+          // } else {
+          //   if (this.countdown) {
+          //     this.countdown.unsubscribe();
+          //     this.countdown = null;
+          //     this.countdownText = '';
+          //   }
+          // }
           // this.detected = event.detected;
         } else if (event.kind === 'done') {
           console.log('GOT EVENT DONE');
           // this.src = event.content;
+          console.log('STARTING COUNTDOWN');
+          this.countdown = this.doCountdown().subscribe((x) => {
+            console.log('COUNTDOWN DONE', x);
+            this.completed.next();
+          });
           this.state.setRecord({id: 'pending', descriptor: event.descriptor, image: event.image});
           this.state.pushRequest(
             this.api.createNew(event)

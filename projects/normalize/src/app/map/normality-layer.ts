@@ -13,7 +13,7 @@ export class NormalityLayer {
             grid.forEach((g) => {
             const x = g.pos.x;
             const y = - 1 - g.pos.y;
-            const r = 0.24 * (1.0 - (g.item.tournaments ? (g.item.votes * 1.0) / g.item.tournaments : 0));
+            const r = 0.24 * (1.0 - (g.item.tournaments ? (g.item.votes * 1.0) / g.item.tournaments : 0.5));
             features.push({
                 type: 'Feature',
                 properties: {},

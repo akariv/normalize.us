@@ -65,6 +65,7 @@ export class FaceProcessorService {
     size: 10,
     distance: 0.1
   };
+  public defaultScale = 1;
 
   constructor(private faceapi: FaceApiService, private config: ConfigService, private animationManager: AnimationManagerService) {
     if (config.TINY) {
@@ -77,7 +78,7 @@ export class FaceProcessorService {
     this.detectorOptions = this.scoreThresholdHigh;
   }
 
-  processFaces(el: HTMLVideoElement | HTMLImageElement, skipFramesStart=20, snap=this.defaultSnap) {
+  processFaces(el: HTMLVideoElement | HTMLImageElement, skipFramesStart=5, snap=this.defaultSnap) {
     const compositionFrame = this.getCompositionFrame();
     const canvas = document.createElement('canvas');
     const elementHeight = el.offsetHeight;
@@ -93,7 +94,7 @@ export class FaceProcessorService {
     const ratio = Math.min(el.offsetWidth / canvas.width, el.offsetHeight / canvas.height);
     // console.log('RATIO', ratio);
     const context = canvas.getContext('2d');
-    const progress = new ReplaySubject<any>(1);
+    const progress = new ReplaySubject<any>(2);
 
     let frames = 0;
     let skipFrames = skipFramesStart;
@@ -107,6 +108,14 @@ export class FaceProcessorService {
       kind: 'start',
       observer: animationObs
     });
+    progress.next({
+      transformOrigin: `${el.offsetWidth*0.5}px ${el.offsetHeight*0.5}px`,
+      transform: `translate(0px,0px)rotate(0rad)scale(${this.defaultScale})`,
+      kind: 'transform',
+      snapped: false,
+      orientation: NaN, scale: NaN, distance: NaN
+    });
+    console.log('SENT!');
     this.faceapi.ready.pipe(
       switchMap(() => {
         // console.log('FP: READY');
@@ -130,7 +139,7 @@ export class FaceProcessorService {
           console.log('NO DETECTION');
           progress.next({
             transformOrigin: `${el.offsetWidth*0.5}px ${el.offsetHeight*0.5}px`,
-            transform: `translate(0px,0px)rotate(0rad)scale(1)`,
+            transform: `translate(0px,0px)rotate(0rad)scale(${this.defaultScale})`,
             kind: 'transform',
             snapped: false,
             orientation: NaN, scale: NaN, distance: NaN
@@ -188,9 +197,9 @@ export class FaceProcessorService {
           progress.next({
             // transformOrigin: `${center.x * ratio}px ${center.y * ratio}px`,
             transformOrigin: `${el.offsetWidth*0.5 + (center.x - canvas.width/2)* ratio}px ${el.offsetHeight*0.5 + (center.y-canvas.height/2) * ratio}px`,
-            transform: `translate(${-(center.x - canvas.width/2)* ratio}px,${-(center.y-canvas.height/2) * ratio}px)rotate(${rotation}rad)scale(${scale})`,
+            transform: `translate(${-(center.x - canvas.width/2)* ratio}px,${-(center.y-canvas.height/2) * ratio}px)rotate(${rotation}rad)scale(${scale*this.defaultScale})`,
             // preview: canvas.toDataURL(),
-            maskTransform: `translate(${canvas.width/2 * ratio}px,${canvas.height/2 * ratio}px)rotate(0rad)scale(${magnification})`,
+            maskTransform: `translate(${canvas.width/2 * ratio}px,${canvas.height/2 * ratio}px)rotate(0rad)scale(${magnification*this.defaultScale})`,
             kind: 'transform',
             snapped: true,
             orientation, scale, distance: distance / canvas.height  
@@ -199,9 +208,9 @@ export class FaceProcessorService {
         } else {
           progress.next({
             transformOrigin: `${el.offsetWidth*0.5}px ${el.offsetHeight*0.5}px`,
-            transform: `translate(0px,0px)rotate(0rad)scale(1)`,
+            transform: `translate(0px,0px)rotate(0rad)scale(${this.defaultScale})`,
             // maskTransform: `translate(0px,0px)rotate(0rad)scale(1)`,
-            maskTransform: `translate(${topPoint.x * ratio}px,${topPoint.y * ratio}px)rotate(${-rotation}rad)scale(${magnification})`,
+            maskTransform: `translate(${topPoint.x * ratio}px,${topPoint.y * ratio}px)rotate(${-rotation}rad)scale(${magnification*this.defaultScale})`,
             kind: 'transform',
             snapped: false,
             orientation, scale, distance: distance / canvas.height
