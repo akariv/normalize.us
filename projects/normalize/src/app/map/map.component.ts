@@ -38,9 +38,9 @@ export class MapComponent implements OnInit, AfterViewInit {
   grid = new Subject<GridItem[]>();
 
   hasSelfie = false;
-  focusedItem: ImageItem = null;
+  focusedItem: GridItem = null;
   overlay = true;
-  drawerOpen = true;
+  _drawerOpen = true;
 
   @ViewChild('map') mapElement:  ElementRef;
 
@@ -93,21 +93,25 @@ export class MapComponent implements OnInit, AfterViewInit {
         const x = Math.floor(latlng.lng);
         const y = -Math.ceil(latlng.lat);
         const current = this.focusedItem;
-        this.focusedItem = null;
+        let proposed = null;
         if (x >= 0 && y >= 0) {
           for (const item of this.configuration.grid) {
             const posX = item.pos.x;
             const posY = item.pos.y;
             if (x === posX && y === posY) {
-              this.focusedItem = item.item;
-              this.drawerOpen = true;
+              proposed = item;
+              console.log('CLICKED', x, y, item);
               break;
             }
           }
         }
-        if (current !== this.focusedItem && this.focusedItem !== null) {
+        if (current !== proposed || proposed === null) {
           this.drawerOpen = false;
+        }
+        if (proposed !== null) {
           setTimeout(() => {
+            console.log('OPENING...');
+            this.focusedItem = proposed;
             this.drawerOpen = true;
           }, 500);
         }
@@ -175,4 +179,30 @@ export class MapComponent implements OnInit, AfterViewInit {
   start() {
     this.router.navigate(['/selfie']);
   }
+
+  set drawerOpen(open: boolean) {
+    this._drawerOpen = open;
+    if (this.map && this.focusedItem) {
+      const zoom = this.map.getZoom();
+      if (open) {
+        this.map.fitBounds(
+          [[-this.focusedItem.pos.y - 1, this.focusedItem.pos.x], [-this.focusedItem.pos.y, this.focusedItem.pos.x + 1]], {
+            animate: true,
+            maxZoom: zoom,
+            paddingBottomRight: [
+              0, open ? 500 : 70
+            ],
+          }
+        );
+      } else {
+        this.map.setView([-this.focusedItem.pos.y - 0.5, this.focusedItem.pos.x + 0.5], zoom);
+        // this.focusedItem = null;
+      }
+    }
+  } 
+
+  get drawerOpen() {
+    return this._drawerOpen;
+  }
+
 }

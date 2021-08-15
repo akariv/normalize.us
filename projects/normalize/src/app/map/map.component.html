@@ -13,7 +13,7 @@
         </div>
     </ng-container>
     <ng-container *ngIf='focusedItem'>
-        <app-report-card [item]='focusedItem'></app-report-card>
+        <app-report-card [item]='focusedItem.item'></app-report-card>
     </ng-container>
 </app-drawer>
 <app-start-button label='start' (click)='start()'></app-start-button>
