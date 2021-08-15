@@ -93,7 +93,7 @@ export class SelfieComponent implements OnInit, AfterViewInit {
     const videoEl: HTMLVideoElement = this.inputVideo.nativeElement;
     this.faceProcessor.processFaces(videoEl, 5)
       .subscribe((event) => {
-        console.log('EVENT', event);
+        // console.log('EVENT', event);
         if (event.kind === 'start') {
           console.log('STARTED!');
           this.started = true;
@@ -105,6 +105,7 @@ export class SelfieComponent implements OnInit, AfterViewInit {
           this.orientation = (event.orientation as Number).toFixed(1);;
           this.scale = (event.scale as Number).toFixed(2);;
           this.detected = event.snapped;
+          console.log('TRANSFORM', event.transform);
         // } else if (event.kind === 'detection') {
           // if (event.detected) {
           //   console.log('DETECTED');
@@ -131,13 +132,13 @@ export class SelfieComponent implements OnInit, AfterViewInit {
             console.log('COUNTDOWN DONE', x);
             this.completed.next();
           });
-          this.state.setRecord({id: 'pending', descriptor: event.descriptor, image: event.image});
+          this.state.setOwnInfo({id: 'pending', descriptor: event.descriptor, image: event.image});
           this.state.pushRequest(
             this.api.createNew(event)
             .pipe(
               switchMap((result: any) => {
                 if (result.success) {
-                  this.state.setOwnId(result.id);
+                  this.state.setOwnInfo(result);
                 }
                 return this.completed;
               })

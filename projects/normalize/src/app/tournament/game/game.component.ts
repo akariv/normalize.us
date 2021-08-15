@@ -27,9 +27,7 @@ export class GameComponent implements OnInit {
   constructor(private api: ApiService, private state: StateService, public imageFetcher: ImageFetcherService, private router: Router) {
     api.getGame().subscribe((game) => {
       this.game = game;
-      if (state.ownRecord) {
-        this.game.records.push(state.ownRecord);
-      }
+      this.game.records.push({id: 'pending', image: state.getOwnImageID()});
       console.log('GOT GAME', game);
       this.next();
     })
@@ -92,7 +90,7 @@ export class GameComponent implements OnInit {
       this.state.pushRequest(
         from([this.results]).pipe(
           map((results) => {
-            return results.map((t) => t.map((c) => c === 'pending'? this.state.getOwnId() : c));
+            return results.map((t) => t.map((c) => c === 'pending'? this.state.getOwnItemID() : c));
           }),
           switchMap((results) => {
             return this.api.saveGameResults(results);

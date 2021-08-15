@@ -12,6 +12,7 @@ import { StateService } from '../state.service';
 import { LayoutService } from '../layout.service';
 import { Router } from '@angular/router';
 import { GridItem, ImageItem } from '../datatypes';
+import { TSNEOverlay } from './tsne-overlay';
 
 @Component({
   selector: 'app-map',
@@ -35,7 +36,8 @@ export class MapComponent implements OnInit, AfterViewInit {
   tileLayers: any = {};
   _feature = null;
   normalityLayer: NormalityLayer;
-  grid = new Subject<GridItem[]>();
+  tsneOverlay: TSNEOverlay;
+  grid = new ReplaySubject<GridItem[]>(1);
 
   hasSelfie = false;
   focusedItem: GridItem = null;
@@ -47,7 +49,6 @@ export class MapComponent implements OnInit, AfterViewInit {
   constructor(private hostElement: ElementRef, private api: ApiService,
               private fetchImage: ImageFetcherService, private state: StateService,
               private layout: LayoutService, private router: Router) {
-    this.hasSelfie = this.state.imageID || this.state.ownRecord;
   }
 
   ngOnInit(): void {
@@ -59,7 +60,10 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    console.log('HAS SELFIE', this.state.imageID, this.state.descriptor);
+    this.hasSelfie = this.state.imageID || this.state.descriptor;
     this.ready.pipe(first()).subscribe(() => {
+      console.log('READY');
       this.maxZoom = this.configuration.max_zoom;
       // Create map
       this.map = L.map(this.mapElement.nativeElement, {
@@ -74,7 +78,6 @@ export class MapComponent implements OnInit, AfterViewInit {
       if (this.layout.desktop) {
         new L.Control.Zoom({ position: 'bottomleft' }).addTo(this.map);
       }
-
       // Tile layers
       for (const feature of ['faces', 'mouths', 'eyes', 'noses', 'foreheads']) {
         this.tileLayers[feature] = L.tileLayer(`https://normalizing-us-files.fra1.cdn.digitaloceanspaces.com/feature-tiles/0/${feature}/{z}/{x}/{y}`, {
@@ -118,6 +121,36 @@ export class MapComponent implements OnInit, AfterViewInit {
       });
       // Normality layer
       this.normalityLayer = new NormalityLayer(this.map, this.grid);
+      // TSNE Overlay
+      this.tsneOverlay = new TSNEOverlay(this.map, this.grid, this.configuration.dim, this.fetchImage);
+      if (this.state.getOwnImageID()) {
+        if (this.state.getDescriptor()) {
+          console.log('HAS DESCRIPTOR');
+          const item: ImageItem = {
+            id: this.state.getOwnItemID() + '',
+            image: this.state.getOwnImageID(),
+            descriptor: this.state.getDescriptor(),
+            votes: 0,
+            tournaments: 0,
+            landmarks: []
+          };
+          this.tsneOverlay.addImageLayer(item).subscribe(() => {
+            this.overlay = false;
+            this.drawerOpen = false;
+            this.normalityLayer.refresh();
+          });
+      } else {
+          console.log('NO DESCRIPTOR', this.state.getOwnItemID());
+          this.api.getImage(this.state.getOwnItemID()).subscribe((item) => {
+            console.log('MY ITEM', item);
+            this.tsneOverlay.addImageLayer(item as ImageItem).subscribe(() => {
+              this.overlay = false;
+              this.drawerOpen = false;
+              this.normalityLayer.refresh();
+            });
+          });
+        }
+      }
       this.grid.next(this.configuration.grid);
     });
   }

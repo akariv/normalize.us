@@ -12,7 +12,7 @@ export class MainComponent implements OnInit {
   constructor(private state: StateService, private router: Router) { }
 
   ngOnInit(): void {
-    const hasSelfie = this.state.imageID || this.state.ownRecord;
+    const hasSelfie = this.state.imageID || this.state.descriptor;
     if (!hasSelfie) {
       this.router.navigate(['/selfie']);
     } else if (!this.state.played) {
