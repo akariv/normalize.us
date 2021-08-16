@@ -86,6 +86,7 @@ export class SingleTournamentComponent implements OnInit, OnChanges, AfterViewIn
         break;
       }
     }
+    // console.log('SELECT', winner, loser, this.index);
     from([true]).pipe(
       tap(() => {
         this.state = 'end';
@@ -95,11 +96,13 @@ export class SingleTournamentComponent implements OnInit, OnChanges, AfterViewIn
         this.direction = null;
       }),
     ).subscribe(() => {
+      // console.log('RESULTS', winner, loser, this.index);
       this.results.emit([winner, loser, this.index]);
     });  
   }
 
   finish(sliderPosition) {
+    // console.log('FINISH', sliderPosition);
     if (sliderPosition === 1) {
       this.select(this.candidates[1]);
     } else if (sliderPosition === -1) {

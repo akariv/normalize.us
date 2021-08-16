@@ -70,14 +70,12 @@ export class SelfieComponent implements OnInit, AfterViewInit {
           video: videoConstraints,
         });
     }
-    console.log('STREAM', this.videoStream.getVideoTracks()[0].getSettings());
     console.log('STREAM SIZE', this.videoStream.getVideoTracks()[0].getSettings().width, this.videoStream.getVideoTracks()[0].getSettings().height);
 
     videoEl.srcObject = this.videoStream;
     fromEvent(videoEl, 'play').pipe(first()).subscribe(() => {
       setTimeout(() => {
         this.videoHeight = videoEl.offsetHeight;
-        console.log('DEFAULT SCALE:', this.el.nativeElement.offsetHeight, videoEl.offsetHeight, this.el.nativeElement.offsetHeight/videoEl.offsetHeight);
         this.faceProcessor.defaultScale = Math.max(
           this.el.nativeElement.offsetWidth/videoEl.offsetWidth,
           this.el.nativeElement.offsetHeight/videoEl.offsetHeight,
@@ -105,7 +103,7 @@ export class SelfieComponent implements OnInit, AfterViewInit {
           this.orientation = (event.orientation as Number).toFixed(1);;
           this.scale = (event.scale as Number).toFixed(2);;
           this.detected = event.snapped;
-          console.log('TRANSFORM', event.transform);
+          // console.log('TRANSFORM', event.transform);
         // } else if (event.kind === 'detection') {
           // if (event.detected) {
           //   console.log('DETECTED');
@@ -125,11 +123,11 @@ export class SelfieComponent implements OnInit, AfterViewInit {
           // }
           // this.detected = event.detected;
         } else if (event.kind === 'done') {
-          console.log('GOT EVENT DONE');
+          // console.log('GOT EVENT DONE');
           // this.src = event.content;
-          console.log('STARTING COUNTDOWN');
+          // console.log('STARTING COUNTDOWN');
           this.countdown = this.doCountdown().subscribe((x) => {
-            console.log('COUNTDOWN DONE', x);
+            // console.log('COUNTDOWN DONE', x);
             this.completed.next();
           });
           this.state.setOwnInfo({id: 'pending', descriptor: event.descriptor, image: event.image});

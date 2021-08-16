@@ -92,7 +92,6 @@ export class TSNEOverlay {
     const center: L.LatLngExpression = [-pos.y + 0.5, pos.x + 0.5];
     this.map.flyTo(this.map.getCenter(), this.maxZoom - 5, {animate: true, duration: 1});
     setTimeout(() => {
-      console.log('fitbounds');
       this.map.flyTo(center, this.maxZoom, {animate: true, duration: 1});
     }, 3000);
   }

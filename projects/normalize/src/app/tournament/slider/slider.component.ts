@@ -25,6 +25,7 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
   startX = 0;
   position = 0;
   opacity = [null, null]
+  markSelected = false;
 
   constructor(private el: ElementRef) {
     this.throttled.pipe(
@@ -41,6 +42,7 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.opacity = [1, 1]
       if (this.state === 'start') {
+        this.markSelected = false;
         this.position = 0;
         this.location.next(0);
       }
@@ -56,8 +58,8 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
         fromEvent(handle, 'mousedown').subscribe((ev: MouseEvent) => { if (ev.button === 0) { this.mousedown(idx, ev); }}),
         fromEvent(handle, 'touchstart').subscribe((ev: MouseEvent) => { this.mousedown(idx, ev); }),
         
-        fromEvent(window, 'mouseup').subscribe((ev: Event) => { this.mouseup(idx); }),
-        fromEvent(window, 'touchend').subscribe((ev: Event) => { this.mouseup(idx); }),  
+        fromEvent(window, 'mouseup').subscribe((ev: Event) => { this.mouseup('m'); }),
+        fromEvent(window, 'touchend').subscribe((ev: Event) => { this.mouseup('t'); }),  
       ]);
     }
   }
@@ -68,17 +70,26 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  mouseup(idx) {
+  mouseup(type) {
+    // console.log('MOUSEUP', type);
     setTimeout(() => {
-      if (this.position >= this.width * 0.35) {
-        this.selected.next(-1);
-        this.position = this.width / 2;
-        this.throttled.next(1);
+      if (this.position >= this.width * 0.25) {
+        if (!this.markSelected) {
+          this.markSelected = true;
+          // console.log('SELECTING', -1);
+          this.selected.next(-1);
+          this.position = this.width / 2;
+          this.throttled.next(1);
+        }
       }
-      else if (this.position <= -this.width * 0.35) {
-        this.selected.next(1);
-        this.position = -this.width / 2;
-        this.throttled.next(-1);
+      else if (this.position <= -this.width * 0.25) {
+        if (!this.markSelected) {
+          this.markSelected = true;
+          // console.log('SELECTING', 1);
+          this.selected.next(1);
+          this.position = -this.width / 2;
+          this.throttled.next(-1);
+        }
       } else {      
         this.position = 0;
         this.opacity = [1, 1];
@@ -88,7 +99,7 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
         this.moveSubscripion.unsubscribe();
         this.moveSubscripion = null;
       }
-    });
+    }, 0);
   }
 
   mousedown(idx, ev) {

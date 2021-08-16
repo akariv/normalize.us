@@ -103,7 +103,7 @@ export class MapComponent implements OnInit, AfterViewInit {
             const posY = item.pos.y;
             if (x === posX && y === posY) {
               proposed = item;
-              console.log('CLICKED', x, y, item);
+              // console.log('CLICKED', x, y, item);
               break;
             }
           }
@@ -113,7 +113,7 @@ export class MapComponent implements OnInit, AfterViewInit {
         }
         if (proposed !== null) {
           setTimeout(() => {
-            console.log('OPENING...');
+            // console.log('OPENING...');
             this.focusedItem = proposed;
             this.drawerOpen = true;
           }, 500);
@@ -125,7 +125,7 @@ export class MapComponent implements OnInit, AfterViewInit {
       this.tsneOverlay = new TSNEOverlay(this.map, this.grid, this.configuration.dim, this.fetchImage, this.maxZoom);
       if (this.state.getOwnImageID()) {
         if (this.state.getDescriptor()) {
-          console.log('HAS DESCRIPTOR');
+          // console.log('HAS DESCRIPTOR');
           const item: ImageItem = {
             id: this.state.getOwnItemID() + '',
             image: this.state.getOwnImageID(),
@@ -146,9 +146,9 @@ export class MapComponent implements OnInit, AfterViewInit {
             this.drawerOpen = true;
           });
       } else {
-          console.log('NO DESCRIPTOR', this.state.getOwnItemID());
+          // console.log('NO DESCRIPTOR', this.state.getOwnItemID());
           this.api.getImage(this.state.getOwnItemID()).subscribe((item) => {
-            console.log('MY ITEM', item);
+            // console.log('MY ITEM', item);
             this.tsneOverlay.addImageLayer(item as ImageItem).pipe(
               tap(() => {
                 this.overlay = false;

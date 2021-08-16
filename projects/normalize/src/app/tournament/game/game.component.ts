@@ -31,9 +31,6 @@ export class GameComponent implements OnInit {
   constructor(private api: ApiService, private state: StateService, public imageFetcher: ImageFetcherService, private router: Router) {
     api.getGame().subscribe((game) => {
       this.game = game;
-      if (state.getOwnImageID()) {
-        this.game.records.push({id: 'pending', image: state.getOwnImageID()});
-      }
       console.log('GOT GAME', game);
       this.next();
     })
@@ -47,15 +44,21 @@ export class GameComponent implements OnInit {
       if (this.tuples.length === 0) {
         this.index += 1;
         this.feature = this.FEATURES[this.index];
-        console.log('INDEX = ', this.index, 'FEATURE=', this.feature);
+        // console.log('INDEX = ', this.index, 'FEATURE=', this.feature);
         this.tuples = this.randomTuples(this.TUPLES_PER_FEATURE);
+        // console.log('TUP', this.tuples.length, this.tuples);
+        if (this.feature === 4) {
+          if (this.state.getOwnImageID()) {
+            this.tuples[this.tuples.length - 1][1] = {id: 'pending', image: this.state.getOwnImageID()};
+          }
+        }
         // for (const t of this.tuples) {
         //   this.imageFetcher.fetchImage(t[0]);
         //   this.imageFetcher.fetchImage(t[1]);
         // }
       }
       this.candidates = this.tuples.shift();
-      console.log('CANDIDATES', this.candidates);
+      // console.log('CANDIDATES', this.candidates);
       if (this.index === this.maxIndex) {
         this.saveGameResults();
       }

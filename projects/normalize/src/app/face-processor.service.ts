@@ -115,7 +115,7 @@ export class FaceProcessorService {
       snapped: false,
       orientation: NaN, scale: NaN, distance: NaN
     });
-    console.log('SENT!');
+    // console.log('SENT!');
     this.faceapi.ready.pipe(
       switchMap(() => {
         // console.log('FP: READY');
