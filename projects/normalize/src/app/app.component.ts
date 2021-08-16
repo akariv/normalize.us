@@ -8,7 +8,9 @@ import { LayoutService } from './layout.service';
 })
 export class AppComponent implements AfterViewInit {
 
-  constructor(private layout: LayoutService, private el: ElementRef) {}
+  constructor(private layout: LayoutService, private el: ElementRef) {
+    alert('Normalizi.ng is in early testing phase, please do not share this link yet and send any bug or feedback to mushon@shual.com');
+  }
 
   ngAfterViewInit() {
     setTimeout(() => {
