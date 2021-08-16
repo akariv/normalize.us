@@ -14,9 +14,13 @@ import { StateService } from '../../state.service';
 export class GameComponent implements OnInit {
 
   TUPLES_PER_FEATURE = 5;
+  FEATURES = [
+    0, 3, 2, 1, 4
+  ];
 
   game: any;
   index = -1;
+  feature = -1;
   maxIndex = 5;
   tuples = [];
   candidates = [];
@@ -42,7 +46,8 @@ export class GameComponent implements OnInit {
     if (this.index < this.maxIndex) {
       if (this.tuples.length === 0) {
         this.index += 1;
-        console.log('INDEX = ', this.index);
+        this.feature = this.FEATURES[this.index];
+        console.log('INDEX = ', this.index, 'FEATURE=', this.feature);
         this.tuples = this.randomTuples(this.TUPLES_PER_FEATURE);
         // for (const t of this.tuples) {
         //   this.imageFetcher.fetchImage(t[0]);

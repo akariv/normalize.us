@@ -1,6 +1,6 @@
 <ng-container *ngIf='game && game.records && loaded === game.records.length'>
     <ng-container *ngIf='index < maxIndex && index >= 0'>
-        <app-single-tournament [candidates]='candidates' [index]='index' (results)='addResults($event)'>
+        <app-single-tournament [candidates]='candidates' [index]='feature' (results)='addResults($event)'>
             <div class='progress'>
                 <div *ngFor='let _ of Array(maxIndex); let i1 = index' class='progress-group'>
                     <div *ngFor='let _ of Array(TUPLES_PER_FEATURE); let i2 = index' class='progress-item'

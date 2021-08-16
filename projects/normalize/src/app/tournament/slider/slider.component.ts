@@ -38,12 +38,13 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnChanges() {
-    this.opacity = [1, 1]
-    if (this.state === 'start') {
-      this.position = 0;
-      this.opacity = [1, 1];
-      this.location.next(0);
-    }
+    setTimeout(() => {
+      this.opacity = [1, 1]
+      if (this.state === 'start') {
+        this.position = 0;
+        this.location.next(0);
+      }
+    }, 0);
   }
 
   ngAfterViewInit() {
@@ -68,24 +69,26 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   mouseup(idx) {
-    if (this.position >= this.width * 0.35) {
-      this.selected.next(-1);
-      this.position = this.width / 2;
-      this.throttled.next(1);
-    }
-    else if (this.position <= -this.width * 0.35) {
-      this.selected.next(1);
-      this.position = -this.width / 2;
-      this.throttled.next(-1);
-    } else {      
-      this.position = 0;
-      this.opacity = [1, 1];
-      this.location.next(0);
-    }
-    if (this.moveSubscripion) {
-      this.moveSubscripion.unsubscribe();
-      this.moveSubscripion = null;
-    }
+    setTimeout(() => {
+      if (this.position >= this.width * 0.35) {
+        this.selected.next(-1);
+        this.position = this.width / 2;
+        this.throttled.next(1);
+      }
+      else if (this.position <= -this.width * 0.35) {
+        this.selected.next(1);
+        this.position = -this.width / 2;
+        this.throttled.next(-1);
+      } else {      
+        this.position = 0;
+        this.opacity = [1, 1];
+        this.location.next(0);
+      }
+      if (this.moveSubscripion) {
+        this.moveSubscripion.unsubscribe();
+        this.moveSubscripion = null;
+      }
+    });
   }
 
   mousedown(idx, ev) {

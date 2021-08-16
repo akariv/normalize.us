@@ -80,7 +80,7 @@ export class MapComponent implements OnInit, AfterViewInit {
       }
       // Tile layers
       for (const feature of ['faces', 'mouths', 'eyes', 'noses', 'foreheads']) {
-        this.tileLayers[feature] = L.tileLayer(`https://normalizing-us-files.fra1.cdn.digitaloceanspaces.com/feature-tiles/0/${feature}/{z}/{x}/{y}`, {
+        this.tileLayers[feature] = L.tileLayer(`https://normalizing-us-files.fra1.cdn.digitaloceanspaces.com/feature-tiles/${this.configuration.set}/${feature}/{z}/{x}/{y}`, {
           maxZoom: 9,
           minZoom: this.configuration.min_zoom,
           bounds: [[-this.configuration.dim - 1, 0], [-1, this.configuration.dim]],

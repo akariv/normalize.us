@@ -164,7 +164,7 @@ def create_tsne_image(grid_jv, img_collection, out_dim, to_plot,
     # buff.seek(0)
     return im, info
 
-def create_tiles(filename, image: Image, out_dim, res, info):
+def create_tiles(filename, image: Image, out_dim, res, info, current_set):
     assert res[0] == res[1]
     dim_zoom = round(math.log2(out_dim))
     edge = 2**math.ceil(math.log2(out_dim)) * res[0]
@@ -191,7 +191,7 @@ def create_tiles(filename, image: Image, out_dim, res, info):
 
             for x in range(num_cuts):
                 for y in range(num_cuts):
-                    key = f'feature-tiles/0/{filename}/{zoom}/{x}/{y}'
+                    key = f'feature-tiles/{current_set}/{filename}/{zoom}/{x}/{y}'
                     left = math.floor(x * cut_size)
                     upper = math.floor(y * cut_size)
                     right = math.ceil((x+1) * cut_size - 1)
@@ -230,6 +230,14 @@ def main():
         loaders.append(ImageLoader([item['image'] for item in ids[0:to_plot]], [int(size*w/dim), int(size*h/dim), img_location, img_size]))
     loaders[0].start()
 
+    try:
+        current_config = requests.get('https://normalizing-us-files.fra1.digitaloceanspaces.com/tsne.json').json()
+        current_set = current_config.get('set', 0)
+    except:
+        current_set = 0
+    current_set += 1
+    current_set %= 10
+
     print("Generating 2D representation.")
     X_2d = generate_tsne(activations, to_plot, perplexity, tsne_iter)
     print("Generating image grid (%dx%d, %d images)" % (out_dim, out_dim, len(ids)))
@@ -250,9 +258,10 @@ def main():
         image, info = create_tsne_image(grid, ids, out_dim, to_plot,
                                         (side, side),  # res
                                         offset, size, loaders.pop(0))
+        info['set'] = current_set
         if len(loaders) > 0:
             loaders[0].start()
-        create_tiles(filename, image, out_dim, (side, side), info)
+        create_tiles(filename, image, out_dim, (side, side), info, current_set)
 
 
 def calc_tsne_handler(event, context):
