@@ -9,7 +9,7 @@
     <div class='face-mask-overlay' *ngIf='videoHeight'>
         <img [class.visible]='!detected' src='assets/img/frame-overlay.svg' [style.transform]='maskOverlayTransform'>
         <img [class.visible]='detected' src='assets/img/frame-overlay2.svg' [style.transform]='maskOverlayTransform'>
-        <svg width="194" height="254" fill="none" xmlns="http://www.w3.org/2000/svg" [style.transform]='maskTransform'>
+        <svg width="194" height="254" fill="none" xmlns="http://www.w3.org/2000/svg" [style.transform]='maskOverlayTransform'>
             <g filter="url(#filter0_d)">
                 <text style="mix-blend-mode:lighten" fill='white' transform='scale(-1, 1)translate(-97,60)'>{{countdownText}}</text>
             </g>
