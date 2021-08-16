@@ -1,4 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { from } from 'rxjs';
+import { delay, tap } from 'rxjs/operators';
 import { ConfigService } from '../../config.service';
 import { ImageFetcherService } from '../../image-fetcher.service';
 
@@ -17,7 +19,8 @@ export class SingleTournamentComponent implements OnInit, OnChanges, AfterViewIn
   sizes = [50, 50];
   position = 0;
   baseScale = 1;
-  direction = true;
+  direction = null;
+  state = 'start';
 
   constructor(public imageFetcher: ImageFetcherService, private el: ElementRef, private config: ConfigService) { }
 
@@ -42,9 +45,24 @@ export class SingleTournamentComponent implements OnInit, OnChanges, AfterViewIn
   }
 
   ngOnChanges() {
-    if (this.el.nativeElement) {
-      this.updateScales();
-    }
+    from([true]).pipe(
+      tap(() => {
+        this.state = 'start';
+        this.direction = null;
+      }),
+      delay(100),
+      tap(() => {
+        this.state = 'starting';
+      }),
+      delay(500),
+      tap(() => {
+        this.state = '';
+      }),
+    ).subscribe(() => {
+      if (this.el.nativeElement) {
+        this.updateScales();
+      }
+    });  
   }
 
   ngAfterViewInit() {
@@ -68,7 +86,17 @@ export class SingleTournamentComponent implements OnInit, OnChanges, AfterViewIn
         break;
       }
     }
-    this.results.emit([winner, loser, this.index]);
+    from([true]).pipe(
+      tap(() => {
+        this.state = 'end';
+      }),
+      delay(500),
+      tap(() => {
+        this.direction = null;
+      }),
+    ).subscribe(() => {
+      this.results.emit([winner, loser, this.index]);
+    });  
   }
 
   finish(sliderPosition) {

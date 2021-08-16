@@ -4,7 +4,7 @@ import * as L from 'leaflet';
 import * as geojson from 'geojson';
 
 import { ReplaySubject, Subject } from 'rxjs';
-import { first } from 'rxjs/operators';
+import { delay, first, switchMap, tap } from 'rxjs/operators';
 import { ApiService } from '../api.service';
 import { ImageFetcherService } from '../image-fetcher.service';
 import { NormalityLayer } from './normality-layer';
@@ -70,7 +70,7 @@ export class MapComponent implements OnInit, AfterViewInit {
         crs: L.CRS.Simple,
         maxZoom: this.maxZoom,
         minZoom: this.configuration.min_zoom,
-        maxBounds: [[-this.configuration.dim * 2, this.configuration.dim], [-this.configuration.dim, this.configuration.dim * 2]],
+        maxBounds: [[-this.configuration.dim * 2, -this.configuration.dim], [this.configuration.dim, this.configuration.dim * 2]],
         center: [-this.configuration.dim/2, this.configuration.dim/2],
         zoom: this.configuration.min_zoom + 2,
         zoomControl: false,
@@ -134,19 +134,31 @@ export class MapComponent implements OnInit, AfterViewInit {
             tournaments: 0,
             landmarks: []
           };
-          this.tsneOverlay.addImageLayer(item).subscribe(() => {
-            this.overlay = false;
-            this.drawerOpen = false;
-            this.normalityLayer.refresh();
+          this.tsneOverlay.addImageLayer(item).pipe(
+            tap(() => {
+              this.overlay = false;
+              this.drawerOpen = false;
+              this.normalityLayer.refresh();
+            }),
+            delay(3000),
+          ).subscribe((gi) => {
+            this.focusedItem = gi;
+            this.drawerOpen = true;
           });
       } else {
           console.log('NO DESCRIPTOR', this.state.getOwnItemID());
           this.api.getImage(this.state.getOwnItemID()).subscribe((item) => {
             console.log('MY ITEM', item);
-            this.tsneOverlay.addImageLayer(item as ImageItem).subscribe(() => {
-              this.overlay = false;
-              this.drawerOpen = false;
-              this.normalityLayer.refresh();
+            this.tsneOverlay.addImageLayer(item as ImageItem).pipe(
+              tap(() => {
+                this.overlay = false;
+                this.drawerOpen = false;
+                this.normalityLayer.refresh();
+              }),
+              delay(3000),
+            ).subscribe((gi) => {
+              this.focusedItem = gi;
+              this.drawerOpen = true;
             });
           });
         }
@@ -221,7 +233,7 @@ export class MapComponent implements OnInit, AfterViewInit {
         this.map.fitBounds(
           [[-this.focusedItem.pos.y - 1, this.focusedItem.pos.x], [-this.focusedItem.pos.y, this.focusedItem.pos.x + 1]], {
             animate: true,
-            maxZoom: zoom,
+            // maxZoom: this.maxZoom,
             paddingBottomRight: [
               0, open ? 500 : 70
             ],

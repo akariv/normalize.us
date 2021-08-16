@@ -27,7 +27,9 @@ export class GameComponent implements OnInit {
   constructor(private api: ApiService, private state: StateService, public imageFetcher: ImageFetcherService, private router: Router) {
     api.getGame().subscribe((game) => {
       this.game = game;
-      this.game.records.push({id: 'pending', image: state.getOwnImageID()});
+      if (state.getOwnImageID()) {
+        this.game.records.push({id: 'pending', image: state.getOwnImageID()});
+      }
       console.log('GOT GAME', game);
       this.next();
     })

@@ -1,4 +1,8 @@
-<div class='slider'>
+<div class='slider'
+    [class.state-start]='state === "start"' 
+    [class.state-starting]='state === "starting"' 
+    [class.state-end]='state === "end"'
+>
     <div class='handle left' [class.moving]='!!moveSubscripion' #handleLeft [style.left]='position + "px"' [style.opacity]='opacity[0]'></div>
     <div class='endpoint'></div>
     <div class='handle right' [class.moving]='!!moveSubscripion' #handleRight [style.right]='-position + "px"' [style.opacity]='opacity[1]'></div>

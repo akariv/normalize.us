@@ -2,7 +2,7 @@ import * as L from 'leaflet';
 import { Observable, ReplaySubject } from "rxjs";
 import { euclideanDistance } from 'face-api.js';
 import { GridItem, ImageItem } from '../datatypes';
-import { first, tap } from 'rxjs/operators';
+import { first, map, tap } from 'rxjs/operators';
 import { ImageFetcherService } from '../image-fetcher.service';
 
 class Overlaid {
@@ -27,7 +27,7 @@ export class TSNEOverlay {
   }
   
   addImageLayer(image: ImageItem) {
-    return this.gridObs.pipe(first(), tap((grid) => {
+    return this.gridObs.pipe(first(), map((grid) => {
       let found = null;
       this.grid.forEach((gi) => {
         if (gi.item.id === image.id) {
@@ -53,11 +53,14 @@ export class TSNEOverlay {
         );
         overlay.addTo(this.map);
         this.animateMap(emptyPosition);
-        this.grid.push({pos: emptyPosition, item: image});
+        const gi = {pos: emptyPosition, item: image};
+        this.grid.push(gi);
+        return gi;
       } else {
         console.log('FOUND in GRID');
         // const bounds: L.LatLngBoundsExpression = [[-found.pos.y-1, found.pos.x], [-found.pos.y, found.pos.x+1]];
         this.animateMap(found.pos);
+        return found;
       }
     }), first());
   }

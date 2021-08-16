@@ -1,6 +1,9 @@
 :host {
     width: 100%;
     padding: 32px 64px;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
 
     .slider {
         width: 100%;
@@ -16,6 +19,9 @@
         justify-content: center;
         position: relative;
         overflow: hidden;
+        transition-property: width;
+        transition-duration: 0s;
+        transition-timing-function: linear;
     
         .endpoint {
             display: block;
@@ -25,7 +31,7 @@
             box-shadow: 0px 0px 8px #000000;
 
             border-radius: 26px;
-            }
+        }
 
         .handle {
             display: block;
@@ -35,24 +41,53 @@
             margin: 0 4px;
             border: 4px solid rgba(255, 255, 255, 0.5);
             background: url(../../../assets/img/slider-handle-right.svg);                
+            transform: scale(1);
 
             &.left {
             }
 
             &.right {
-                transform: scaleX(-1);
+                transform: scaleX(-1)scale(1);
             }
             background-repeat: no-repeat;
             background-size: cover;
             position: absolute;
             cursor: pointer;
-            transition-property: left right opacity;
+            transition-property: left,right,opacity,transform;
             transition-duration: 500ms;
-            transition-timing-function: ease-in-out;
+            transition-timing-function: linear;//ease-in-out;
 
             &.moving {
                 transition-duration: 0ms;
             }
         }
+
+        &.state-start {
+            width: 56px;
+            .handle {
+                transition-duration: 0ms;
+                opacity: 0 !important;
+            }
+        }
+        &.state-starting {
+            transition-duration: 500ms;
+        }
+        &.state-end {
+            width: 56px;
+            transition-duration: 500ms;
+            .handle {
+                opacity: 0 !important;
+                transform: scale(0);
+                transition-timing-function: linear;
+                &.left {
+                    left: 0 !important;
+                }
+                &.right {
+                    right: 0 !important;
+                    transform: scaleX(-1)scale(0);
+                }
+            }
+        }
+
     }
 }

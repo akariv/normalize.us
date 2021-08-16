@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { fromEvent, Subject, Subscription } from 'rxjs';
 import { debounceTime, throttle, throttleTime } from 'rxjs/operators';
 
@@ -11,6 +11,7 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   HANDLE_SIZE = 48 + 8;
 
+  @Input() state = '';
   @Output() location = new EventEmitter<number>();
   @Output() selected = new EventEmitter<number>();
 
@@ -23,7 +24,7 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
   width = 0;
   startX = 0;
   position = 0;
-  opacity = [1, 1]
+  opacity = [null, null]
 
   constructor(private el: ElementRef) {
     this.throttled.pipe(
@@ -34,6 +35,15 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
+  }
+
+  ngOnChanges() {
+    this.opacity = [1, 1]
+    if (this.state === 'start') {
+      this.position = 0;
+      this.opacity = [1, 1];
+      this.location.next(0);
+    }
   }
 
   ngAfterViewInit() {
@@ -58,19 +68,24 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   mouseup(idx) {
-    if (this.position === this.width / 2) {
+    if (this.position >= this.width * 0.35) {
       this.selected.next(-1);
+      this.position = this.width / 2;
+      this.throttled.next(1);
     }
-    if (this.position === -this.width / 2) {
+    else if (this.position <= -this.width * 0.35) {
       this.selected.next(1);
+      this.position = -this.width / 2;
+      this.throttled.next(-1);
+    } else {      
+      this.position = 0;
+      this.opacity = [1, 1];
+      this.location.next(0);
     }
-    this.position = 0;
-    this.opacity = [1, 1];
     if (this.moveSubscripion) {
       this.moveSubscripion.unsubscribe();
       this.moveSubscripion = null;
     }
-    this.location.next(0);
   }
 
   mousedown(idx, ev) {
