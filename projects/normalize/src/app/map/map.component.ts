@@ -72,7 +72,7 @@ export class MapComponent implements OnInit, AfterViewInit {
         minZoom: this.configuration.min_zoom,
         maxBounds: [[-this.configuration.dim, 0], [0, this.configuration.dim]],
         center: [-this.configuration.dim/2, this.configuration.dim/2],
-        zoom: this.maxZoom - 2,
+        zoom: this.configuration.min_zoom + 2,
         zoomControl: false,
       });
       if (this.layout.desktop) {
@@ -122,7 +122,7 @@ export class MapComponent implements OnInit, AfterViewInit {
       // Normality layer
       this.normalityLayer = new NormalityLayer(this.map, this.grid);
       // TSNE Overlay
-      this.tsneOverlay = new TSNEOverlay(this.map, this.grid, this.configuration.dim, this.fetchImage);
+      this.tsneOverlay = new TSNEOverlay(this.map, this.grid, this.configuration.dim, this.fetchImage, this.maxZoom);
       if (this.state.getOwnImageID()) {
         if (this.state.getDescriptor()) {
           console.log('HAS DESCRIPTOR');

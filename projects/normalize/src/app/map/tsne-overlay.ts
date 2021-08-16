@@ -17,7 +17,8 @@ export class TSNEOverlay {
   imageLayers: L.ImageOverlay[] = [];
 
   constructor(private map: L.Map, private gridObs: ReplaySubject<GridItem[]>,
-              private dim: number, private imageFetcher: ImageFetcherService) {
+              private dim: number, private imageFetcher: ImageFetcherService,
+              private maxZoom: number) {
     this.map.createPane('tsne-overlay');
     this.map.getPane('tsne-overlay').style.zIndex = '9';
     this.gridObs.subscribe(grid => {
@@ -51,12 +52,12 @@ export class TSNEOverlay {
           [[-emptyPosition.y-0.75, emptyPosition.x+0.25], [-emptyPosition.y-0.25, emptyPosition.x+0.75]]
         );
         overlay.addTo(this.map);
-        this.map.fitBounds(overlay.getBounds());
+        this.animateMap(emptyPosition);
         this.grid.push({pos: emptyPosition, item: image});
       } else {
         console.log('FOUND in GRID');
-        const bounds: L.LatLngBoundsExpression = [[-found.pos.y-1, found.pos.x], [-found.pos.y, found.pos.x+1]];
-        this.map.fitBounds(bounds);
+        // const bounds: L.LatLngBoundsExpression = [[-found.pos.y-1, found.pos.x], [-found.pos.y, found.pos.x+1]];
+        this.animateMap(found.pos);
       }
     }), first());
   }
@@ -82,5 +83,14 @@ export class TSNEOverlay {
       }
     }
     return { x: gi.pos.x, y: gi.pos.y };
+  }
+
+  animateMap(pos) {
+    const center: L.LatLngExpression = [-pos.y + 0.5, pos.x + 0.5];
+    this.map.flyTo(this.map.getCenter(), this.maxZoom - 5, {animate: true, duration: 1});
+    setTimeout(() => {
+      console.log('fitbounds');
+      this.map.flyTo(center, this.maxZoom, {animate: true, duration: 1});
+    }, 3000);
   }
 }
