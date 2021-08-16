@@ -70,7 +70,7 @@ export class MapComponent implements OnInit, AfterViewInit {
         crs: L.CRS.Simple,
         maxZoom: this.maxZoom,
         minZoom: this.configuration.min_zoom,
-        maxBounds: [[-this.configuration.dim, 0], [0, this.configuration.dim]],
+        maxBounds: [[-this.configuration.dim * 2, this.configuration.dim], [-this.configuration.dim, this.configuration.dim * 2]],
         center: [-this.configuration.dim/2, this.configuration.dim/2],
         zoom: this.configuration.min_zoom + 2,
         zoomControl: false,
