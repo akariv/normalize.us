@@ -25,8 +25,8 @@ export class GameComponent implements OnInit {
   tuples = [];
   candidates = [];
   results = [];
-  loaded = 0;
   Array = Array;
+  loaded = false;
 
   constructor(private api: ApiService, private state: StateService, public imageFetcher: ImageFetcherService, private router: Router) {
     api.getGame().subscribe((game) => {
@@ -52,10 +52,6 @@ export class GameComponent implements OnInit {
             this.tuples[this.tuples.length - 1][1] = {id: 'pending', image: this.state.getOwnImageID()};
           }
         }
-        // for (const t of this.tuples) {
-        //   this.imageFetcher.fetchImage(t[0]);
-        //   this.imageFetcher.fetchImage(t[1]);
-        // }
       }
       this.candidates = this.tuples.shift();
       // console.log('CANDIDATES', this.candidates);
@@ -115,11 +111,4 @@ export class GameComponent implements OnInit {
       this.router.navigate(['/']);  
     }
   }
-
-  // get progress() {
-  //   if (this.game && this.game.records) {
-  //     return (100 / this.game.records.length * this.loaded).toFixed(0) + '%';
-  //   }
-  //   return '0%';
-  // }
 }

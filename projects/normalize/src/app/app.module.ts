@@ -17,6 +17,7 @@ import { DrawerComponent } from './map/drawer/drawer.component';
 import { StartButtonComponent } from './map/start-button/start-button.component';
 import { ReportCardComponent } from './map/report-card/report-card.component';
 import { LoaderComponent } from './tournament/loader/loader.component';
+import { GamePreloaderComponent } from './game-preloader/game-preloader.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { LoaderComponent } from './tournament/loader/loader.component';
     DrawerComponent,
     StartButtonComponent,
     ReportCardComponent,
-    LoaderComponent
+    LoaderComponent,
+    GamePreloaderComponent
   ],
   imports: [
     BrowserModule,

@@ -12,7 +12,7 @@ fetch_random = text('''
         FROM faces
         ORDER BY tournaments
         LIMIT 20)
-    SELECT * FROM a ORDER BY RANDOM() limit 5
+    SELECT * FROM a ORDER BY RANDOM() limit 10
 ''')
 # PREFIX = 'data:image/png;base64,'
 

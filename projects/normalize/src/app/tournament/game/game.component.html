@@ -1,4 +1,4 @@
-<ng-container *ngIf='game && game.records && loaded === game.records.length'>
+<ng-container *ngIf='game && game.records && loaded'>
     <ng-container *ngIf='index < maxIndex && index >= 0'>
         <app-single-tournament [candidates]='candidates' [index]='feature' (results)='addResults($event)'>
             <div class='progress'>
@@ -14,12 +14,7 @@
         <h2>Done!</h2>
     </ng-container>
 </ng-container>
-<ng-container *ngIf='!game || !game.records || loaded < game.records.length'>
+<ng-container *ngIf='!game || !game.records || !loaded'>
     <app-loader></app-loader>
 </ng-container>
-<ng-container *ngIf='game && game.records && loaded < game.records.length'>
-    <div class='placeholder' *ngFor='let candidate of game.records'>
-        <img
-            [src]='imageFetcher.fetchImage(candidate.image)' (load)='loaded = loaded + 1'>
-    </div>    
-</ng-container>
+<app-game-preloader (loaded)='loaded = true'></app-game-preloader>

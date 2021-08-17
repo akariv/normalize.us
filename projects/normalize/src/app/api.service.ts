@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map } from 'rxjs/operators';
+import { from } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
 import { environment } from '../environments/environment';
 import { ImageItem } from './datatypes';
@@ -10,6 +11,8 @@ import { ImageItem } from './datatypes';
 })
 export class ApiService {
 
+  game: any = null;
+
   constructor(private http: HttpClient) { }
 
   createNew(imageItem: ImageItem) {
@@ -18,7 +21,14 @@ export class ApiService {
   }
 
   getGame() {
-    return this.http.get(environment.endpoints.getGame);
+    if (this.game) {
+      return from([this.game]);
+    }
+    return this.http.get(environment.endpoints.getGame).pipe(
+      tap((game) => {
+        this.game = game;
+      }),
+    );
   }
 
   getImage(id) {

@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { defer, fromEvent, interval, ReplaySubject, Subscription } from 'rxjs';
+import { AfterViewInit, Component, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
+import { defer, from, fromEvent, interval, ReplaySubject, Subscription } from 'rxjs';
 import { ConfigService } from '../config.service';
 import { delay, filter, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { FaceProcessorService } from '../face-processor.service';
@@ -36,9 +36,11 @@ export class SelfieComponent implements OnInit, AfterViewInit {
   public distance = '';
   public maskOverlayTransform = 'scale(1)';
 
+  public svgHack = false;
+
 
   constructor(private faceProcessor: FaceProcessorService, private api: ApiService, private state: StateService,
-              private router: Router, private el: ElementRef) {}
+              private router: Router, private el: ElementRef, private ngZone: NgZone) {}
 
   ngOnInit(): void { }
 
@@ -126,10 +128,6 @@ export class SelfieComponent implements OnInit, AfterViewInit {
           // console.log('GOT EVENT DONE');
           // this.src = event.content;
           // console.log('STARTING COUNTDOWN');
-          this.countdown = this.doCountdown().subscribe((x) => {
-            // console.log('COUNTDOWN DONE', x);
-            this.completed.next();
-          });
           this.state.setOwnInfo({id: 'pending', descriptor: event.descriptor, image: event.image});
           this.state.pushRequest(
             this.api.createNew(event)
@@ -142,6 +140,10 @@ export class SelfieComponent implements OnInit, AfterViewInit {
               })
             )
           );
+          this.countdown = this.doCountdown().subscribe((x) => {
+            // console.log('COUNTDOWN DONE', x);
+            this.completed.next();
+          });
           this.completed.pipe(first()).subscribe(() => {
             console.log('completed');
             (this.inputVideo.nativeElement as HTMLVideoElement).remove();
@@ -154,7 +156,13 @@ export class SelfieComponent implements OnInit, AfterViewInit {
 
   doCountdown() {
     this.countdownText = '3';
-    return interval(1000).pipe(
+    this.svgHack = true;
+    return from([true]).pipe(
+      delay(0),
+      tap(() => {
+        this.svgHack = false;
+      }),
+      switchMap(() => interval(1000)),
       take(3),
       map((num) => {
         const count = 2 - num;
@@ -162,7 +170,12 @@ export class SelfieComponent implements OnInit, AfterViewInit {
         if (count === 0) {
           this.flashActive = true;
         }
+        this.svgHack = true;
         return count;
+      }),
+      delay(0),
+      tap(() => {
+        this.svgHack = false;
       }),
       filter((count) => count === 0),
       delay(3000)
