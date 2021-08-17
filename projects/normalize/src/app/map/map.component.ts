@@ -235,7 +235,7 @@ export class MapComponent implements OnInit, AfterViewInit {
             animate: true,
             // maxZoom: this.maxZoom,
             paddingBottomRight: [
-              0, open ? 500 : 70
+              0, open ? window.innerHeight * 0.73 : 70
             ],
           }
         );
