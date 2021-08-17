@@ -174,11 +174,6 @@ def create_tiles(filename, image: Image, out_dim, res, info, current_set):
     min_zoom = info['min_zoom'] = 8 - dim_zoom
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=32) as executor:
-        json_buff = BytesIO()
-        json_buff.write(json.dumps(info).encode('utf8'))
-        json_buff.seek(0)
-        executor.submit(upload_fileobj_s3, json_buff, 'tsne.json', 'application/json')
-
         for zoom in range(min_zoom, max_zoom + 1):
             num_cuts = (2**(zoom - min_zoom))
             cut_size = edge / num_cuts
@@ -262,6 +257,11 @@ def main():
         if len(loaders) > 0:
             loaders[0].start()
         create_tiles(filename, image, out_dim, (side, side), info, current_set)
+
+    json_buff = BytesIO()
+    json_buff.write(json.dumps(info).encode('utf8'))
+    json_buff.seek(0)
+    upload_fileobj_s3(json_buff, 'tsne.json', 'application/json')
 
 
 def calc_tsne_handler(event, context):
