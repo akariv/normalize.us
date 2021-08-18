@@ -41,11 +41,12 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   hasSelfie = false;
   focusedItem: GridItem = null;
+  breatheOverlay: L.ImageOverlay;
   overlay = true;
   _drawerOpen = true;
 
   @ViewChild('map') mapElement:  ElementRef;
-
+  
   constructor(private hostElement: ElementRef, private api: ApiService,
               private fetchImage: ImageFetcherService, private state: StateService,
               private layout: LayoutService, private router: Router) {
@@ -239,8 +240,14 @@ export class MapComponent implements OnInit, AfterViewInit {
             ],
           }
         );
+        this.breatheOverlay = new L.ImageOverlay('/assets/img/breathe.svg', 
+            [[-this.focusedItem.pos.y - 0.75, this.focusedItem.pos.x + 0.25], [-this.focusedItem.pos.y - 0.25, this.focusedItem.pos.x + 0.75]]).addTo(this.map);
       } else {
         this.map.setView([-this.focusedItem.pos.y - 0.5, this.focusedItem.pos.x + 0.5], zoom);
+        if (this.breatheOverlay) {
+          this.breatheOverlay.remove();
+          this.breatheOverlay = null;
+        }
         // this.focusedItem = null;
       }
     }

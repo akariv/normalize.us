@@ -54,7 +54,7 @@ export class SingleTournamentComponent implements OnInit, OnChanges, AfterViewIn
       tap(() => {
         this.state = 'starting';
       }),
-      delay(500),
+      delay(300),
       tap(() => {
         this.state = '';
       }),
@@ -91,7 +91,7 @@ export class SingleTournamentComponent implements OnInit, OnChanges, AfterViewIn
       tap(() => {
         this.state = 'end';
       }),
-      delay(500),
+      delay(300),
       tap(() => {
         this.direction = null;
       }),
