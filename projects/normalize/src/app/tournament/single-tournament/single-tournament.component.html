@@ -4,7 +4,7 @@
     [class.state-end]='state === "end"'
      *ngIf='candidates'>
     <ng-container *ngFor='let candidate of candidates; let i = index'>
-        <div class='candidate' [style.width]='sizes[i] + "vw"'>
+        <div class='candidate' #handle [style.width]='sizes[i] + "vw"'>
             <app-moving-image [style.transform]='"scale(" + scales[i] + ")"' [src]='imageFetcher.fetchImage(candidate.image)' [index]='index' [id]='candidate.id'></app-moving-image>
         </div>
         <div class='spacer' *ngIf='i === 0'></div>
@@ -15,4 +15,4 @@
     <span [style.opacity]='1-position'>Swipe the side that looks</span>
     <span ><strong>more normal</strong></span>
 </div>
-<app-slider [state]='state' (location)='location = $event' (selected)='finish($event)'></app-slider>
+<app-slider [state]='state' [extraHandles]='extraHandles' (location)='location = $event' (selected)='finish($event)'></app-slider>

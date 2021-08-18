@@ -12,6 +12,7 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
   HANDLE_SIZE = 48 + 8;
 
   @Input() state = '';
+  @Input() extraHandles: ElementRef[] = null;
   @Output() location = new EventEmitter<number>();
   @Output() selected = new EventEmitter<number>();
 
@@ -26,6 +27,8 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
   position = 0;
   opacity = [null, null]
   markSelected = false;
+  handles: ElementRef<any>[];
+  savedExtraHandles: ElementRef<any>[] = null;
 
   constructor(private el: ElementRef) {
     this.throttled.pipe(
@@ -47,27 +50,41 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
         this.location.next(0);
       }
     }, 0);
+    if (this.extraHandles && this.savedExtraHandles !== this.extraHandles) {
+      this.savedExtraHandles = this.extraHandles;
+      console.log('EXTRA HANDLES', this.extraHandles);
+      this.clearSubscriptions();
+      this.registerHandles(this.extraHandles);
+      this.registerHandles(this.handles);
+    }
   }
 
   ngAfterViewInit() {
-    const handles = [this.handleLeft, this.handleright];
+    this.handles = [this.handleLeft, this.handleright];
     this.width = this.el.nativeElement.offsetWidth - 128 - this.HANDLE_SIZE;
+  }
+
+  registerHandles(handles) {
     for (const idx of [0, 1]) {
       const handle = handles[idx].nativeElement;
       this.subscriptions.push(...[
-        fromEvent(handle, 'mousedown').subscribe((ev: MouseEvent) => { if (ev.button === 0) { this.mousedown(idx, ev); }}),
-        fromEvent(handle, 'touchstart').subscribe((ev: MouseEvent) => { this.mousedown(idx, ev); }),
+        fromEvent(handle, 'mousedown').subscribe((ev: MouseEvent) => { if (ev.button === 0) { ev.preventDefault(); ; this.mousedown(idx, ev); }}),
+        fromEvent(handle, 'touchstart').subscribe((ev: MouseEvent) => { ev.preventDefault(); this.mousedown(idx, ev); }),
         
-        fromEvent(window, 'mouseup').subscribe((ev: Event) => { this.mouseup('m'); }),
-        fromEvent(window, 'touchend').subscribe((ev: Event) => { this.mouseup('t'); }),  
+        fromEvent(window, 'mouseup').subscribe((ev: Event) => { ev.preventDefault(); this.mouseup('m'); }),
+        fromEvent(window, 'touchend').subscribe((ev: Event) => { ev.preventDefault(); this.mouseup('t'); }),  
       ]);
     }
   }
 
-  ngOnDestroy() {
+  clearSubscriptions() {
     while (this.subscriptions.length) {
       this.subscriptions.pop().unsubscribe();
     }
+  }
+
+  ngOnDestroy() {
+    this.clearSubscriptions();
   }
 
   mouseup(type) {

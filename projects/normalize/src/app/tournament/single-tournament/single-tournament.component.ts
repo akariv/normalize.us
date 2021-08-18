@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, ViewChildren } from '@angular/core';
 import { from } from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
 import { ConfigService } from '../../config.service';
@@ -14,6 +14,9 @@ export class SingleTournamentComponent implements OnInit, OnChanges, AfterViewIn
   @Input() candidates: any[];
   @Input() index: number;
   @Output() results = new EventEmitter<number[]>();
+
+  @ViewChildren('handle') handles: QueryList<ElementRef>;
+  extraHandles: ElementRef[] = null;
 
   scales = [1, 1];
   sizes = [50, 50];
@@ -61,6 +64,7 @@ export class SingleTournamentComponent implements OnInit, OnChanges, AfterViewIn
     ).subscribe(() => {
       if (this.el.nativeElement) {
         this.updateScales();
+        this.extraHandles = this.handles.toArray();
       }
     });  
   }
