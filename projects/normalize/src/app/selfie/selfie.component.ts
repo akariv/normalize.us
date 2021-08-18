@@ -1,11 +1,22 @@
-import { AfterViewInit, Component, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
-import { defer, from, fromEvent, interval, ReplaySubject, Subscription } from 'rxjs';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { defer, from, fromEvent, interval, ReplaySubject, Subject, Subscription } from 'rxjs';
 import { ConfigService } from '../config.service';
-import { delay, filter, first, map, switchMap, take, tap } from 'rxjs/operators';
+import { debounceTime, delay, filter, first, map, switchMap, take, tap, throttleTime } from 'rxjs/operators';
 import { FaceProcessorService } from '../face-processor.service';
 import { ApiService } from '../api.service';
 import { StateService } from '../state.service';
 import { Router } from '@angular/router';
+
+const PROMPTS = {
+  initial: ['', ''],
+  getting_ready: ['Hold on', `we're getting things ready`],
+  no_detection: ['Please bring your face', 'into the red frame'],
+  too_far: ['Please bring the camera', 'closer to your face'],
+  too_close: [`You're too close...`, 'move a bit farther away'],
+  not_aligned: ['Please', 'align your face'],
+  hold_still: ["Hold still...", 'look straight forward'],
+  hold_still2: ["Hold still...", 'just a few more seconds'],
+}
 
 @Component({
   selector: 'app-selfie',
@@ -35,12 +46,20 @@ export class SelfieComponent implements OnInit, AfterViewInit {
   public scale = '';
   public distance = '';
   public maskOverlayTransform = 'scale(1)';
+  public prompts = PROMPTS.getting_ready;
+  public promptsStream = new Subject<string[]>();
 
   public svgHack = false;
 
 
   constructor(private faceProcessor: FaceProcessorService, private api: ApiService, private state: StateService,
-              private router: Router, private el: ElementRef, private ngZone: NgZone) {}
+              private router: Router, private el: ElementRef) {
+      this.promptsStream.pipe(
+        throttleTime(500),
+      ).subscribe((prompts) => {
+        this.prompts = prompts;
+      });
+  }
 
   ngOnInit(): void { }
 
@@ -75,8 +94,10 @@ export class SelfieComponent implements OnInit, AfterViewInit {
     console.log('STREAM SIZE', this.videoStream.getVideoTracks()[0].getSettings().width, this.videoStream.getVideoTracks()[0].getSettings().height);
 
     videoEl.srcObject = this.videoStream;
-    fromEvent(videoEl, 'play').pipe(first()).subscribe(() => {
-      setTimeout(() => {
+    fromEvent(videoEl, 'play').pipe(
+      first(),
+      delay(1000),
+      tap(() => {
         this.videoHeight = videoEl.offsetHeight;
         this.faceProcessor.defaultScale = Math.max(
           this.el.nativeElement.offsetWidth/videoEl.offsetWidth,
@@ -84,18 +105,23 @@ export class SelfieComponent implements OnInit, AfterViewInit {
           1
         );
         this.maskOverlayTransform = `scale(${videoEl.offsetHeight * 0.675 / 254 * this.faceProcessor.defaultScale})`;
+        // this.maskOverlayTransform = `scale(${videoEl.offsetHeight * 0.675 / 254})`;
         this.triggerDetectFaces();
-      }, 1000);
+      })
+    ).subscribe(() => {
+        console.log('DETECTING FACES...');
     });
   }
 
   triggerDetectFaces() {
     const videoEl: HTMLVideoElement = this.inputVideo.nativeElement;
+    console.log('DETECTING FACES...');
     this.faceProcessor.processFaces(videoEl, 5)
       .subscribe((event) => {
         // console.log('EVENT', event);
         if (event.kind === 'start') {
           console.log('STARTED!');
+          this.prompts = PROMPTS.no_detection;
           this.started = true;
         } else if (event.kind === 'transform') {
           this.transform = event.transform;
@@ -105,30 +131,29 @@ export class SelfieComponent implements OnInit, AfterViewInit {
           this.orientation = (event.orientation as Number).toFixed(1);;
           this.scale = (event.scale as Number).toFixed(2);;
           this.detected = event.snapped;
+          if (event.snapped) {
+            this.promptsStream.next(PROMPTS.hold_still);
+          } else {
+            setTimeout(() => {
+              if (event.problem) {
+                this.promptsStream.next(PROMPTS[event.problem]);
+              } else {
+                this.promptsStream.next(PROMPTS.no_detection);
+              }
+            });
+          }
           // console.log('TRANSFORM', event.transform);
-        // } else if (event.kind === 'detection') {
-          // if (event.detected) {
-          //   console.log('DETECTED');
-          //   if (!this.countdown) {
-          //     console.log('STARTING COUNTDOWN');
-          //     this.countdown = this.doCountdown().subscribe((x) => {
-          //       console.log('COUNTDOWN DONE', x);
-          //       this.completed.next();
-          //     })
-          //   }
-          // } else {
-          //   if (this.countdown) {
-          //     this.countdown.unsubscribe();
-          //     this.countdown = null;
-          //     this.countdownText = '';
-          //   }
-          // }
-          // this.detected = event.detected;
+        } else if (event.kind === 'detection') {
+          if (!event.detected) {
+            this.promptsStream.next(PROMPTS.no_detection);
+          }
         } else if (event.kind === 'done') {
           // console.log('GOT EVENT DONE');
           // this.src = event.content;
           // console.log('STARTING COUNTDOWN');
-          this.state.setOwnInfo({id: 'pending', descriptor: event.descriptor, image: event.image});
+          this.prompts = PROMPTS.hold_still2;
+          this.promptsStream.next(PROMPTS.hold_still2);
+          this.state.setOwnInfo({id: 'pending', descriptor: event.descriptor, image: event.image, landmarks: event.landmarks, gender_age: event.gender_age});
           this.state.pushRequest(
             this.api.createNew(event)
             .pipe(

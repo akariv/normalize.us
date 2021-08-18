@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { delay, first } from 'rxjs/operators';
+import { ImageItem } from './datatypes';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,8 @@ export class StateService {
   PLAYED_KEY = 'normalize_played';
 
   descriptor: any;
+  landmarks: any;
+  gender_age: any;
   itemID: string;
   imageID: string;
   magic: string;
@@ -32,6 +35,8 @@ export class StateService {
     this.imageID = value.image;
     this.magic = this.magic || value.magic;
     this.descriptor = value.descriptor || this.descriptor;
+    this.landmarks = value.landmarks || this.landmarks;
+    this.gender_age = value.gender_age || this.gender_age;
     window.localStorage.setItem(this.OWN_ID_KEY, this.itemID);
     if (this.imageID && this.imageID.length < 64) {
       window.localStorage.setItem(this.OWN_IMAGE_KEY, this.imageID);
@@ -57,6 +62,15 @@ export class StateService {
     return this.descriptor;
   }
 
+  getLandmarks() {
+    return this.landmarks;
+  }
+
+  getGenderAge() {
+    return this.gender_age;
+  }
+
+  
   setPlayed() {
     this.played = true;
     window.localStorage.setItem(this.PLAYED_KEY, 'true');
@@ -83,5 +97,19 @@ export class StateService {
       this.handlingRequest = false;
       this.handleRequest();
     });
+  }
+
+  checkItem(item: ImageItem) {
+    if (
+      (item.id + '' !== this.getOwnItemID() + '') ||
+      (item.image !== this.getOwnImageID())
+    ) {
+      window.localStorage.removeItem(this.OWN_ID_KEY);
+      window.localStorage.removeItem(this.OWN_IMAGE_KEY);
+      window.localStorage.removeItem(this.OWN_MAGIC_KEY);
+      window.localStorage.removeItem(this.PLAYED_KEY);
+      window.location.reload();
+    }
+    return true;
   }
 }

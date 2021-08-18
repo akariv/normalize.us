@@ -137,7 +137,6 @@ export class FaceProcessorService {
           this.detectorOptions = this.scoreThresholdHigh;
         }
         if (!result) {
-          console.log('NO DETECTION');
           progress.next({
             transformOrigin: `${el.offsetWidth*0.5}px ${el.offsetHeight*0.5}px`,
             transform: `translate(0px,0px)rotate(0rad)scale(${this.defaultScale})`,
@@ -176,12 +175,22 @@ export class FaceProcessorService {
         const distance = Math.sqrt((center.x - canvas.width*0.5)**2 + (center.y - canvas.height*0.6)**2);
   
         const snapRatio = snapped ? 2 : 1;
-        const shouldSnap = (
-          (Math.abs(orientation) < snap.orientaton * snapRatio) &&
-          (scale < 1 + snap.size * snapRatio / 100) &&
-          (scale > 1 - snap.size * snapRatio / 100) &&
-          (distance < snap.distance * canvas.height * snapRatio)
-        );
+        let problem = null;
+        let shouldSnap = true;
+        if (scale > 1 + snap.size * snapRatio / 100) {
+          problem = 'too_far';
+          shouldSnap = false;
+        } else if (scale < 1 - snap.size * snapRatio / 100) {
+          problem = 'too_close';
+          shouldSnap = false;
+        } else if (Math.abs(orientation) > snap.orientaton * snapRatio) {
+          problem = 'not_aligned';
+          shouldSnap = false;
+        } else if (distance > snap.distance * canvas.height * snapRatio) {
+          problem = 'not_aligned';
+          shouldSnap = false;
+        }
+        // console.log('SSS', shouldSnap, problem);
         snapped = shouldSnap;
 
         // console.log('SHOULD SNAP', shouldSnap, orientation, scale, distance);
@@ -203,7 +212,7 @@ export class FaceProcessorService {
             maskTransform: `translate(${canvas.width/2 * ratio}px,${canvas.height/2 * ratio}px)rotate(0rad)scale(${magnification*this.defaultScale})`,
             kind: 'transform',
             snapped: true,
-            orientation, scale, distance: distance / canvas.height  
+            orientation, scale, distance: distance / canvas.height,
           });
           const ret = detectSingleFace(canvas, this.detectorOptions).withFaceLandmarks(this.config.TINY).withFaceDescriptor();
           if (gender_age.gender) {
@@ -219,7 +228,8 @@ export class FaceProcessorService {
             maskTransform: `translate(${topPoint.x * ratio}px,${topPoint.y * ratio}px)rotate(${-rotation}rad)scale(${magnification*this.defaultScale})`,
             kind: 'transform',
             snapped: false,
-            orientation, scale, distance: distance / canvas.height
+            orientation, scale, distance: distance / canvas.height,
+            problem: problem
           });
           return from([null]);
         }

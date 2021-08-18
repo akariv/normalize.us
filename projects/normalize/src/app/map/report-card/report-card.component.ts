@@ -20,8 +20,7 @@ export class ReportCardComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     if (this.item) {
-      console.log('REPORT CARD ITEM', this.item);
-      this.normality = (this.item.tournaments ? (this.item.votes * 1.0) / this.item.tournaments : 0.5).toFixed(2);
+      this.normality = ImageItem.normality(this.item).toFixed(2);
     }
   }
 

@@ -6,6 +6,10 @@ export class ImageItem {
     descriptor: number[];
     landmarks: number[];
     gender_age: {gender: string; genderProbability: number; age: number};
+
+    public static normality(item: ImageItem) {
+        return (item.votes + 0.5) / (item.tournaments + 1);
+    }
 }
 
 export class GridItem {
@@ -14,4 +18,8 @@ export class GridItem {
         y: number;
     };
     item: ImageItem;
+
+    public static normality(item: GridItem) {
+        return ImageItem.normality(item.item);
+    }
 }

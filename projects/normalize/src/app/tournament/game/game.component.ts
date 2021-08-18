@@ -13,7 +13,7 @@ import { StateService } from '../../state.service';
 })
 export class GameComponent implements OnInit {
 
-  TUPLES_PER_FEATURE = 5;
+  TUPLES_PER_FEATURE = 3;
   FEATURES = [
     0, 3, 2, 1, 4
   ];

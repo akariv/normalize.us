@@ -73,17 +73,14 @@ export class DatasetComponent implements OnInit, AfterViewInit {
         // return faceapi.fetchImage(imageUrl);
       }),
       switchMap((img) => {
-        console.log('LOADED!', img);
         return this.faceProcessor.processFaces(img as HTMLImageElement, 0, this.datasetSnap);
       }),
       switchMap((event) => {
         if (event.kind === 'start') {
-          console.log('START', event);
           observer = event.observer;
         } else if (event.kind === 'transform') {
           this.preview = event.preview;
         } else if (event.kind === 'detection') {
-          console.log('DETECTED??', event.detected, event.score);
           if (!event.detected) {
             observer.cancel();
           }

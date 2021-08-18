@@ -11,6 +11,30 @@
     position: relative;
     background: #C0C6C6;
 
+    .prompts {
+        position: absolute;
+        top: 16px;
+        z-index: 1;
+
+        p {
+            .font-source-sans;
+            font-style: normal;
+            font-size: 20px;
+            line-height: 25px;
+            color: #FFFFFF;
+            margin: 0;
+            text-align: center;
+        }
+
+        p:first-child {
+            font-weight: normal;
+        }
+
+        p:last-child {
+            font-weight: bold;            
+        }
+    }
+
     .video {
         width: 100%;
         position: relative;

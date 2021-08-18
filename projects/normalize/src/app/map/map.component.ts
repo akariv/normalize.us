@@ -13,6 +13,7 @@ import { LayoutService } from '../layout.service';
 import { Router } from '@angular/router';
 import { GridItem, ImageItem } from '../datatypes';
 import { TSNEOverlay } from './tsne-overlay';
+import { FaceApiService } from '../face-api.service';
 
 @Component({
   selector: 'app-map',
@@ -49,7 +50,8 @@ export class MapComponent implements OnInit, AfterViewInit {
   
   constructor(private hostElement: ElementRef, private api: ApiService,
               private fetchImage: ImageFetcherService, private state: StateService,
-              private layout: LayoutService, private router: Router) {
+              private layout: LayoutService, private router: Router,
+              private faceapi: FaceApiService) {
   }
 
   ngOnInit(): void {
@@ -64,7 +66,6 @@ export class MapComponent implements OnInit, AfterViewInit {
     console.log('HAS SELFIE', this.state.imageID, this.state.descriptor);
     this.hasSelfie = this.state.imageID || this.state.descriptor;
     this.ready.pipe(first()).subscribe(() => {
-      console.log('READY');
       this.maxZoom = this.configuration.max_zoom;
       // Create map
       this.map = L.map(this.mapElement.nativeElement, {
@@ -133,8 +134,8 @@ export class MapComponent implements OnInit, AfterViewInit {
             descriptor: this.state.getDescriptor(),
             votes: 0,
             tournaments: 0,
-            landmarks: [],
-            gender_age: null
+            landmarks: this.state.getLandmarks(),
+            gender_age: this.state.getGenderAge(),
           };
           this.tsneOverlay.addImageLayer(item).pipe(
             tap(() => {
@@ -149,8 +150,9 @@ export class MapComponent implements OnInit, AfterViewInit {
           });
       } else {
           // console.log('NO DESCRIPTOR', this.state.getOwnItemID());
-          this.api.getImage(this.state.getOwnItemID()).subscribe((item) => {
-            // console.log('MY ITEM', item);
+          this.api.getImage(this.state.getOwnItemID()).subscribe((item: ImageItem) => {
+            console.log('MY ITEM', item);
+            this.state.checkItem(item);
             this.tsneOverlay.addImageLayer(item as ImageItem).pipe(
               tap(() => {
                 this.overlay = false;
