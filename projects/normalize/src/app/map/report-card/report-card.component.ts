@@ -20,8 +20,16 @@ export class ReportCardComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     if (this.item) {
+      console.log('REPORT CARD ITEM', this.item);
       this.normality = (this.item.tournaments ? (this.item.votes * 1.0) / this.item.tournaments : 0.5).toFixed(2);
     }
   }
 
+  get age() {
+    return this.item.gender_age.age.toFixed(0);
+  }
+
+  get gender() {
+    return this.item.gender_age.gender[0].toUpperCase();
+  }
 }

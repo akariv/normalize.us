@@ -41,7 +41,7 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   hasSelfie = false;
   focusedItem: GridItem = null;
-  breatheOverlay: L.ImageOverlay;
+  breatheOverlay: L.ImageOverlay = null;
   overlay = true;
   _drawerOpen = true;
 
@@ -241,6 +241,10 @@ export class MapComponent implements OnInit, AfterViewInit {
             ],
           }
         );
+        if (this.breatheOverlay) {
+          // precaution
+          this.breatheOverlay.remove();
+        }
         this.breatheOverlay = new L.ImageOverlay('/assets/img/breathe.svg', 
             [[-this.focusedItem.pos.y - 0.75, this.focusedItem.pos.x + 0.25], [-this.focusedItem.pos.y - 0.25, this.focusedItem.pos.x + 0.75]]).addTo(this.map);
       } else {
