@@ -133,7 +133,8 @@ export class MapComponent implements OnInit, AfterViewInit {
             descriptor: this.state.getDescriptor(),
             votes: 0,
             tournaments: 0,
-            landmarks: []
+            landmarks: [],
+            gender_age: null
           };
           this.tsneOverlay.addImageLayer(item).pipe(
             tap(() => {

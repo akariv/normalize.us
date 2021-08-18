@@ -26,5 +26,6 @@ export class FaceApiService {
       await faceapi.loadFaceLandmarkModel('assets/models');  
     }
     await faceapi.loadFaceRecognitionModel('assets/models');
+    await faceapi.loadAgeGenderModel('assets/models');
   }
 }

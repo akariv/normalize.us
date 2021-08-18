@@ -16,7 +16,7 @@ export class ApiService {
   constructor(private http: HttpClient) { }
 
   createNew(imageItem: ImageItem) {
-    const params = {image: imageItem.image, descriptor: imageItem.descriptor, landmarks: imageItem.landmarks};
+    const params = {image: imageItem.image, descriptor: imageItem.descriptor, landmarks: imageItem.landmarks, gender_age: imageItem.gender_age};
     return this.http.post(environment.endpoints.new, params);
   }
 

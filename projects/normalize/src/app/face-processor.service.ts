@@ -101,6 +101,7 @@ export class FaceProcessorService {
     let descriptor = [];
     let firstLandmarks: any[] = [];
     let snapped = false;
+    let gender_age: any = {};
 
     const id = 'fps' + Math.random();
     const animationObs = new AnimationObservable(id, this.animationManager);
@@ -204,7 +205,12 @@ export class FaceProcessorService {
             snapped: true,
             orientation, scale, distance: distance / canvas.height  
           });
-          return detectSingleFace(canvas, this.detectorOptions).withFaceLandmarks(this.config.TINY).withFaceDescriptor().run();
+          const ret = detectSingleFace(canvas, this.detectorOptions).withFaceLandmarks(this.config.TINY).withFaceDescriptor();
+          if (gender_age.gender) {
+            return ret.run();
+          } else {
+            return ret.withAgeAndGender().run();
+          }
         } else {
           progress.next({
             transformOrigin: `${el.offsetWidth*0.5}px ${el.offsetHeight*0.5}px`,
@@ -243,6 +249,16 @@ export class FaceProcessorService {
         if (animationObs.cancelled) {
           console.log('SKIPPING EXTRACTION, CANCELLED')
           return;
+        }
+        if (result.gender) {
+          gender_age.gender = result.gender;
+        }
+        if (result.genderProbability) {
+          gender_age.genderProbability = result.genderProbability;
+        }
+        if (result.age) {
+          gender_age.age = result.age;
+          console.log('gender_age', gender_age);
         }
         const landmarks: FaceLandmarks68 = result.landmarks;
         if (firstLandmarks.length === 0) {
@@ -297,6 +313,7 @@ export class FaceProcessorService {
         image: compositionFrame.toDataURL('png', 90),
         descriptor: [...descriptor],
         landmarks: firstLandmarks,
+        gender_age: gender_age,
         collected: frames
       });
       compositionFrame.remove();

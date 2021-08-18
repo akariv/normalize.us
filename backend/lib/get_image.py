@@ -6,7 +6,7 @@ from flask import Request, Response, abort
 from .db import connection
 from .net import HEADERS
 
-fetch_image = text("SELECT id, image, votes, tournaments, descriptor, landmarks from FACES WHERE id = :id")
+fetch_image = text("SELECT id, image, votes, tournaments, descriptor, landmarks, gender_age from FACES WHERE id = :id")
 PREFIX = 'data:image/png;base64,'
 
 

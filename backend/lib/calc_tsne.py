@@ -80,13 +80,13 @@ class ImageLoader():
 
 def load_activations():
     print('Fetching descriptors')
-    rows = conn.execution_options(stream_results=True).execute('select id, image, tournaments, votes, descriptor, landmarks from faces order by id desc limit 500')
+    rows = conn.execution_options(stream_results=True).execute('select id, image, tournaments, votes, descriptor, landmarks, gender_age from faces order by id desc limit 500')
     ids = []
     activations = []
     for row in rows:
-        id, image, tournaments, votes, descriptor, landmarks = row
+        id, image, tournaments, votes, descriptor, landmarks, gender_age = row
         ids.append(dict(
-            id=id, image=image, tournaments=tournaments, votes=votes, landmarks=landmarks, descriptor=descriptor
+            id=id, image=image, tournaments=tournaments, votes=votes, landmarks=landmarks, descriptor=descriptor, gender_age=gender_age
         ))
         activations.append(descriptor)
         # if len(img_collection) > 100:

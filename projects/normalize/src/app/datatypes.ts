@@ -5,6 +5,7 @@ export class ImageItem {
     votes: number;
     descriptor: number[];
     landmarks: number[];
+    gender_age: {gender: string; genderProbability: number; age: number};
 }
 
 export class GridItem {
