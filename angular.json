@@ -29,6 +29,7 @@
             "aot": true,
             "assets": [
               "projects/normalize/src/favicon.ico",
+              "projects/normalize/src/favicons",
               "projects/normalize/src/assets"
             ],
             "styles": [
@@ -94,6 +95,7 @@
             "karmaConfig": "projects/normalize/karma.conf.js",
             "assets": [
               "projects/normalize/src/favicon.ico",
+              "projects/normalize/src/favicons",
               "projects/normalize/src/assets"
             ],
             "styles": [
