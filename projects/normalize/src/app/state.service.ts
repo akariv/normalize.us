@@ -17,6 +17,7 @@ export class StateService {
   gender_age: any;
   itemID: string;
   imageID: string;
+  geolocation: number[];
   magic: string;
   played = false;
   handlingRequest = false;
@@ -46,6 +47,10 @@ export class StateService {
     }
   }
 
+  setGeolocation(geolocation: number[]) {
+    this.geolocation = geolocation;
+  }
+
   getOwnItemID() {
     return this.itemID ? parseInt(this.itemID) : null;
   }
@@ -70,6 +75,9 @@ export class StateService {
     return this.gender_age;
   }
 
+  getGeolocation() {
+    return this.geolocation;
+  }
   
   setPlayed() {
     this.played = true;

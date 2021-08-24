@@ -1,0 +1,87 @@
+@import '../../common.less';
+
+.modal-wrapper {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 40;
+    
+    display: none;
+    &.open {
+        display: flex;
+    }
+    flex-flow: column;
+    align-items: stretch;
+    justify-content: center;
+    padding: 32px;
+
+    > .background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: @color-dark-brown;
+        opacity: 0.8;
+        pointer-events: none;
+    }
+
+    > .modal-body {
+        width: 100%;
+        max-height: 100%;
+        background: @color-offwhite;
+        box-shadow: 0px -4px 40px rgba(0, 0, 0, 0.25);
+        border-radius: 4px;
+        position: relative;
+        > .close {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 23px;
+            height: 23px;
+            cursor: pointer;
+            background: url(../../assets/img/close.svg) no-repeat center;
+        }
+        > .content {
+            flex: 1 1 auto;
+            padding: 24px;
+            border-bottom: 1px solid @color-offtint;
+            overflow-y: scroll;
+            .no-scrollbars;
+        }
+        > .actions {
+            flex: 0 0 auto;
+            padding: 16px 24px;
+            display: flex;
+            flex-flow: row;
+            align-items: center;
+            justify-content: center;
+
+            .submit_button {
+                min-width: 160px;
+                border: 1px solid @color-dark-brown;
+                border-radius: 22px;
+                height: 36px;
+                display: flex;
+                flex-flow: row;
+                align-items: center;
+                justify-content: center;
+
+                .font-source-sans;
+                font-style: normal;
+                font-weight: normal;
+                font-size: 16px;
+                line-height: 115%;
+                font-variant: small-caps;
+
+                color: @color-dark-brown;
+                background-color: @color-offwhite;
+                cursor: pointer;;
+            }
+        }
+    }
+}

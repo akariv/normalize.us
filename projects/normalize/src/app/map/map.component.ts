@@ -46,6 +46,8 @@ export class MapComponent implements OnInit, AfterViewInit {
   overlay = true;
   _drawerOpen = true;
 
+  consentModalOpen = false;
+
   @ViewChild('map') mapElement:  ElementRef;
   
   constructor(private hostElement: ElementRef, private api: ApiService,
@@ -226,7 +228,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   start() {
-    this.router.navigate(['/selfie']);
+    this.consentModalOpen = true;
   }
 
   set drawerOpen(open: boolean) {

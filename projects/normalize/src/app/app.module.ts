@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -18,6 +19,10 @@ import { StartButtonComponent } from './map/start-button/start-button.component'
 import { ReportCardComponent } from './map/report-card/report-card.component';
 import { LoaderComponent } from './tournament/loader/loader.component';
 import { GamePreloaderComponent } from './game-preloader/game-preloader.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ModalComponent } from './modal/modal.component';
+import { ConsentModalComponent } from './map/consent-modal/consent-modal.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -35,12 +40,17 @@ import { GamePreloaderComponent } from './game-preloader/game-preloader.componen
     StartButtonComponent,
     ReportCardComponent,
     LoaderComponent,
-    GamePreloaderComponent
+    GamePreloaderComponent,
+    ModalComponent,
+    ConsentModalComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
+    BrowserAnimationsModule,
+    MatSlideToggleModule,
+    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -32,6 +32,7 @@
               "projects/normalize/src/assets"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "projects/normalize/src/styles.less",
               "node_modules/leaflet/dist/leaflet.css"
             ],
@@ -96,6 +97,7 @@
               "projects/normalize/src/assets"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "projects/normalize/src/styles.less",
               "node_modules/leaflet/dist/leaflet.css"
             ],

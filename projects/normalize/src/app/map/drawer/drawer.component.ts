@@ -6,12 +6,14 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
   styleUrls: ['./drawer.component.less'],
   host: {
     'class': 'drawer',
-    '[class.open]': 'open'
+    '[class.open]': 'open && !hidden',
+    '[class.hidden]': 'hidden'
   }
 })
 export class DrawerComponent implements OnInit {
 
   @Input() open = false;
+  @Input() hidden = false;
   @Output() changed = new EventEmitter<boolean>();
 
   constructor() { }

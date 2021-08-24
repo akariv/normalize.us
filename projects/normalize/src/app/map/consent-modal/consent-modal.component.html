@@ -1,0 +1,10 @@
+<app-modal submit_text='continue' [open]='open' (closed)='close($event)'>
+    <span class='header'>Thank you for your participation.</span>
+
+    <span>We will ask your permission to:</span>
+    <span class='option'><mat-slide-toggle [(ngModel)]='sliderCamera'></mat-slide-toggle>Take a picture of your face</span>
+    <span class='option' *ngIf='geolocationPossible'><mat-slide-toggle [(ngModel)]='sliderGeolocation'></mat-slide-toggle>Receive your general location</span>
+    <span class='option'><mat-slide-toggle [(ngModel)]='sliderPrivacy'></mat-slide-toggle>Approve our privacy policy</span>
+
+    <span class='faq'>*Read our FAQ to better understand all of this</span>
+</app-modal>
