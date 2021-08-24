@@ -51,3 +51,6 @@
     </div>
 </div>
 <app-moving-image [src]='imageFetcher.fetchImage(item.image)' [index]='4' [id]='item.image'></app-moving-image>
+<div class='button-row' *ngIf='hasShare'>
+    <div class='button' (click)='share()'><img src='assets/img/ic-share.svg'>share this card</div>
+</div>

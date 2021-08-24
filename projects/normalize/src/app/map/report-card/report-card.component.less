@@ -6,6 +6,7 @@
     display: flex;
     flex-flow: column;
     align-items: stretch;
+    padding-bottom: 8px;
 
     .row {
         display: flex;
@@ -73,5 +74,50 @@
         border: 2px solid white;
         align-self: center;
         margin-top: 20px;
+        margin-bottom: 16px;
+    }
+
+    .button-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: stretch;
+        align-items: center;
+        width: 100%;
+        padding: 8px;
+
+        .button-separator {
+            width: 16px;
+            flex: 0 0 auto;
+            height: 10px;
+        }
+        .button {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 8px 16px;
+    
+            cursor: pointer;
+
+            height: 60px;
+    
+            border: 1px solid @color-gray-4;
+            border-radius: 4px;
+
+            .font-source-sans;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 16px;
+            line-height: 18px;
+            font-variant: small-caps;
+
+            color: @color-dark-brown;
+
+            img {
+                margin-right: 32px;
+            }
+        }
+    
     }
 }

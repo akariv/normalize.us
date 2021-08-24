@@ -31,4 +31,19 @@ export class ReportCardComponent implements OnInit, OnChanges {
   get gender() {
     return this.item.gender_age.gender[0].toUpperCase();
   }
+
+  get hasShare() {
+    return !!navigator && !!navigator.share;
+  }
+  
+  share() {
+    console.log('SHARING', navigator, navigator.share);
+    navigator.share({
+      title: 'Normalizi.ng',
+      text: 'Discover what *normal* people look like',
+      url: 'https://normalizi.ng'
+    }).then((result) => {
+      console.log('Share result:', result);
+    });
+  }
 }
