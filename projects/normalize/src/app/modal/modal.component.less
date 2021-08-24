@@ -9,7 +9,7 @@
     width: 100%;
     height: 100%;
     z-index: 40;
-    
+
     display: none;
     &.open {
         display: flex;
@@ -63,7 +63,7 @@
 
             .submit_button {
                 min-width: 160px;
-                border: 1px solid @color-dark-brown;
+                border: 1px solid @color-offtint;
                 border-radius: 22px;
                 height: 36px;
                 display: flex;
@@ -78,9 +78,19 @@
                 line-height: 115%;
                 font-variant: small-caps;
 
-                color: @color-dark-brown;
                 background-color: @color-offwhite;
-                cursor: pointer;;
+
+                color: @color-offtint;
+
+                cursor: initial;
+                pointer-events: none;
+            
+                &.allowed {
+                    color: @color-dark-brown;
+                    border-color: @color-dark-brown;
+                    cursor: pointer;
+                    pointer-events: all;
+                }
             }
         }
     }

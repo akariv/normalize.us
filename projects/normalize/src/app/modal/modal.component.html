@@ -5,7 +5,7 @@
         <div class='content'><ng-content></ng-content></div>
         <div class='actions'>
             <a class='cancel_button' (click)='close(false)' *ngIf='cancel_text'>{{cancel_text}}</a>
-            <button class='submit_button' (click)='close(true)'>{{submit_text}}</button>
+            <button class='submit_button' [class.allowed]='submit_allowed' (click)='close(true)'>{{submit_text}}</button>
         </div>
     </div>
 </div>

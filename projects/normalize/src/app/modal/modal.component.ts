@@ -11,6 +11,7 @@ export class ModalComponent implements OnInit {
   @Input() submit_text = 'OK';
   @Input() cancel_text = '';
   @Input() open = true;
+  @Input() submit_allowed = true;
   @Output() closed = new EventEmitter<boolean>();
 
   constructor() { }
