@@ -11,6 +11,7 @@ export class StateService {
   OWN_IMAGE_KEY = 'normalize_own_image';
   OWN_MAGIC_KEY = 'normalize_own_magic';
   PLAYED_KEY = 'normalize_played';
+  ASKED_FOR_EMAIL_KEY = 'normalize_email';
 
   descriptor: any;
   landmarks: any;
@@ -20,6 +21,7 @@ export class StateService {
   geolocation: number[];
   magic: string;
   played = false;
+  askedForEmail = false;
   handlingRequest = false;
   requests = [];
 
@@ -28,6 +30,7 @@ export class StateService {
     this.imageID = window.localStorage.getItem(this.OWN_IMAGE_KEY);
     this.magic = window.localStorage.getItem(this.OWN_MAGIC_KEY);
     this.played = window.localStorage.getItem(this.PLAYED_KEY) === 'true';
+    this.askedForEmail = window.localStorage.getItem(this.ASKED_FOR_EMAIL_KEY) === 'true';
     console.log('STATE:', this.imageID, this.played);
   }
 
@@ -82,6 +85,15 @@ export class StateService {
   setPlayed() {
     this.played = true;
     window.localStorage.setItem(this.PLAYED_KEY, 'true');
+  }
+
+  setAskedForEmail() {
+    this.askedForEmail = true;
+    window.localStorage.setItem(this.ASKED_FOR_EMAIL_KEY, 'true');
+  }
+
+  getAskedForEmail() {
+    return this.askedForEmail;
   }
 
   pushRequest(request) {

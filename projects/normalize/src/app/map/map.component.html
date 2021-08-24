@@ -18,3 +18,4 @@
 </app-drawer>
 <app-start-button label='start' (click)='start()' *ngIf='!hasSelfie'></app-start-button>
 <app-consent-modal [open]='consentModalOpen' (closed)='consentModalOpen = false'></app-consent-modal>
+<app-email-modal [open]='emailModalOpen' (closed)='emailModalOpen = false'></app-email-modal>

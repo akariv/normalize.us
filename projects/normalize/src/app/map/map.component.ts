@@ -3,7 +3,7 @@ import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angula
 import * as L from 'leaflet';
 import * as geojson from 'geojson';
 
-import { ReplaySubject, Subject } from 'rxjs';
+import { from, ReplaySubject, Subject } from 'rxjs';
 import { delay, first, switchMap, tap } from 'rxjs/operators';
 import { ApiService } from '../api.service';
 import { ImageFetcherService } from '../image-fetcher.service';
@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 import { GridItem, ImageItem } from '../datatypes';
 import { TSNEOverlay } from './tsne-overlay';
 import { FaceApiService } from '../face-api.service';
+import { EmailModalComponent } from './email-modal/email-modal.component';
 
 @Component({
   selector: 'app-map',
@@ -47,8 +48,10 @@ export class MapComponent implements OnInit, AfterViewInit {
   _drawerOpen = true;
 
   consentModalOpen = false;
+  emailModalOpen = false;
 
   @ViewChild('map') mapElement:  ElementRef;
+  @ViewChild(EmailModalComponent) emailModal: EmailModalComponent;
   
   constructor(private hostElement: ElementRef, private api: ApiService,
               private fetchImage: ImageFetcherService, private state: StateService,
@@ -67,95 +70,95 @@ export class MapComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     console.log('HAS SELFIE', this.state.imageID, this.state.descriptor);
     this.hasSelfie = this.state.imageID || this.state.descriptor;
-    this.ready.pipe(first()).subscribe(() => {
-      this.maxZoom = this.configuration.max_zoom;
-      // Create map
-      this.map = L.map(this.mapElement.nativeElement, {
-        crs: L.CRS.Simple,
-        maxZoom: this.maxZoom,
-        minZoom: this.configuration.min_zoom,
-        maxBounds: [[-this.configuration.dim * 2, -this.configuration.dim], [this.configuration.dim, this.configuration.dim * 2]],
-        center: [-this.configuration.dim/2, this.configuration.dim/2],
-        zoom: this.configuration.min_zoom + 2,
-        zoomControl: false,
-      });
-      if (this.layout.desktop) {
-        new L.Control.Zoom({ position: 'bottomleft' }).addTo(this.map);
-      }
-      // Tile layers
-      for (const feature of ['faces', 'mouths', 'eyes', 'noses', 'foreheads']) {
-        this.tileLayers[feature] = L.tileLayer(`https://normalizing-us-files.fra1.cdn.digitaloceanspaces.com/feature-tiles/${this.configuration.set}/${feature}/{z}/{x}/{y}`, {
-          maxZoom: 9,
+    this.ready.pipe(
+      first(),
+      tap(() => { // SET UP MAP
+        this.maxZoom = this.configuration.max_zoom;
+        // Create map
+        this.map = L.map(this.mapElement.nativeElement, {
+          crs: L.CRS.Simple,
+          maxZoom: this.maxZoom,
           minZoom: this.configuration.min_zoom,
-          bounds: [[-this.configuration.dim - 1, 0], [-1, this.configuration.dim]],
-          errorTileUrl: '/assets/img/empty.png'
+          maxBounds: [[-this.configuration.dim * 2, -this.configuration.dim], [this.configuration.dim, this.configuration.dim * 2]],
+          center: [-this.configuration.dim/2, this.configuration.dim/2],
+          zoom: this.configuration.min_zoom + 2,
+          zoomControl: false,
         });
-      }
-      this.feature = 'faces';
-      // Map events
-      this.map.on('zoomend', (ev) => { return this.onZoomChange(); });
-      this.map.on('moveend', (ev) => { return this.onBoundsChange(); });
-      this.map.on('click', (ev: L.LeafletMouseEvent) => {
-        const latlng = ev.latlng;
-        const x = Math.floor(latlng.lng);
-        const y = -Math.ceil(latlng.lat);
-        const current = this.focusedItem;
-        let proposed = null;
-        if (x >= 0 && y >= 0) {
-          for (const item of this.configuration.grid) {
-            const posX = item.pos.x;
-            const posY = item.pos.y;
-            if (x === posX && y === posY) {
-              proposed = item;
-              // console.log('CLICKED', x, y, item);
-              break;
+        if (this.layout.desktop) {
+          new L.Control.Zoom({ position: 'bottomleft' }).addTo(this.map);
+        }
+        // Tile layers
+        for (const feature of ['faces', 'mouths', 'eyes', 'noses', 'foreheads']) {
+          this.tileLayers[feature] = L.tileLayer(`https://normalizing-us-files.fra1.cdn.digitaloceanspaces.com/feature-tiles/${this.configuration.set}/${feature}/{z}/{x}/{y}`, {
+            maxZoom: 9,
+            minZoom: this.configuration.min_zoom,
+            bounds: [[-this.configuration.dim - 1, 0], [-1, this.configuration.dim]],
+            errorTileUrl: '/assets/img/empty.png'
+          });
+        }
+        this.feature = 'faces';
+        // Map events
+        this.map.on('zoomend', (ev) => { return this.onZoomChange(); });
+        this.map.on('moveend', (ev) => { return this.onBoundsChange(); });
+        this.map.on('click', (ev: L.LeafletMouseEvent) => {
+          const latlng = ev.latlng;
+          const x = Math.floor(latlng.lng);
+          const y = -Math.ceil(latlng.lat);
+          const current = this.focusedItem;
+          let proposed = null;
+          if (x >= 0 && y >= 0) {
+            for (const item of this.configuration.grid) {
+              const posX = item.pos.x;
+              const posY = item.pos.y;
+              if (x === posX && y === posY) {
+                proposed = item;
+                // console.log('CLICKED', x, y, item);
+                break;
+              }
             }
           }
-        }
-        if (current !== proposed || proposed === null) {
-          this.drawerOpen = false;
-        }
-        if (proposed !== null) {
-          setTimeout(() => {
-            // console.log('OPENING...');
-            this.focusedItem = proposed;
-            this.drawerOpen = true;
-          }, 500);
-        }
-      });
-      // Normality layer
-      this.normalityLayer = new NormalityLayer(this.map, this.grid);
-      // TSNE Overlay
-      this.tsneOverlay = new TSNEOverlay(this.map, this.grid, this.configuration.dim, this.fetchImage, this.maxZoom);
-      if (this.state.getOwnImageID()) {
-        if (this.state.getDescriptor()) {
-          // console.log('HAS DESCRIPTOR');
-          const item: ImageItem = {
-            id: this.state.getOwnItemID() + '',
-            image: this.state.getOwnImageID(),
-            descriptor: this.state.getDescriptor(),
-            votes: 0,
-            tournaments: 0,
-            landmarks: this.state.getLandmarks(),
-            gender_age: this.state.getGenderAge(),
-          };
-          this.tsneOverlay.addImageLayer(item).pipe(
+          if (current !== proposed || proposed === null) {
+            this.drawerOpen = false;
+          }
+          if (proposed !== null) {
+            setTimeout(() => {
+              // console.log('OPENING...');
+              this.focusedItem = proposed;
+              this.drawerOpen = true;
+            }, 500);
+          }
+        });        
+      }),
+      tap(() => { // SET UP NORMALITY LAYER
+        this.normalityLayer = new NormalityLayer(this.map, this.grid);
+      }),
+      switchMap(() => {
+        if (!this.state.getAskedForEmail()) {
+          this.emailModalOpen = true;
+          return this.emailModal.closed.pipe(
             tap(() => {
-              this.overlay = false;
-              this.drawerOpen = false;
-              this.normalityLayer.refresh();
-            }),
-            delay(3000),
-          ).subscribe((gi) => {
-            this.focusedItem = gi;
-            this.drawerOpen = true;
-          });
-      } else {
-          // console.log('NO DESCRIPTOR', this.state.getOwnItemID());
-          this.api.getImage(this.state.getOwnItemID()).subscribe((item: ImageItem) => {
-            console.log('MY ITEM', item);
-            this.state.checkItem(item);
-            this.tsneOverlay.addImageLayer(item as ImageItem).pipe(
+              this.state.setAskedForEmail();
+            })
+          );
+        } else {
+          return from([true]);
+        }
+      }),
+      tap(() => { // SET UP TSNE OVERLAY
+        this.tsneOverlay = new TSNEOverlay(this.map, this.grid, this.configuration.dim, this.fetchImage, this.maxZoom);
+        if (this.state.getOwnImageID()) {
+          if (this.state.getDescriptor()) {
+            // console.log('HAS DESCRIPTOR');
+            const item: ImageItem = {
+              id: this.state.getOwnItemID() + '',
+              image: this.state.getOwnImageID(),
+              descriptor: this.state.getDescriptor(),
+              votes: 0,
+              tournaments: 0,
+              landmarks: this.state.getLandmarks(),
+              gender_age: this.state.getGenderAge(),
+            };
+            this.tsneOverlay.addImageLayer(item).pipe(
               tap(() => {
                 this.overlay = false;
                 this.drawerOpen = false;
@@ -166,10 +169,29 @@ export class MapComponent implements OnInit, AfterViewInit {
               this.focusedItem = gi;
               this.drawerOpen = true;
             });
-          });
+        } else {
+            // console.log('NO DESCRIPTOR', this.state.getOwnItemID());
+            this.api.getImage(this.state.getOwnItemID()).subscribe((item: ImageItem) => {
+              console.log('MY ITEM', item);
+              this.state.checkItem(item);
+              this.tsneOverlay.addImageLayer(item as ImageItem).pipe(
+                tap(() => {
+                  this.overlay = false;
+                  this.drawerOpen = false;
+                  this.normalityLayer.refresh();
+                }),
+                delay(3000),
+              ).subscribe((gi) => {
+                this.focusedItem = gi;
+                this.drawerOpen = true;
+              });
+            });
+          }
         }
-      }
-      this.grid.next(this.configuration.grid);
+        this.grid.next(this.configuration.grid);
+      })
+    ).subscribe(() => {
+      console.log('FINISHED VIEW INIT');
     });
   }
 
