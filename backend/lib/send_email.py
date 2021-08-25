@@ -11,8 +11,9 @@ reply_to_name = 'Mushon Zer-Aviv'
 
 def send_email_handler(request):
   if request.method == 'POST':
-    to_email = request.form.get('email')
-    link = request.form.get('link')
+    content = request.json
+    to_email = content['email']
+    link = content['link']
 
     subject = 'Normalizi.ng / Your face'
     message = f'''
