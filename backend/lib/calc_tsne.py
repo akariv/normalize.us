@@ -16,8 +16,9 @@ from queue import Queue
 
 from .net import upload_fileobj_s3
 
-engine = create_engine(os.environ['DATABASE_URL'])
-conn = engine.connect()
+if 'DATABASE_URL' in os.environ:
+    engine = create_engine(os.environ['DATABASE_URL'])
+    conn = engine.connect()
 class ImageLoader():
     def __init__(self, images, args):
         self.concurrency = 32
