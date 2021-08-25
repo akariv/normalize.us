@@ -35,12 +35,12 @@ def send_email_handler(request):
     error = None
     try:
       response = requests.post(
-        'https://api.eu.mailgun.net/v3/normalizi.ng',
+        'https://api.eu.mailgun.net/v3/normalizi.ng/messages',
         auth=('api', os.environ['MAILGUN_API_KEY']),
         data={'from': our_email,
               'to': to_email,
               'subject': subject,
-              'text': message})
+              'html': message})
       print('GOT', response.status_code, response.text)
       if response.status_code != 200:
         success = False
