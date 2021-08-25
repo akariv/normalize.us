@@ -24,6 +24,7 @@ import { ModalComponent } from './modal/modal.component';
 import { ConsentModalComponent } from './map/consent-modal/consent-modal.component';
 import { FormsModule } from '@angular/forms';
 import { EmailModalComponent } from './map/email-modal/email-modal.component';
+import { AboutCardComponent } from './map/about-card/about-card.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { EmailModalComponent } from './map/email-modal/email-modal.component';
     GamePreloaderComponent,
     ModalComponent,
     ConsentModalComponent,
-    EmailModalComponent
+    EmailModalComponent,
+    AboutCardComponent
   ],
   imports: [
     BrowserModule,

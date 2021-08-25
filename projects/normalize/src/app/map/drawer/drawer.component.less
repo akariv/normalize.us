@@ -7,12 +7,6 @@
     // top: ~'calc(100% - 70px)';
     width: 100%;
     height: 75%;
-    background-color: @color-offwhite;
-    border-radius: 8px 8px 0px 0px;
-    display: flex;
-    flex-flow: column;
-    align-items: stretch;
-    justify-content: flex-start;
     transition: bottom 250ms ease-in-out;
 
     &.open {
@@ -24,23 +18,71 @@
         bottom: -75%;
     }
 
-    .handle {
-        flex: 0 0 auto;
-        display: flex;
-        flex-flow: column;
-        align-items: center;
-        justify-content: flex-start;
-        cursor: pointer;
-        height: 35px;
+    .lessmore {
+        position: absolute;
+        top: -32px;
         width: 100%;
-        padding: 6.5px;
+        height: 40px;
+        padding-bottom: 8px;
+        background-color: @color-dark-brown;
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px 8px 0px 0px;
+        transition: top 250ms ease-in-out;
+
+        span {
+            .font-source-sans;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 16px;
+            line-height: 18px;
+            color: @color-offwhite;
+            font-variant: small-caps;
+        }
+        img {
+            margin: 0 8px;
+        }
     }
 
-    .content {
-        // height: ~'calc(73.75vh - 35px)';
-        // height: ~'calc(73.75% - 110px)';
-        width: 100%;
-        overflow-y: scroll;
-        .no-scrollbars;
+    &.open {
+        .lessmore {
+            top: 0;
+        }
     }
+
+    .wrapper {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: @color-offwhite;
+        border-radius: 8px 8px 0px 0px;
+        display: flex;
+        flex-flow: column;
+        align-items: stretch;
+        justify-content: flex-start;
+    
+        .handle {
+            flex: 0 0 auto;
+            display: flex;
+            flex-flow: column;
+            align-items: center;
+            justify-content: flex-start;
+            cursor: pointer;
+            height: 35px;
+            width: 100%;
+            padding: 6.5px;
+        }
+    
+        .content {
+            // height: ~'calc(73.75vh - 35px)';
+            // height: ~'calc(73.75% - 110px)';
+            width: 100%;
+            overflow-y: scroll;
+            .no-scrollbars;
+        }
+    }
+
 }

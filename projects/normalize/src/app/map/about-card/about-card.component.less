@@ -1,0 +1,47 @@
+@import '../../../common.less';
+@import './markdown.less';
+
+.info {
+
+    .content {
+        padding: 24px;
+        display: flex;
+        flex-flow: column;
+        align-items: flex-start;
+        overflow-x: hidden;
+        width: 100%;
+        
+        .title {
+            .font-typewriter;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 32px;
+            line-height: 37px;
+            letter-spacing: 2px;
+            color: #2D2C29;
+            transform: matrix(1, -0.02, 0.02, 1, 0, 0);
+        }
+        .subtitle {
+            .font-source-sans;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 18px;
+            line-height: 23px;
+            color: #6B378F;
+        }
+        .subsubtitle {
+            .font-source-sans;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 16px;
+            line-height: 20px;
+            color: #2D2C29;
+            margin-top: 40px;
+        }
+        app-start-button {
+            margin: 0;
+            margin-top: 40px;
+            align-self: center;
+        }
+    }
+}

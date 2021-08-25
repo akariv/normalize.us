@@ -1,0 +1,133 @@
+@import '../../../common.less';
+
+.md ::ng-deep {
+    width: 100%;
+
+    h2, h3, p, a{
+        .font-source-sans;
+
+        font-style: normal;
+        color: @color-dark-brown;
+    }
+
+    p {
+        font-weight: 300;
+        font-size: 16px;
+        line-height: 20px;
+        margin: 8px 0;
+        display: flex;
+        flex-flow: column;
+        align-items: stretch;
+    }
+
+    h2, h3 {
+        height: 20px;
+
+        font-size: 16px;
+        line-height: 20px;
+
+        font-variant: small-caps;
+        margin: 0;
+        margin-top: 32px;
+    }
+
+    h2 {
+        font-weight: 600;
+    }
+
+    h3 {
+        font-weight: 400;
+    }
+
+    a.button {
+        align-self: center;
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        justify-content: center;
+        height: 36px;
+        padding: 0 18px;
+        border-radius: 16px;
+        border: 1px solid @color-dark-brown;
+        
+        &, &:hover, &:visited {
+            text-decoration: none;
+        }
+    }
+
+    a.more {
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        justify-content: stretch;
+        margin: 16px 0;
+        
+        .clickable {
+            display: block;
+            padding-left: 8px;
+            padding-right: 24px;
+            cursor: pointer;
+            background-image: url(../../../assets/img/caret-down.svg);
+            background-repeat: no-repeat;
+            background-size: 10px 6px;
+            background-position: top 8px right 8px;
+        }
+
+        .hr {
+            flex: 1 1 auto;
+            height: 0px;
+            border-bottom: 1px solid @color-dark-brown;
+        }
+    }
+
+    .gallery {
+        position: relative;
+        left: -24px;
+        width: calc(100% + 48px);
+        height: 408px;
+        overflow-x: scroll;
+        overflow-y: hidden;
+        .no-scrollbars;
+        padding: 16px 8px;
+
+        background: linear-gradient(180deg, #2D2C29 0%, #6C6C6C 100%);
+        display: flex;
+        flex-flow: row;
+        align-items: stretch;
+        
+        .gallery-item {
+            display: flex;
+            flex-flow: column;
+            align-items: center;
+            justify-content: flex-start;
+            margin: 0 16px;
+            width: 75%;
+            flex: 0 0 auto;
+
+            .img {
+                flex: 1 1 auto;
+                max-height: 100%;
+                height: auto;
+                width: 100%;
+                background-repeat: no-repeat;
+                background-size: contain;
+                background-position: center;
+            }
+
+            label {
+                display: block;
+                flex: 0 0 auto;
+                font-family: Source Serif Pro;
+                font-style: italic;
+                font-weight: normal;
+                font-size: 13px;
+                line-height: 16px;
+                text-align: center;
+                color: #FFFFFF;
+                margin: 0;
+                margin-top: auto;            
+                padding-top: 16px;
+            }
+        }
+    }
+}

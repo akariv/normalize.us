@@ -1,6 +1,13 @@
-<div class='handle' (click)='state(!open)'>
-    <img src='assets/img/handle.svg'/>
+<div class='lessmore'>
+    <span>less normal</span>
+    <img src='assets/img/lessmore.svg'/>
+    <span>more normal</span>
 </div>
-<div class='content'>
-    <ng-content></ng-content>
+<div class='wrapper'>
+    <div class='handle' (click)='state(!open)'>
+        <img src='assets/img/handle.svg'/>
+    </div>
+    <div class='content'>
+        <ng-content></ng-content>
+    </div>    
 </div>
