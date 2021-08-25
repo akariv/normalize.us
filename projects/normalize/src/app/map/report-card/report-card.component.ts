@@ -35,12 +35,12 @@ export class ReportCardComponent implements OnInit, OnChanges {
   get hasShare() {
     return !!navigator && !!navigator.share;
   }
-  
+
   share() {
     console.log('SHARING', navigator, navigator.share);
     navigator.share({
       title: 'Normalizi.ng',
-      text: 'Discover what *normal* people look like',
+      text: 'Normalizi.ng - Discover what *normal* people look like https://normalizi.ng',
       url: 'https://normalizi.ng'
     }).then((result) => {
       console.log('Share result:', result);

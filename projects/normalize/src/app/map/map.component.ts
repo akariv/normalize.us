@@ -133,7 +133,7 @@ export class MapComponent implements OnInit, AfterViewInit {
         this.normalityLayer = new NormalityLayer(this.map, this.grid);
       }),
       switchMap(() => {
-        if (!this.state.getAskedForEmail()) {
+        if (this.state.getOwnItemID() && !this.state.getAskedForEmail()) {
           this.emailModalOpen = true;
           return this.emailModal.closed.pipe(
             tap(() => {
