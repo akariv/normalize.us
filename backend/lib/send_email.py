@@ -41,6 +41,7 @@ def send_email_handler(request):
               'to': to_email,
               'subject': subject,
               'text': message})
+      print('GOT', response.status_code, response.text)
       if response.status_code != 200:
         success = False
         error = response.text
