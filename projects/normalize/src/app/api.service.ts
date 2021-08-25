@@ -43,4 +43,12 @@ export class ApiService {
   getMapConfiguration() {
     return this.http.get('https://normalizing-us-files.fra1.digitaloceanspaces.com/tsne.json');
   }
+
+  sendEmail(email) {
+    return this.http.post(environment.endpoints.send_email, {email}).pipe(
+      tap((res) => {
+        console.log('SENT EMAIL RESULT', res);
+      })
+    );
+  }
 }

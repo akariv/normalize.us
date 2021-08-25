@@ -1,5 +1,6 @@
 import { ElementRef, ViewChild } from '@angular/core';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ApiService } from '../../api.service';
 
 @Component({
   selector: 'app-email-modal',
@@ -14,7 +15,7 @@ export class EmailModalComponent implements OnInit {
   @ViewChild('input') input: ElementRef;
   emailAddress: string = null;
 
-  constructor() { }
+  constructor(private api: ApiService) { }
 
   ngOnInit(): void {
   }
@@ -23,7 +24,9 @@ export class EmailModalComponent implements OnInit {
     if (result === false) {
       this.closed.next(result);
     } else {
-      // send email
+      this.api.sendEmail(this.emailAddress).subscribe(() => {
+        this.closed.next(result);
+      }
     }
   }
 
