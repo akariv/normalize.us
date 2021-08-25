@@ -9,6 +9,7 @@ export const environment = {
     getGame: 'https://europe-west3-normalize-us.cloudfunctions.net/get-game',
     getImage: 'https://europe-west3-normalize-us.cloudfunctions.net/get-image',
     gameResults: 'https://europe-west3-normalize-us.cloudfunctions.net/game-results',
+    sendEmail: 'https://europe-west3-normalize-us.cloudfunctions.net/send_email',
     // new: 'http://localhost:8080/'
   }
 };

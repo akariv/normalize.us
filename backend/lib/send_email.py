@@ -10,6 +10,8 @@ reply_to_email = 'mushon@shual.com'
 reply_to_name = 'Mushon Zer-Aviv'
 
 def send_email_handler(request):
+  if request.method == 'OPTIONS':
+    return Response('', headers=HEADERS)
   if request.method == 'POST':
     content = request.json
     to_email = content['email']

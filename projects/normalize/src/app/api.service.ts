@@ -45,7 +45,8 @@ export class ApiService {
   }
 
   sendEmail(email) {
-    return this.http.post(environment.endpoints.send_email, {email}).pipe(
+    const link = window.location.href;
+    return this.http.post(environment.endpoints.sendEmail, {email, link}).pipe(
       tap((res) => {
         console.log('SENT EMAIL RESULT', res);
       })

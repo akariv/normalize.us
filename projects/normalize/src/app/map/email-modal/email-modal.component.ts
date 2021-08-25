@@ -26,7 +26,7 @@ export class EmailModalComponent implements OnInit {
     } else {
       this.api.sendEmail(this.emailAddress).subscribe(() => {
         this.closed.next(result);
-      }
+      });
     }
   }
 
