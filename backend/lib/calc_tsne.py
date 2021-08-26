@@ -18,7 +18,6 @@ from .net import upload_fileobj_s3
 
 if 'DATABASE_URL' in os.environ:
     engine = create_engine(os.environ['DATABASE_URL'])
-    conn = engine.connect()
 class ImageLoader():
     def __init__(self, images, args):
         self.concurrency = 32
@@ -81,18 +80,19 @@ class ImageLoader():
 
 def load_activations():
     print('Fetching descriptors')
-    rows = conn.execution_options(stream_results=True).execute('select id, image, tournaments, votes, descriptor, landmarks, gender_age from faces order by id desc limit 500')
-    ids = []
-    activations = []
-    for row in rows:
-        id, image, tournaments, votes, descriptor, landmarks, gender_age = row
-        ids.append(dict(
-            id=id, image=image, tournaments=tournaments, votes=votes, landmarks=landmarks, descriptor=descriptor, gender_age=gender_age
-        ))
-        activations.append(descriptor)
-        # if len(img_collection) > 100:
-        #     break
-    return ids, activations
+    with engine.connect() as conn:
+        rows = conn.execution_options(stream_results=True).execute('select id, image, tournaments, votes, descriptor, landmarks, gender_age from faces order by id desc limit 500')
+        ids = []
+        activations = []
+        for row in rows:
+            id, image, tournaments, votes, descriptor, landmarks, gender_age = row
+            ids.append(dict(
+                id=id, image=image, tournaments=tournaments, votes=votes, landmarks=landmarks, descriptor=descriptor, gender_age=gender_age
+            ))
+            activations.append(descriptor)
+            # if len(img_collection) > 100:
+            #     break
+        return ids, activations
 
 # def get_activations(model, img_collection, to_plot):
 #     activations = []
