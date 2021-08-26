@@ -74,10 +74,6 @@ If you have previously given consent to processing your data you can freely with
 
 If you do withdraw your consent, I will stop processing your personal data. This may take me up to 24 hours for technical reasons.
 
-## Your Choices
-
-If you choose to do this, you can continue to use the website and browse its pages, but I will not be able to give you the full [Normalizi.ng](http://normalizi.ng) experience without personal data.
-
 ## Your Rights
 
 You can exercise your rights by sending me an email at me @ normalizi.ng.
