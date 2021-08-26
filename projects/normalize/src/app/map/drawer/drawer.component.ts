@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { LayoutService } from '../../layout.service';
 
 @Component({
   selector: 'app-drawer',
@@ -7,7 +8,9 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
   host: {
     'class': 'drawer',
     '[class.open]': 'open && !hidden',
-    '[class.hidden]': 'hidden'
+    '[class.hidden]': 'hidden',
+    '[class.desktop]': 'layout.desktop',
+    '[class.mobile]': 'layout.mobile',
   }
 })
 export class DrawerComponent implements OnInit {
@@ -16,7 +19,7 @@ export class DrawerComponent implements OnInit {
   @Input() hidden = false;
   @Output() changed = new EventEmitter<boolean>();
 
-  constructor() { }
+  constructor(public layout: LayoutService) { }
 
   ngOnInit(): void {
   }

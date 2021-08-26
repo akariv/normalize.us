@@ -55,7 +55,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   
   constructor(private hostElement: ElementRef, private api: ApiService,
               private fetchImage: ImageFetcherService, private state: StateService,
-              private layout: LayoutService, private router: Router,
+              public layout: LayoutService, private router: Router,
               private faceapi: FaceApiService) {
   }
 
@@ -258,14 +258,14 @@ export class MapComponent implements OnInit, AfterViewInit {
     if (this.map && this.focusedItem) {
       const zoom = this.map.getZoom();
       if (open) {
+        let options: any = {animate: true};
+        if (this.layout.mobile) {
+          options.paddingBottomRight = [open ? window.innerHeight * 0.73 : 70, 0]
+        } else {
+          options.paddingBottomRight = [0, open ? 400 : 0];
+        }
         this.map.fitBounds(
-          [[-this.focusedItem.pos.y - 1, this.focusedItem.pos.x], [-this.focusedItem.pos.y, this.focusedItem.pos.x + 1]], {
-            animate: true,
-            // maxZoom: this.maxZoom,
-            paddingBottomRight: [
-              0, open ? window.innerHeight * 0.73 : 70
-            ],
-          }
+          [[-this.focusedItem.pos.y - 1, this.focusedItem.pos.x], [-this.focusedItem.pos.y, this.focusedItem.pos.x + 1]], options
         );
         if (this.breatheOverlay) {
           // precaution

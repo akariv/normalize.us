@@ -1,36 +1,48 @@
 @import '../../../common.less';
 
+@desktop-width: 400px;
+
 :host {
     position: absolute;
-    bottom: calc(70px - 75%);
-    left: 0;
-    // top: ~'calc(100% - 70px)';
-    width: 100%;
-    height: 75%;
-    transition: bottom 250ms ease-in-out;
 
-    &.open {
-        // top: 26.25vh;
-        bottom: 0;
+    &.desktop {
+        right: -@desktop-width;
+        top: 0;
+        width: @desktop-width;
+        height: 100%;
+        transition: right 250ms ease-in-out;
+        &.open {
+            right: 0;
+        }
+    
+        &.hidden {
+            right: - @desktop-width;
+        }
     }
-
-    &.hidden {
-        bottom: -75%;
+    &.mobile {
+        bottom: ~'calc(70px - 75%)';
+        left: 0;    
+        width: 100%;
+        height: 75%;
+        transition: bottom 250ms ease-in-out;
+        &.open {
+            bottom: 0;
+        }
+    
+        &.hidden {
+            bottom: -75%;
+        }
     }
-
+    
     .lessmore {
         position: absolute;
-        top: -32px;
         width: 100%;
         height: 40px;
-        padding-bottom: 8px;
         background-color: @color-dark-brown;
         display: flex;
         flex-flow: row;
         align-items: center;
         justify-content: center;
-        border-radius: 8px 8px 0px 0px;
-        transition: top 250ms ease-in-out;
 
         span {
             .font-source-sans;
@@ -46,11 +58,28 @@
         }
     }
 
-    &.open {
+    &.desktop {
         .lessmore {
-            top: 0;
+            width: 300px;
+            border-radius: 8px;
+            bottom: 40px;
+            right: @desktop-width + 40px;
         }
     }
+    &.mobile {
+        .lessmore {
+            top: -32px;
+            padding-bottom: 8px;
+            border-radius: 8px 8px 0px 0px;
+            transition: top 250ms ease-in-out;    
+        }
+        &.open {
+            .lessmore {
+                top: 0;
+            }
+        }
+    }
+
 
     .wrapper {
         position: absolute;
@@ -85,4 +114,11 @@
         }
     }
 
+    &.desktop {
+        .wrapper {
+            .handle {
+                display: none;
+            }
+        }
+    }
 }
