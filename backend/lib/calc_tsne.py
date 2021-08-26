@@ -82,7 +82,7 @@ def load_activations():
     print('Fetching descriptors')
     with engine.connect() as conn:
         rows = conn.execution_options(stream_results=True).execute('''
-            select id, image, tournaments, votes, descriptor, landmarks, gender_age, geolocation, created_timestamp
+            select id, image, tournaments, votes, descriptor, landmarks, gender_age, geolocation, created_timestamp,
                 votes_0, tournaments_0, 
                 votes_1, tournaments_1, 
                 votes_2, tournaments_2, 
