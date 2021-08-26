@@ -6,7 +6,7 @@ from PIL import Image
 from io import BytesIO
 import uuid
 
-from .db import connection
+from .db import engine
 from .net import HEADERS, upload_fileobj_s3
 
 insert_new = text('INSERT INTO FACES (image, descriptor, landmarks, gender_age, magic) VALUES (:image, :descriptor, :landmarks, :gender_age, :magic) RETURNING id')
@@ -45,8 +45,9 @@ def new_selfie_handler(request: Request):
             gender_age = content.get('gender_age')
             gender_age = json.dumps(gender_age)
 
-            result = connection.execute(insert_new, image=filename_base, descriptor=descriptor, landmarks=landmarks, gender_age=gender_age, magic=magic)
-            new_id = result.fetchone()[0]
+            with engine.connect() as connection:
+                result = connection.execute(insert_new, image=filename_base, descriptor=descriptor, landmarks=landmarks, gender_age=gender_age, magic=magic)
+                new_id = result.fetchone()[0]
             return Response(
                 json.dumps(dict(success=True, id=new_id, image=filename_base, magic=magic)),
                 headers=HEADERS

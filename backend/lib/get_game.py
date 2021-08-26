@@ -3,7 +3,7 @@ import json
 from sqlalchemy.sql import text
 from flask import Request, Response
 
-from .db import connection
+from .db import engine
 from .net import HEADERS
 
 fetch_random = text('''
@@ -21,12 +21,13 @@ def get_game_handler(request: Request):
     if request.method == 'OPTIONS':
         return Response('', headers=HEADERS)
     if request.method == 'GET':
-        rows = connection.execute(fetch_random)
-        result = []
-        for row in rows:
-            row = dict(row)
-            # row['created_timestamp'] = row['created_timestamp'].isoformat()
-            result.append(row)
+        with engine.connect() as connection:
+            rows = connection.execute(fetch_random)
+            result = []
+            for row in rows:
+                row = dict(row)
+                # row['created_timestamp'] = row['created_timestamp'].isoformat()
+                result.append(row)
         response = dict(
             success=True, records=result
         )

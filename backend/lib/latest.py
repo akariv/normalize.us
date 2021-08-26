@@ -2,7 +2,7 @@ import json
 from sqlalchemy.sql import text
 from flask import Request, Response
 
-from .db import connection
+from .db import engine
 from .net import HEADERS
 
 fetch_latest = text('''
@@ -17,11 +17,12 @@ def get_latest_handler(request: Request):
     if request.method == 'OPTIONS':
         return Response('', headers=HEADERS)
     if request.method == 'GET':
-        rows = connection.execute(fetch_latest)
-        result = []
-        for row in rows:
-            row = dict(row)
-            result.append(row)
+        with engine.connect() as connection:
+            rows = connection.execute(fetch_latest)
+            result = []
+            for row in rows:
+                row = dict(row)
+                result.append(row)
         response = dict(
             success=True, records=result
         )

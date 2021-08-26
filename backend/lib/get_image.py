@@ -3,7 +3,7 @@ import json
 from sqlalchemy.sql import text
 from flask import Request, Response, abort
 
-from .db import connection
+from .db import engine
 from .net import HEADERS
 
 fetch_image = text('''SELECT
@@ -22,12 +22,13 @@ def get_image_handler(request: Request):
         return Response('', headers=HEADERS)
     if request.method == 'GET':
         id = int(request.values.get('id'))
-        rows = connection.execute(fetch_image, id=id)
-        for row in rows:
-            return Response(
-                json.dumps(dict(row)),
-                headers={
-                    **HEADERS,
-                }
-            )
+        with engine.connect() as connection:
+            rows = connection.execute(fetch_image, id=id)
+            for row in rows:
+                return Response(
+                    json.dumps(dict(row)),
+                    headers={
+                        **HEADERS,
+                    }
+                )
         abort(404)
