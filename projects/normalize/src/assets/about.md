@@ -43,7 +43,7 @@ An exhibition version of the work is also available. Below are documentations <!
         <label>The Normalizing Machine at Fotomuseum Winterthur (2020)</label>
     </div>
     <div class='gallery-item'>
-        <div class='img' style='background-image: url(/assets/gallery/exhibit-2.jpg)'></div>
+        <div class='img' style='background-image: url(/assets/gallery/exhibit-2.png)'></div>
         <label>The Normalizing Machine at Fotomuseum Winterthur (2020)</label>
     </div>
 </div>
