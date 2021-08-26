@@ -6,6 +6,7 @@ export class ImageItem {
     descriptor: number[];
     landmarks: number[];
     gender_age: {gender: string; genderProbability: number; age: number};
+    geolocation: number[];
 
     public static normality(item: ImageItem, feature?: number) {
         let v = 'votes';

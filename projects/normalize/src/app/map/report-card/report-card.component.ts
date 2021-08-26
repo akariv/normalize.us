@@ -45,6 +45,14 @@ export class ReportCardComponent implements OnInit, OnChanges {
     return this.item.gender_age.genderProbability.toFixed(2);
   }
 
+  get geoLocation() {
+    if (this.item.geolocation) {
+      const c = this.item.geolocation;
+      return `${c[0].toFixed(3)}, ${c[1].toFixed(3)}`;
+    }
+    return '';
+  }
+
   get hasShare() {
     return !!navigator && !!navigator.share;
   }

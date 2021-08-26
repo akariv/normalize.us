@@ -82,7 +82,7 @@ def load_activations():
     print('Fetching descriptors')
     with engine.connect() as conn:
         rows = conn.execution_options(stream_results=True).execute('''
-            select id, image, tournaments, votes, descriptor, landmarks, gender_age,
+            select id, image, tournaments, votes, descriptor, landmarks, gender_age, geolocation, created_timestamp
                 votes_0, tournaments_0, 
                 votes_1, tournaments_1, 
                 votes_2, tournaments_2, 
@@ -93,7 +93,7 @@ def load_activations():
         ids = []
         activations = []
         for row in rows:
-            id, image, tournaments, votes, descriptor, landmarks, gender_age, *per_feature = row
+            id, image, tournaments, votes, descriptor, landmarks, gender_age, geolocation, created_timestamp, *per_feature = row
             ids.append(dict(
                 id=id, image=image,
                 tournaments=tournaments,votes=votes,
@@ -102,7 +102,9 @@ def load_activations():
                 votes_2=per_feature[4],tournaments_2=per_feature[5],
                 votes_3=per_feature[6],tournaments_3=per_feature[7],
                 votes_4=per_feature[8],tournaments_4=per_feature[9],
-                landmarks=landmarks, descriptor=descriptor, gender_age=gender_age
+                landmarks=landmarks, descriptor=descriptor,
+                gender_age=gender_age, geolocation=geolocation,
+                created_timestamp=created_timestamp.isoformat()
             ))
             activations.append(descriptor)
             # if len(img_collection) > 100:

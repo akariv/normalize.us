@@ -158,6 +158,7 @@ export class MapComponent implements OnInit, AfterViewInit {
               tournaments: 0,
               landmarks: this.state.getLandmarks(),
               gender_age: this.state.getGenderAge(),
+              geolocation: this.state.getGeolocation(),
             };
             this.tsneOverlay.addImageLayer(item).pipe(
               tap(() => {

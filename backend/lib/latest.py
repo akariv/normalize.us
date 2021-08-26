@@ -6,7 +6,7 @@ from .db import engine
 from .net import HEADERS
 
 fetch_latest = text('''
-    SELECT id, image, votes, tournaments, descriptor, landmarks, gender_age
+    SELECT id, image, votes, tournaments, descriptor, landmarks, gender_age,  geolocation
     FROM faces
     ORDER BY id desc
     LIMIT 5

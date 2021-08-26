@@ -32,12 +32,18 @@
         .cell {
             flex: 0 0 50%;
 
-            &:not(:first-child) {
-                border-left: 1px solid @color-dark-brown;
-                padding-left: 12px;
+            &.full {
+                flex: 0 0 100%;
             }
-            &:not(:last-child) {
-                padding-right: 12px;
+
+            &:not(.full) {
+                &:not(:first-child) {
+                    border-left: 1px solid @color-dark-brown;
+                    padding-left: 12px;
+                }
+                &:not(:last-child) {
+                    padding-right: 12px;
+                }    
             }
 
             display: flex;
@@ -66,6 +72,20 @@
                 flex: 1 1 auto;
                 border-bottom: 1px solid @color-dark-brown;
                 text-align: center;
+
+                .tilt1 {
+                    display: block;
+                    transform: matrix(1, 0.01, -0.02, 1, 0, 0);
+                }
+
+                .header {
+                    display: block;
+                    font-weight: 600;
+                    font-size: 32px;
+                    line-height: 37px;
+                    letter-spacing: 2px;
+                    transform: matrix(1, -0.02, 0.02, 1, 0, 0);
+                }
             }
         }
     }

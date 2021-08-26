@@ -9,7 +9,7 @@ import uuid
 from .db import engine
 from .net import HEADERS, upload_fileobj_s3
 
-insert_new = text('INSERT INTO FACES (image, descriptor, landmarks, gender_age, magic) VALUES (:image, :descriptor, :landmarks, :gender_age, :magic) RETURNING id')
+insert_new = text('INSERT INTO FACES (image, descriptor, landmarks, gender_age, geolocation, magic) VALUES (:image, :descriptor, :landmarks, :gender_age, :geolocation, :magic) RETURNING id')
 PREFIX = 'data:image/png;base64,'
 
 def new_selfie_handler(request: Request):
@@ -45,8 +45,11 @@ def new_selfie_handler(request: Request):
             gender_age = content.get('gender_age')
             gender_age = json.dumps(gender_age)
 
+            geolocation = content.get('geolocation')
+            geolocation = json.dumps(geolocation)
+
             with engine.connect() as connection:
-                result = connection.execute(insert_new, image=filename_base, descriptor=descriptor, landmarks=landmarks, gender_age=gender_age, magic=magic)
+                result = connection.execute(insert_new, image=filename_base, descriptor=descriptor, landmarks=landmarks, gender_age=gender_age, geolocation=geolocation, magic=magic)
                 new_id = result.fetchone()[0]
             return Response(
                 json.dumps(dict(success=True, id=new_id, image=filename_base, magic=magic)),
