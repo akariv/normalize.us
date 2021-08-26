@@ -11,7 +11,12 @@ export class ReportCardComponent implements OnInit, OnChanges {
 
   @Input() item: ImageItem;
 
-  normality = '0.50';
+  // 'nose', 'eyes', 'mouth', 'forehead', 'face
+  nose_normality = '0.50';
+  eyes_normality = '0.50';
+  mouth_normality = '0.50';
+  forehead_normality = '0.50';
+  face_normality = '0.50';
 
   constructor(public imageFetcher: ImageFetcherService) { }
 
@@ -20,7 +25,11 @@ export class ReportCardComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     if (this.item) {
-      this.normality = ImageItem.normality(this.item).toFixed(2);
+      this.nose_normality = ImageItem.normality(this.item, 0).toFixed(2);
+      this.eyes_normality = ImageItem.normality(this.item, 1).toFixed(2);
+      this.mouth_normality = ImageItem.normality(this.item, 2).toFixed(2);
+      this.forehead_normality = ImageItem.normality(this.item, 3).toFixed(2);
+      this.face_normality = ImageItem.normality(this.item, 4).toFixed(2);
     }
   }
 
@@ -30,6 +39,10 @@ export class ReportCardComponent implements OnInit, OnChanges {
 
   get gender() {
     return this.item.gender_age.gender[0].toUpperCase();
+  }
+
+  get gender_confidence() {
+    return this.item.gender_age.genderProbability.toFixed(2);
   }
 
   get hasShare() {

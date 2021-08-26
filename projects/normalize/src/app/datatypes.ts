@@ -7,8 +7,14 @@ export class ImageItem {
     landmarks: number[];
     gender_age: {gender: string; genderProbability: number; age: number};
 
-    public static normality(item: ImageItem) {
-        return (item.votes + 0.5) / (item.tournaments + 1);
+    public static normality(item: ImageItem, feature?: number) {
+        let v = 'votes';
+        let t = 'tournaments';
+        if (Number.isFinite(feature)) {
+            v += `_${feature}`;
+            t += `_${feature}`;
+        }
+        return (item[v] + 0.5) / (item[t] + 1);
     }
 }
 
