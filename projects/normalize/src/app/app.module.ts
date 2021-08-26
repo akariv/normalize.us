@@ -25,6 +25,7 @@ import { ConsentModalComponent } from './map/consent-modal/consent-modal.compone
 import { FormsModule } from '@angular/forms';
 import { EmailModalComponent } from './map/email-modal/email-modal.component';
 import { AboutCardComponent } from './map/about-card/about-card.component';
+import { RedirectModalComponent } from './map/redirect-modal/redirect-modal.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { AboutCardComponent } from './map/about-card/about-card.component';
     ModalComponent,
     ConsentModalComponent,
     EmailModalComponent,
-    AboutCardComponent
+    AboutCardComponent,
+    RedirectModalComponent
   ],
   imports: [
     BrowserModule,

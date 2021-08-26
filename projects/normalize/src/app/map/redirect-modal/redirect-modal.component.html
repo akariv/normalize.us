@@ -1,0 +1,12 @@
+<app-modal submit_text='ok' [open]='open' [submit_allowed]='true' (closed)='close()'>
+    <div class='redirect'>
+        <span class='header'>Normalizi.ng happens on mobile</span>
+
+        <span>Please scan the QR code:</span>
+        <img src='/assets/img/qrcode.png'>
+    
+        <span>Or open this link on a mobile device:</span>
+    
+        <input value='normalizi.ng'>
+    </div>
+</app-modal>

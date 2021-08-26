@@ -13,3 +13,4 @@
 <img class='info-button' (click)='focusedItem=null; drawerOpen=true' src='/assets/img/info-button.svg' *ngIf='!drawerOpen || !!focusedItem'>
 <app-consent-modal [open]='consentModalOpen' (closed)='consentModalOpen = false'></app-consent-modal>
 <app-email-modal [open]='emailModalOpen' (closed)='emailModalOpen = false'></app-email-modal>
+<app-redirect-modal [open]='redirectModalOpen' (closed)='redirectModalOpen = false'></app-redirect-modal>

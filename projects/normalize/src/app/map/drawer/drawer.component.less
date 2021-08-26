@@ -87,7 +87,6 @@
         width: 100%;
         height: 100%;
         background-color: @color-offwhite;
-        border-radius: 8px 8px 0px 0px;
         display: flex;
         flex-flow: column;
         align-items: stretch;
@@ -119,6 +118,12 @@
             .handle {
                 display: none;
             }
+        }
+    }
+
+    &.mobile {
+        .wrapper {
+            border-radius: 8px 8px 0px 0px;
         }
     }
 }

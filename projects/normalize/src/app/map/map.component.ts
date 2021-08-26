@@ -48,6 +48,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   _drawerOpen = true;
 
   consentModalOpen = false;
+  redirectModalOpen = false;
   emailModalOpen = false;
 
   @ViewChild('map') mapElement:  ElementRef;
@@ -250,7 +251,11 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   start() {
-    this.consentModalOpen = true;
+    if (this.layout.mobile) {
+      this.consentModalOpen = true;
+    } else {
+      this.redirectModalOpen = true;
+    }
   }
 
   set drawerOpen(open: boolean) {
