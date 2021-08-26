@@ -33,7 +33,9 @@ The work was generously commissioned by **Science Gallery Dublin**. Thank you.
 
 ## exhibit
 
-An exhibition version of the work is also available. Below are documentations from the work’s debut in Dublin (Sep, 2021) and of The Normalizing Machine, a previous iterrations of the work:
+<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/323711041?h=4c1b93e06c" style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+
+An exhibition version of the work is also available. Below are documentations <!---from the work’s debut in Dublin (Sep, 2021) and -->of The Normalizing Machine, a previous iterrations of the work:
 
 <div class='gallery'>
     <div class='gallery-item'>
