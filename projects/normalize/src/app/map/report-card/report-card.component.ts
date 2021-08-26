@@ -53,6 +53,20 @@ export class ReportCardComponent implements OnInit, OnChanges {
     return '';
   }
 
+  get createdTime() {
+    if (this.item.created_timestamp) {
+      return this.item.created_timestamp.split('T')[1].split('.')[0] || '';
+    }
+    return '';
+  }
+
+  get createdDate() {
+    if (this.item.created_timestamp) {
+      return this.item.created_timestamp.split('T')[0] || '';
+    }
+    return '';
+  }
+
   get hasShare() {
     return !!navigator && !!navigator.share;
   }

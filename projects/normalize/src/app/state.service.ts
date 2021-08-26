@@ -51,6 +51,7 @@ export class StateService {
   }
 
   setGeolocation(geolocation: number[]) {
+    console.log('SETTING GEO', geolocation);
     this.geolocation = geolocation;
   }
 

@@ -154,6 +154,7 @@ export class SelfieComponent implements OnInit, AfterViewInit {
           this.prompts = PROMPTS.hold_still2;
           this.promptsStream.next(PROMPTS.hold_still2);
           this.state.setOwnInfo({id: 'pending', descriptor: event.descriptor, image: event.image, landmarks: event.landmarks, gender_age: event.gender_age});
+          event.geolocation = this.state.geolocation;
           this.state.pushRequest(
             this.api.createNew(event)
             .pipe(
