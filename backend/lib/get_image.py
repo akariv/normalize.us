@@ -24,9 +24,10 @@ def get_image_handler(request: Request):
         with engine.connect() as connection:
             rows = connection.execute(fetch_image, id=id)
             for row in rows:
+                row = dict(row)
                 row['created_timestamp'] = row['created_timestamp'].isoformat()
                 return Response(
-                    json.dumps(dict(row)),
+                    json.dumps(row),
                     headers={
                         **HEADERS,
                     }
