@@ -1,5 +1,5 @@
 <div #map class='map'></div>
-<app-feature-selector [feature]='feature' (selected)='feature = $event'></app-feature-selector>
+<app-feature-selector [feature]='feature' (selected)='feature = $event' *ngIf='false'></app-feature-selector>
 <div class='overlay' *ngIf='overlay' (click)='overlay = false; drawerOpen = false'></div>
 <app-drawer [open]='drawerOpen' [hidden]='consentModalOpen' (changed)='overlay = false; drawerOpen = $event'>
     <ng-container *ngIf='!focusedItem'>
