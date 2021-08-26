@@ -86,6 +86,4 @@ If you have any concern please email: me @ normalizi.ng
 
 No.
       
-<a class='button start' href='#' target='_blank'>Start Normalizi.ng</a>
-
 [Mushon Zer-Aviv](https://mushon.com) 2021  |  [privacy policy](#)
