@@ -91,7 +91,7 @@ I will provide you with the information within one month of your request, unless
 
 ### You have the right to be "forgotten"
 
-This is simply done by deleting your profile. If for some reason, you were not able to do that, please tell me first, so I have a chance to address your concerns. If I fail in this, you can address any complaint to the CNIL, either by calling their helpline or as directed on their website at [https://www.cnil.fr/](https://www.cnil.fr/).
+This is simply done by deleting your profile. If for some reason, you were not able to do that, please tell me first, so I have a chance to address your concerns. 
 
 ### You have the right to lodge a complaint regarding my use of your data
 
@@ -107,9 +107,9 @@ While I took careful procedures to safeguard and secure the information I collec
 
 ### Where do I store the data?
 
-The personal data I collect is primarily stored in ________________ servers in ________. 
+The personal data I collect is primarily stored in DigitalOcean servers in Frankfurt. 
 
-By submitting your personal data, you agree to this transfer, storing or processing by me. If I transfer or store your information outside the EEA in this way, I will take steps to ensure that your privacy rights continue to be protected as outlined in this Privacy Policy.
+By submitting your personal data, you agree to this transfer, storing or processing by me. If I transfer or store your information in a different location, I will take steps to ensure that your privacy rights continue to be protected as outlined in this Privacy Policy.
 
 ### How long do I store your data?
 
@@ -124,14 +124,33 @@ Here are the details of our main third-party service providers, and what data th
 ### Infrastructure
 
 
-#### Amazon Web Services, Inc.
+#### DigitalOcean Inc.
 
-- Contact details
-- Metadata from your source code
-- Data that identifies you
+[Privacy Policy](https://www.digitalocean.com/legal/privacy-policy/)
 
+**Data collected or shared:**
+- Your photograph
+- Your face's biometric data
+- Time and date of the photo taken
+- Location where the photo was taken
+
+**Purpose:**
 This is a web hosting provider: we use it to store data you generate by using the service securely in the cloud.
 
-EEA (Ireland)
+**Place of processing:** Frankfurt, Germany
 
-https://aws.amazon.com/privacy/
+#### Google Cloud Platform
+
+[Privacy Policy](https://cloud.google.com/terms/cloud-privacy-notice)
+
+**Data collected or shared:**
+NONE
+
+**Purpose:**
+This platform does data processing but no data is stored here
+
+**Place of processing:** Frankfurt, Germany
+
+## Changes to this document
+
+I do not intend to make chenges to this document but in case I have to, I will make sure to update them here. I will however, not be able to inform you of any changes as I will not be saving your email.
