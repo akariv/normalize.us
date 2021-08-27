@@ -1,6 +1,7 @@
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { ImageItem } from '../../datatypes';
 import { ImageFetcherService } from '../../image-fetcher.service';
+import { StateService } from '../../state.service';
 
 @Component({
   selector: 'app-report-card',
@@ -18,7 +19,7 @@ export class ReportCardComponent implements OnInit, OnChanges {
   forehead_normality = '0.50';
   face_normality = '0.50';
 
-  constructor(public imageFetcher: ImageFetcherService) { }
+  constructor(public imageFetcher: ImageFetcherService, private state: StateService) { }
 
   ngOnInit(): void {
   }
@@ -48,7 +49,7 @@ export class ReportCardComponent implements OnInit, OnChanges {
   get geoLocation() {
     if (this.item.geolocation) {
       const c = this.item.geolocation;
-      return `${c[0].toFixed(3)}, ${c[1].toFixed(3)}`;
+      return `${c[0].toFixed(2)}, ${c[1].toFixed(2)}`;
     }
     return '';
   }
@@ -71,12 +72,16 @@ export class ReportCardComponent implements OnInit, OnChanges {
     return !!navigator && !!navigator.share;
   }
 
+  get ownCard() {
+    return this.item.id === this.state.getOwnItemID();
+  }
+
   share() {
-    console.log('SHARING', navigator, navigator.share);
+    const url = `https://normalizi.ng?id=${this.state.getOwnItemID()}`;
     navigator.share({
       title: 'Normalizi.ng',
-      text: 'Normalizi.ng - Discover what *normal* people look like https://normalizi.ng',
-      url: 'https://normalizi.ng'
+      text: `Normalizi.ng - Discover what *normal* people look like ${url}`,
+      url: url
     }).then((result) => {
       console.log('Share result:', result);
     });

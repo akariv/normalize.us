@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { from, ReplaySubject } from 'rxjs';
+import { from, Observable, ReplaySubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
 import { environment } from '../environments/environment';
@@ -32,8 +32,10 @@ export class ApiService {
     );
   }
 
-  getImage(id) {
-    return this.http.get(environment.endpoints.getImage, {params: {id}});
+  getImage(id): Observable<ImageItem> {
+    return this.http.get(environment.endpoints.getImage, {params: {id}}).pipe(
+      map(result => result as ImageItem)
+    );
   }
 
   saveGameResults(results) {

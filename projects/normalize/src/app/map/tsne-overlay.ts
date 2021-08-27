@@ -52,14 +52,12 @@ export class TSNEOverlay {
           [[-emptyPosition.y-0.75, emptyPosition.x+0.25], [-emptyPosition.y-0.25, emptyPosition.x+0.75]]
         );
         overlay.addTo(this.map);
-        this.animateMap(emptyPosition);
         const gi = {pos: emptyPosition, item: image};
         this.grid.push(gi);
         return gi;
       } else {
         console.log('FOUND in GRID');
         // const bounds: L.LatLngBoundsExpression = [[-found.pos.y-1, found.pos.x], [-found.pos.y, found.pos.x+1]];
-        this.animateMap(found.pos);
         return found;
       }
     }), first());
@@ -86,13 +84,5 @@ export class TSNEOverlay {
       }
     }
     return { x: gi.pos.x, y: gi.pos.y };
-  }
-
-  animateMap(pos) {
-    const center: L.LatLngExpression = [-pos.y + 0.5, pos.x + 0.5];
-    this.map.flyTo(this.map.getCenter(), this.maxZoom - 5, {animate: true, duration: 1});
-    setTimeout(() => {
-      this.map.flyTo(center, this.maxZoom, {animate: true, duration: 1});
-    }, 3000);
   }
 }

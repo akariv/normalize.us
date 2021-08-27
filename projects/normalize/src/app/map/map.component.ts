@@ -3,8 +3,8 @@ import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angula
 import * as L from 'leaflet';
 import * as geojson from 'geojson';
 
-import { from, ReplaySubject, Subject } from 'rxjs';
-import { delay, first, switchMap, tap } from 'rxjs/operators';
+import { forkJoin, from, merge, Observable, ReplaySubject, Subject } from 'rxjs';
+import { delay, first, last, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { ApiService } from '../api.service';
 import { ImageFetcherService } from '../image-fetcher.service';
 import { NormalityLayer } from './normality-layer';
@@ -147,50 +147,90 @@ export class MapComponent implements OnInit, AfterViewInit {
       }),
       tap(() => { // SET UP TSNE OVERLAY
         this.tsneOverlay = new TSNEOverlay(this.map, this.grid, this.configuration.dim, this.fetchImage, this.maxZoom);
+        const items: Observable<ImageItem>[] = [];
+        console.log('SET UP TSNE OVERLAY');
+
         if (this.state.getOwnImageID()) {
+          let expectedId = this.state.getOwnItemID();
           if (this.state.getDescriptor()) {
             // console.log('HAS DESCRIPTOR');
             const item: ImageItem = {
-              id: this.state.getOwnItemID() + '',
+              id: this.state.getOwnItemID(),
               image: this.state.getOwnImageID(),
               descriptor: this.state.getDescriptor(),
               votes: 0,
               tournaments: 0,
+              votes_0: 0,
+              tournaments_0: 0,
+              votes_1: 0,
+              tournaments_1: 0,
+              votes_2: 0,
+              tournaments_2: 0,
+              votes_3: 0,
+              tournaments_3: 0,
+              votes_4: 0,
+              tournaments_4: 0,
+              created_timestamp: new Date().toUTCString(),
               landmarks: this.state.getLandmarks(),
               gender_age: this.state.getGenderAge(),
               geolocation: this.state.getGeolocation(),
             };
-            this.tsneOverlay.addImageLayer(item).pipe(
-              tap(() => {
+            items.push(from([item]));
+          } else {
+            // console.log('NO DESCRIPTOR', this.state.getOwnItemID());
+            items.push(
+              this.api.getImage(this.state.getOwnItemID()).pipe(
+                tap((item) => {
+                  console.log('MY ITEM', item);
+                  this.state.checkItem(item);
+                })
+              )
+            );
+          }
+          const sharedId = this.state.urlSearchParam('id');
+          if (sharedId) {
+            expectedId = parseInt(sharedId);
+            items.push(
+              this.api.getImage(expectedId)
+            );
+          }
+          console.log('LEN ITEMS', items.length);
+          let targetGi = null;
+          merge(...items).pipe(
+            mergeMap((item) => {
+              return this.tsneOverlay.addImageLayer(item);
+            }),
+            tap((gi) => {
+              console.log('GOT GI', gi);
+              if (gi.item.id === expectedId) {
+                targetGi = gi;
+              }
+            }),
+            last(),
+            map(() => {
+              let center: L.LatLngExpression = null;
+              if (targetGi !== null) {
+                console.log('TARGET GI', targetGi);
                 this.overlay = false;
                 this.drawerOpen = false;
                 this.normalityLayer.refresh();
-              }),
-              delay(3000),
-            ).subscribe((gi) => {
-              this.focusedItem = gi;
+
+                const pos = targetGi.pos;
+                center = [-pos.y + 0.5, pos.x + 0.5];
+                this.map.flyTo(this.map.getCenter(), this.maxZoom - 5, {animate: true, duration: 1});
+              }
+              return center;
+            }),
+            delay(3000),
+          ).subscribe((center) => {
+            if (targetGi !== null) {
+              this.map.flyTo(center, this.maxZoom, {animate: true, duration: 1});
+              this.focusedItem = targetGi;
               this.drawerOpen = true;
-            });
-        } else {
-            // console.log('NO DESCRIPTOR', this.state.getOwnItemID());
-            this.api.getImage(this.state.getOwnItemID()).subscribe((item: ImageItem) => {
-              console.log('MY ITEM', item);
-              this.state.checkItem(item);
-              this.tsneOverlay.addImageLayer(item as ImageItem).pipe(
-                tap(() => {
-                  this.overlay = false;
-                  this.drawerOpen = false;
-                  this.normalityLayer.refresh();
-                }),
-                delay(3000),
-              ).subscribe((gi) => {
-                this.focusedItem = gi;
-                this.drawerOpen = true;
-              });
-            });
-          }
+            }
+          });
+          this.grid.next(this.configuration.grid);
         }
-        this.grid.next(this.configuration.grid);
       })
     ).subscribe(() => {
       console.log('FINISHED VIEW INIT');
@@ -266,7 +306,7 @@ export class MapComponent implements OnInit, AfterViewInit {
       if (open) {
         let options: any = {animate: true};
         if (this.layout.mobile) {
-          options.paddingBottomRight = [open ? window.innerHeight * 0.73 : 70, 0]
+          options.paddingBottomRight = [0, open ? window.innerHeight * 0.73 : 70]
         } else {
           options.paddingBottomRight = [0, open ? 400 : 0];
         }

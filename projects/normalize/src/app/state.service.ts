@@ -16,7 +16,7 @@ export class StateService {
   descriptor: any;
   landmarks: any;
   gender_age: any;
-  itemID: string;
+  itemID: number;
   imageID: string;
   geolocation: number[];
   magic: string;
@@ -26,7 +26,11 @@ export class StateService {
   requests = [];
 
   constructor() {
-    this.itemID = window.localStorage.getItem(this.OWN_ID_KEY);
+    try {      
+      this.itemID = parseInt(window.localStorage.getItem(this.OWN_ID_KEY));
+    } catch (e) {
+      this.itemID = null;
+    }
     this.imageID = window.localStorage.getItem(this.OWN_IMAGE_KEY);
     this.magic = window.localStorage.getItem(this.OWN_MAGIC_KEY);
     this.played = window.localStorage.getItem(this.PLAYED_KEY) === 'true';
@@ -41,7 +45,7 @@ export class StateService {
     this.descriptor = value.descriptor || this.descriptor;
     this.landmarks = value.landmarks || this.landmarks;
     this.gender_age = value.gender_age || this.gender_age;
-    window.localStorage.setItem(this.OWN_ID_KEY, this.itemID);
+    window.localStorage.setItem(this.OWN_ID_KEY, this.itemID + '');
     if (this.imageID && this.imageID.length < 64) {
       window.localStorage.setItem(this.OWN_IMAGE_KEY, this.imageID);
     }
@@ -56,7 +60,7 @@ export class StateService {
   }
 
   getOwnItemID() {
-    return this.itemID ? parseInt(this.itemID) : null;
+    return this.itemID;
   }
 
   getOwnImageID() {
@@ -122,7 +126,7 @@ export class StateService {
 
   checkItem(item: ImageItem) {
     if (
-      (item.id + '' !== this.getOwnItemID() + '') ||
+      (item.id !== this.getOwnItemID()) ||
       (item.image !== this.getOwnImageID())
     ) {
       window.localStorage.removeItem(this.OWN_ID_KEY);
@@ -132,5 +136,10 @@ export class StateService {
       window.location.reload();
     }
     return true;
+  }
+
+  urlSearchParam(key) {
+    const params = new URLSearchParams(location.search);
+    return params.get(key);
   }
 }

@@ -1,5 +1,5 @@
 export class ImageItem {
-    id: string;
+    id: number;
     image: string;
     tournaments: number;
     votes: number;
@@ -8,6 +8,16 @@ export class ImageItem {
     gender_age: {gender: string; genderProbability: number; age: number};
     geolocation: number[];
     created_timestamp?: string;
+    tournaments_0?: number;
+    votes_0?: number;
+    tournaments_1?: number;
+    votes_1?: number;
+    tournaments_2?: number;
+    votes_2?: number;
+    tournaments_3?: number;
+    votes_3?: number;
+    tournaments_4?: number;
+    votes_4?: number;
 
     public static normality(item: ImageItem, feature?: number) {
         let v = 'votes';

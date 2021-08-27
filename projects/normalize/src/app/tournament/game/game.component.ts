@@ -49,7 +49,7 @@ export class GameComponent implements OnInit {
         // console.log('TUP', this.tuples.length, this.tuples);
         if (this.feature === 4) {
           if (this.state.getOwnImageID()) {
-            this.tuples[this.tuples.length - 1][1] = {id: 'pending', image: this.state.getOwnImageID()};
+            this.tuples[this.tuples.length - 1][1] = {id: -1, image: this.state.getOwnImageID()};
           }
         }
       }
@@ -96,7 +96,7 @@ export class GameComponent implements OnInit {
       this.state.pushRequest(
         from([this.results]).pipe(
           map((results) => {
-            return results.map((t) => t.map((c) => c === 'pending'? this.state.getOwnItemID() : c));
+            return results.map((t) => t.map((c) => c === -1 ? this.state.getOwnItemID() : c));
           }),
           switchMap((results) => {
             return this.api.saveGameResults(results);
