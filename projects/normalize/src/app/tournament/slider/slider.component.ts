@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { fromEvent, Subject, Subscription } from 'rxjs';
-import { debounceTime, throttle, throttleTime } from 'rxjs/operators';
+import { from, fromEvent, Subject, Subscription } from 'rxjs';
+import { debounceTime, delay, map, tap, throttle, throttleTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-slider',
@@ -24,6 +24,8 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
   throttled = new Subject<number>();
   width = 0;
   startX = 0;
+  startTime = 0;
+  currentIdx = 0;
   position = 0;
   opacity = [null, null]
   markSelected = false;
@@ -70,11 +72,12 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
       this.subscriptions.push(...[
         fromEvent(handle, 'mousedown').subscribe((ev: MouseEvent) => { if (ev.button === 0) { ev.preventDefault(); ; this.mousedown(idx, ev); }}),
         fromEvent(handle, 'touchstart').subscribe((ev: MouseEvent) => { ev.preventDefault(); this.mousedown(idx, ev); }),
-        
-        fromEvent(window, 'mouseup').subscribe((ev: Event) => { ev.preventDefault(); this.mouseup('m'); }),
-        fromEvent(window, 'touchend').subscribe((ev: Event) => { ev.preventDefault(); this.mouseup('t'); }),  
       ]);
     }
+    this.subscriptions.push(...[
+      fromEvent(window, 'mouseup').subscribe((ev: Event) => { ev.preventDefault(); this.mouseup('m'); }),
+      fromEvent(window, 'touchend').subscribe((ev: Event) => { ev.preventDefault(); this.mouseup('t'); }),  
+    ]);
   }
 
   clearSubscriptions() {
@@ -89,38 +92,56 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   mouseup(type) {
     // console.log('MOUSEUP', type);
-    setTimeout(() => {
-      if (this.position >= this.width * 0.25) {
-        if (!this.markSelected) {
-          this.markSelected = true;
-          // console.log('SELECTING', -1);
-          this.selected.next(-1);
-          this.position = this.width / 2;
-          this.throttled.next(1);
+    const clicked = (performance.now() - this.startTime) < 200;
+    from([true]).pipe(
+      delay(0),
+      map(() => {
+        let selected = 0;
+        if (clicked) {
+          if (!this.markSelected) {
+            this.markSelected = true;
+            selected = this.currentIdx * 2 - 1;
+            console.log('SELECTING CLICKED', selected);
+            this.updatePosition(-this.width / 2 * selected);
+          }
         }
-      }
-      else if (this.position <= -this.width * 0.25) {
-        if (!this.markSelected) {
-          this.markSelected = true;
-          // console.log('SELECTING', 1);
-          this.selected.next(1);
-          this.position = -this.width / 2;
-          this.throttled.next(-1);
+        else if ((this.position >= this.width * 0.25)) {
+          if (!this.markSelected) {
+            this.markSelected = true;
+            console.log('SELECTING', -1);
+            selected = -1;
+            this.updatePosition(this.width / 2);
+          }
         }
-      } else {      
-        this.position = 0;
-        this.opacity = [1, 1];
-        this.location.next(0);
-      }
-      if (this.moveSubscripion) {
-        this.moveSubscripion.unsubscribe();
-        this.moveSubscripion = null;
-      }
-    }, 0);
+        else if (this.position <= -this.width * 0.25) {
+          if (!this.markSelected) {
+            this.markSelected = true;
+            console.log('SELECTING', 1);
+            selected = 1;
+            this.updatePosition(-this.width / 2);
+          }
+        } else {      
+          this.updatePosition(0);
+        }
+        return selected;
+      }),
+      delay(300),
+      tap((selected) => {
+        if (selected !== 0) {
+          this.selected.next(selected);
+        }
+      }),
+    ).subscribe();
+    if (this.moveSubscripion) {
+      this.moveSubscripion.unsubscribe();
+      this.moveSubscripion = null;
+    }
   }
 
   mousedown(idx, ev) {
     this.startX = this.getX(ev);
+    this.startTime = performance.now();
+    this.currentIdx = idx;
     if (this.moveSubscripion) {
       this.moveSubscripion.unsubscribe();
     }
@@ -133,7 +154,11 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   mousemove(idx, ev) {
     const x = this.getX(ev);
-    this.position = x - this.startX;
+    this.updatePosition(x - this.startX);
+  }
+
+  updatePosition(pos) {
+    this.position = pos;
     this.position = Math.min(this.position, this.width/2);
     this.position = Math.max(this.position, -this.width/2);
     if (this.position > 0) {
