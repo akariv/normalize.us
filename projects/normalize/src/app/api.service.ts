@@ -5,6 +5,7 @@ import { map, tap } from 'rxjs/operators';
 
 import { environment } from '../environments/environment';
 import { ImageItem } from './datatypes';
+import { StateService } from './state.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class ApiService {
 
   game: ReplaySubject<any>;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private state: StateService) { }
 
   createNew(imageItem: ImageItem) {
     const params = {image: imageItem.image, descriptor: imageItem.descriptor, landmarks: imageItem.landmarks, gender_age: imageItem.gender_age, geolocation: imageItem.geolocation};
@@ -47,7 +48,7 @@ export class ApiService {
   }
 
   sendEmail(email) {
-    const link = window.location.href;
+    const link = this.state.getPrivateUrl();
     return this.http.post(environment.endpoints.sendEmail, {email, link}).pipe(
       tap((res) => {
         console.log('SENT EMAIL RESULT', res);

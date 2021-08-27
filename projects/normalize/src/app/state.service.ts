@@ -26,6 +26,7 @@ export class StateService {
   requests = [];
 
   constructor() {
+    this.checkUrlParameters();
     try {      
       this.itemID = parseInt(window.localStorage.getItem(this.OWN_ID_KEY));
     } catch (e) {
@@ -36,6 +37,26 @@ export class StateService {
     this.played = window.localStorage.getItem(this.PLAYED_KEY) === 'true';
     this.askedForEmail = window.localStorage.getItem(this.ASKED_FOR_EMAIL_KEY) === 'true';
     console.log('STATE:', this.imageID, this.played);
+    console.log('PRIVATE STATE', this.getPrivateUrl());
+  }
+
+  checkUrlParameters() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const itemID = urlParams.get('i');
+    const imageID = urlParams.get('u');
+    const magic = urlParams.get('m');
+    if (itemID && imageID && magic) {
+      this.setPlayed();
+      this.setAskedForEmail();
+      window.localStorage.setItem(this.OWN_ID_KEY, itemID);
+      window.localStorage.setItem(this.OWN_IMAGE_KEY, imageID);
+      window.localStorage.setItem(this.OWN_MAGIC_KEY, magic);
+      window.location.search = '';
+    }
+  }
+
+  getPrivateUrl() {
+    return `https://normalizi.ng/?i=${this.itemID}&u=${this.imageID}&m=${this.magic}`;
   }
 
   setOwnInfo(value) {
