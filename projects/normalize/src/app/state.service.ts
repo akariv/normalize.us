@@ -40,8 +40,6 @@ export class StateService {
     if (this.magic && !this.askedForEmail) {
       this.needsEmail.next();
     }
-    console.log('STATE:', this.imageID, this.played);
-    console.log('PRIVATE STATE', this.getPrivateUrl());
   }
 
   checkUrlParameters() {
@@ -86,7 +84,6 @@ export class StateService {
   }
 
   setGeolocation(geolocation: number[]) {
-    console.log('SETTING GEO', geolocation);
     this.geolocation = geolocation;
   }
 

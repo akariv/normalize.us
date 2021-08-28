@@ -17,7 +17,6 @@ export class NormalityLayer {
     }
 
     refresh() {
-        // console.log('NORMALITY REFRESH');
         const features: geojson.Feature[] = [];
         this._grid.forEach((g) => {
             const x = g.pos.x;
@@ -39,7 +38,6 @@ export class NormalityLayer {
                 }
             });
         });
-        // console.log('NORMALITY REFRESH', features.length + ' FEATURES');
         const geoJson: geojson.FeatureCollection<any, any> = {type: 'FeatureCollection', features: features};
         if (this.layer) {
             this.map.removeLayer(this.layer);

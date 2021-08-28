@@ -54,7 +54,6 @@ export class SliderComponent implements OnInit, AfterViewInit, OnDestroy {
     }, 0);
     if (this.extraHandles && this.savedExtraHandles !== this.extraHandles) {
       this.savedExtraHandles = this.extraHandles;
-      console.log('EXTRA HANDLES', this.extraHandles);
       this.clearSubscriptions();
       this.registerHandles(this.extraHandles);
       this.registerHandles(this.handles);

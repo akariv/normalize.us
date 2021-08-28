@@ -48,7 +48,6 @@ export class ConsentModalComponent implements OnInit {
     if (value) {
       if (!this.state.getGeolocation()) {
         navigator.geolocation.getCurrentPosition((position) => {
-          console.log('GOT POSITION', position);
           if (position && position.coords) {
             this.state.setGeolocation([position.coords.latitude, position.coords.longitude]);
           }

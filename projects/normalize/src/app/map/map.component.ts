@@ -125,7 +125,6 @@ export class MapComponent implements OnInit, AfterViewInit {
               const posY = item.pos.y;
               if (x === posX && y === posY) {
                 proposed = item;
-                console.log('CLICKED', item.item.id);
                 break;
               }
             }
@@ -135,7 +134,6 @@ export class MapComponent implements OnInit, AfterViewInit {
           }
           if (proposed !== null) {
             setTimeout(() => {
-              // console.log('OPENING...');
               this.focusedItem = proposed;
               this.drawerOpen = true;
             }, 500);
@@ -148,12 +146,10 @@ export class MapComponent implements OnInit, AfterViewInit {
       tap(() => { // SET UP TSNE OVERLAY
         this.tsneOverlay = new TSNEOverlay(this.map, this.grid, this.configuration.dim, this.fetchImage, this.maxZoom);
         const items: Observable<ImageItem>[] = [];
-        console.log('SET UP TSNE OVERLAY');
 
         if (this.state.getOwnImageID()) {
           let expectedId = this.state.getOwnItemID();
           if (this.state.getDescriptor()) {
-            // console.log('HAS DESCRIPTOR');
             const item: ImageItem = {
               id: this.state.getOwnItemID(),
               image: this.state.getOwnImageID(),
@@ -177,11 +173,9 @@ export class MapComponent implements OnInit, AfterViewInit {
             };
             items.push(from([item]));
           } else {
-            // console.log('NO DESCRIPTOR', this.state.getOwnItemID());
             items.push(
               this.api.getImage(this.state.getOwnItemID()).pipe(
                 tap((item) => {
-                  console.log('MY ITEM', item);
                   this.state.checkItem(item);
                 })
               )
@@ -194,14 +188,12 @@ export class MapComponent implements OnInit, AfterViewInit {
               this.api.getImage(expectedId)
             );
           }
-          console.log('LEN ITEMS', items.length);
           let targetGi = null;
           merge(...items).pipe(
             mergeMap((item) => {
               return this.tsneOverlay.addImageLayer(item);
             }),
             tap((gi) => {
-              console.log('GOT GI', gi);
               if (gi.item.id === expectedId) {
                 targetGi = gi;
               }
@@ -210,7 +202,6 @@ export class MapComponent implements OnInit, AfterViewInit {
             map(() => {
               let center: L.LatLngExpression = null;
               if (targetGi !== null) {
-                console.log('TARGET GI', targetGi);
                 this.overlay = false;
                 this.drawerOpen = false;
                 this.normalityLayer.refresh();
@@ -229,8 +220,8 @@ export class MapComponent implements OnInit, AfterViewInit {
               this.drawerOpen = true;
             }
           });
-          this.grid.next(this.configuration.grid);
         }
+        this.grid.next(this.configuration.grid);
       })
     ).subscribe(() => {
       console.log('FINISHED VIEW INIT');
@@ -243,37 +234,40 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   onBoundsChange() {
-    let x = -1;
-    let y = -1;
-    // if (this.zoomedMax) {
-    //   const bounds = this.map.getBounds();
-    //   const pos = bounds.getCenter();
-    //   x = Math.floor(pos.lng);
-    //   y = -Math.ceil(pos.lat);
-    // }
+    const bounds = this.map.getBounds();
+    const weights = [0.5, 0.5];
+    if (this.layout.mobile) {
+      weights[1] = 0.875;
+    } else {
+      weights[0] = (0.5 - (200 / window.innerWidth));
+    }
+    const pos = {
+      lng: bounds.getWest() + (bounds.getEast() - bounds.getWest()) * weights[0],
+      lat: bounds.getSouth() + (bounds.getNorth() - bounds.getSouth()) * weights[1]
+    };
+    const x = Math.floor(pos.lng);
+    const y = -Math.ceil(pos.lat);
     if (this.focusedLayerPos.x !== x || this.focusedLayerPos.x !== y) {
       this.focusedLayerPos = {x, y};
-      if (this.focusedLayerPhoto) {
-        this.focusedLayerPhoto.remove();
-        this.focusedLayerPhoto = null;
-      }
-      if (x >= 0 && y >= 0) {
-        for (const item of this.configuration.grid) {
-          const posX = item.pos.x;
-          const posY = item.pos.y;
-          if (x === posX && y === posY) {
-            const id = item.id;
-            const lat = -1 - y;
-            const lon = x;
-            const imgTop = lat -0.09050195011;
-            const imgLeft = lon + 0.20588;
-            const imgSide = 1.08597721996;
-            const bounds: L.LatLngTuple[] = [[imgTop, imgLeft], [imgTop + imgSide, imgLeft + imgSide]];
-            this.focusedLayerPhoto = L.imageOverlay(
-              '/assets/img/normalizi.ng_arrest_card.svg', bounds, {zIndex: 2}
-            ).addTo(this.map);
-            break;
+      for (const item of this.configuration.grid) {
+        const posX = item.pos.x;
+        const posY = item.pos.y;
+        if (x === posX && y === posY) {
+          this.focusedItem = item;
+          if (this.drawerOpen) {
+            this.updateBreatheOverlay(this.focusedItem.pos);
           }
+          // const id = item.id;
+          // const lat = -1 - y;
+          // const lon = x;
+          // const imgTop = lat -0.09050195011;
+          // const imgLeft = lon + 0.20588;
+          // const imgSide = 1.08597721996;
+          // const bounds: L.LatLngTuple[] = [[imgTop, imgLeft], [imgTop + imgSide, imgLeft + imgSide]];
+          // this.focusedLayerPhoto = L.imageOverlay(
+          //   '/assets/img/normalizi.ng_arrest_card.svg', bounds, {zIndex: 2}
+          // ).addTo(this.map);
+          // break;
         }
       }
     }
@@ -309,6 +303,15 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.deleteModalOpen = true
   }
 
+  updateBreatheOverlay(pos) {
+    if (this.breatheOverlay) {
+      // precaution
+      this.breatheOverlay.remove();
+    }
+    this.breatheOverlay = new L.ImageOverlay('/assets/img/breathe.svg', 
+        [[-pos.y - 0.75, pos.x + 0.25], [-pos.y - 0.25, pos.x + 0.75]]).addTo(this.map);
+  }
+
   set drawerOpen(open: boolean) {
     this._drawerOpen = open;
     if (this.map && this.focusedItem) {
@@ -323,12 +326,7 @@ export class MapComponent implements OnInit, AfterViewInit {
         this.map.fitBounds(
           [[-this.focusedItem.pos.y - 1, this.focusedItem.pos.x], [-this.focusedItem.pos.y, this.focusedItem.pos.x + 1]], options
         );
-        if (this.breatheOverlay) {
-          // precaution
-          this.breatheOverlay.remove();
-        }
-        this.breatheOverlay = new L.ImageOverlay('/assets/img/breathe.svg', 
-            [[-this.focusedItem.pos.y - 0.75, this.focusedItem.pos.x + 0.25], [-this.focusedItem.pos.y - 0.25, this.focusedItem.pos.x + 0.75]]).addTo(this.map);
+        this.updateBreatheOverlay(this.focusedItem.pos);
       } else {
         this.map.setView([-this.focusedItem.pos.y - 0.5, this.focusedItem.pos.x + 0.5], zoom);
         if (this.breatheOverlay) {
