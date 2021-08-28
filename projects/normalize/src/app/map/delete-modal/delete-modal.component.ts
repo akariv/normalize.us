@@ -44,7 +44,7 @@ export class DeleteModalComponent implements OnInit {
     if (value) {
       if (this.phase === 0) {
         this.api.deleteOwnItem().subscribe(() => {
-          this.state.clear();
+          this.state.fullClear();
           this.complete();
         });
       }

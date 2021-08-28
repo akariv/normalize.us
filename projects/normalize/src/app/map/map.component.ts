@@ -75,6 +75,14 @@ export class MapComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.hasSelfie = this.state.imageID || this.state.descriptor;
     }, 0);
+    this.state.needsEmail.subscribe(() => {
+      if (this.state.getOwnItemID() && !this.state.getAskedForEmail()) {
+        this.emailModalOpen = true;
+        this.emailModal.closed.subscribe(() => {
+          this.state.setAskedForEmail();
+        });
+      }
+    });
     this.ready.pipe(
       first(),
       tap(() => { // SET UP MAP
@@ -117,7 +125,7 @@ export class MapComponent implements OnInit, AfterViewInit {
               const posY = item.pos.y;
               if (x === posX && y === posY) {
                 proposed = item;
-                // console.log('CLICKED', x, y, item);
+                console.log('CLICKED', item.item.id);
                 break;
               }
             }
@@ -136,18 +144,6 @@ export class MapComponent implements OnInit, AfterViewInit {
       }),
       tap(() => { // SET UP NORMALITY LAYER
         this.normalityLayer = new NormalityLayer(this.map, this.grid);
-      }),
-      switchMap(() => {
-        if (this.state.getOwnItemID() && !this.state.getAskedForEmail()) {
-          this.emailModalOpen = true;
-          return this.emailModal.closed.pipe(
-            tap(() => {
-              this.state.setAskedForEmail();
-            })
-          );
-        } else {
-          return from([true]);
-        }
       }),
       tap(() => { // SET UP TSNE OVERLAY
         this.tsneOverlay = new TSNEOverlay(this.map, this.grid, this.configuration.dim, this.fetchImage, this.maxZoom);
@@ -322,7 +318,7 @@ export class MapComponent implements OnInit, AfterViewInit {
         if (this.layout.mobile) {
           options.paddingBottomRight = [0, open ? window.innerHeight * 0.73 : 70]
         } else {
-          options.paddingBottomRight = [0, open ? 400 : 0];
+          options.paddingBottomRight = [open ? 400 : 0, 0];
         }
         this.map.fitBounds(
           [[-this.focusedItem.pos.y - 1, this.focusedItem.pos.x], [-this.focusedItem.pos.y, this.focusedItem.pos.x + 1]], options

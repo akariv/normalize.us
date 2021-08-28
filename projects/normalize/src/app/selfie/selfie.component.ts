@@ -153,6 +153,9 @@ export class SelfieComponent implements OnInit, AfterViewInit {
           // console.log('STARTING COUNTDOWN');
           this.prompts = PROMPTS.hold_still2;
           this.promptsStream.next(PROMPTS.hold_still2);
+          this.state.pushRequest(
+            this.api.deleteOwnItem()
+          );
           this.state.setOwnInfo({id: -1, descriptor: event.descriptor, image: event.image, landmarks: event.landmarks, gender_age: event.gender_age});
           event.geolocation = this.state.geolocation;
           this.state.pushRequest(
@@ -174,7 +177,11 @@ export class SelfieComponent implements OnInit, AfterViewInit {
             console.log('completed');
             (this.inputVideo.nativeElement as HTMLVideoElement).remove();
             this.videoStream.getVideoTracks()[0].stop();
-            this.router.navigate(['/game']);  
+            if (this.state.getPlayed()) {
+              this.router.navigate(['/']);  
+            } else {
+              this.router.navigate(['/game']);  
+            }
           });
         }
       });

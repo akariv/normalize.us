@@ -56,12 +56,16 @@ export class ApiService {
   }
 
   deleteOwnItem() {
-    const id = this.state.getOwnItemID();
+    const id = this.state.getOwnItemID() + '';
     const magic = this.state.getMagic();
-    return this.http.post(environment.endpoints.deleteItem, {id, magic}).pipe(
-      tap((res) => {
-        console.log('DELETE ITEM RESULT', res);
-      })
-    );
+    if (id && magic) {
+      return this.http.post(environment.endpoints.deleteItem, null, {params: {id, magic}}).pipe(
+        tap((res) => {
+          console.log('DELETE ITEM RESULT', res);
+        })
+      );
+    } else {
+      return from([true]);
+    }
   }
 }

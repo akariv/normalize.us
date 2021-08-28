@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { delay, first } from 'rxjs/operators';
 import { ImageItem } from './datatypes';
 
@@ -24,6 +24,7 @@ export class StateService {
   askedForEmail = false;
   handlingRequest = false;
   requests = [];
+  needsEmail = new ReplaySubject<void>(1);
 
   constructor() {
     this.checkUrlParameters();
@@ -36,6 +37,9 @@ export class StateService {
     this.magic = window.localStorage.getItem(this.OWN_MAGIC_KEY);
     this.played = window.localStorage.getItem(this.PLAYED_KEY) === 'true';
     this.askedForEmail = window.localStorage.getItem(this.ASKED_FOR_EMAIL_KEY) === 'true';
+    if (this.magic && !this.askedForEmail) {
+      this.needsEmail.next();
+    }
     console.log('STATE:', this.imageID, this.played);
     console.log('PRIVATE STATE', this.getPrivateUrl());
   }
@@ -69,9 +73,15 @@ export class StateService {
     window.localStorage.setItem(this.OWN_ID_KEY, this.itemID + '');
     if (this.imageID && this.imageID.length < 64) {
       window.localStorage.setItem(this.OWN_IMAGE_KEY, this.imageID);
+    } else {
+      window.localStorage.removeItem(this.OWN_IMAGE_KEY);
     }
+    window.localStorage.removeItem(this.ASKED_FOR_EMAIL_KEY);
     if (this.magic) {
       window.localStorage.setItem(this.OWN_MAGIC_KEY, this.magic);
+      this.needsEmail.next();
+    } else {
+      window.localStorage.removeItem(this.OWN_MAGIC_KEY);
     }
   }
 
@@ -108,6 +118,10 @@ export class StateService {
     return this.geolocation;
   }
   
+  getPlayed() {
+    return this.played;
+  }
+
   setPlayed() {
     this.played = true;
     window.localStorage.setItem(this.PLAYED_KEY, 'true');
@@ -149,6 +163,12 @@ export class StateService {
     window.localStorage.removeItem(this.OWN_ID_KEY);
     window.localStorage.removeItem(this.OWN_IMAGE_KEY);
     window.localStorage.removeItem(this.OWN_MAGIC_KEY);
+  }
+
+  fullClear() {
+    this.clear();
+    this.played = false;
+    this.askedForEmail = false;
     window.localStorage.removeItem(this.PLAYED_KEY);
     window.localStorage.removeItem(this.ASKED_FOR_EMAIL_KEY);
   }
@@ -158,7 +178,7 @@ export class StateService {
       (item.id !== this.getOwnItemID()) ||
       (item.image !== this.getOwnImageID())
     ) {
-      this.clear();
+      this.fullClear();
       window.location.reload();
     }
     return true;
