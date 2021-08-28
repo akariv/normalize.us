@@ -26,6 +26,7 @@ import { FormsModule } from '@angular/forms';
 import { EmailModalComponent } from './map/email-modal/email-modal.component';
 import { AboutCardComponent } from './map/about-card/about-card.component';
 import { RedirectModalComponent } from './map/redirect-modal/redirect-modal.component';
+import { DeleteModalComponent } from './map/delete-modal/delete-modal.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { RedirectModalComponent } from './map/redirect-modal/redirect-modal.comp
     ConsentModalComponent,
     EmailModalComponent,
     AboutCardComponent,
-    RedirectModalComponent
+    RedirectModalComponent,
+    DeleteModalComponent
   ],
   imports: [
     BrowserModule,

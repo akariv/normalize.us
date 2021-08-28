@@ -11,7 +11,6 @@ import { StateService } from './state.service';
   providedIn: 'root'
 })
 export class ApiService {
-
   game: ReplaySubject<any>;
 
   constructor(private http: HttpClient, private state: StateService) { }
@@ -52,6 +51,16 @@ export class ApiService {
     return this.http.post(environment.endpoints.sendEmail, {email, link}).pipe(
       tap((res) => {
         console.log('SENT EMAIL RESULT', res);
+      })
+    );
+  }
+
+  deleteOwnItem() {
+    const id = this.state.getOwnItemID();
+    const magic = this.state.getMagic();
+    return this.http.post(environment.endpoints.deleteItem, {id, magic}).pipe(
+      tap((res) => {
+        console.log('DELETE ITEM RESULT', res);
       })
     );
   }

@@ -1,4 +1,5 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { EventEmitter } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { ImageItem } from '../../datatypes';
 import { ImageFetcherService } from '../../image-fetcher.service';
 import { StateService } from '../../state.service';
@@ -11,6 +12,8 @@ import { StateService } from '../../state.service';
 export class ReportCardComponent implements OnInit, OnChanges {
 
   @Input() item: ImageItem;
+  @Output() delete = new EventEmitter<void>();
+  @Output() start = new EventEmitter<void>();
 
   // 'nose', 'eyes', 'mouth', 'forehead', 'face
   nose_normality = '0.50';
@@ -77,7 +80,7 @@ export class ReportCardComponent implements OnInit, OnChanges {
   }
 
   share() {
-    const url = `https://normalizi.ng?id=${this.state.getOwnItemID()}`;
+    const url = `https://normalizi.ng?id=${this.item.id}`;
     navigator.share({
       title: 'Normalizi.ng',
       text: `Normalizi.ng - Discover what *normal* people look like ${url}`,

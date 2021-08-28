@@ -145,15 +145,20 @@ export class StateService {
     });
   }
 
+  clear() {
+    window.localStorage.removeItem(this.OWN_ID_KEY);
+    window.localStorage.removeItem(this.OWN_IMAGE_KEY);
+    window.localStorage.removeItem(this.OWN_MAGIC_KEY);
+    window.localStorage.removeItem(this.PLAYED_KEY);
+    window.localStorage.removeItem(this.ASKED_FOR_EMAIL_KEY);
+  }
+
   checkItem(item: ImageItem) {
     if (
       (item.id !== this.getOwnItemID()) ||
       (item.image !== this.getOwnImageID())
     ) {
-      window.localStorage.removeItem(this.OWN_ID_KEY);
-      window.localStorage.removeItem(this.OWN_IMAGE_KEY);
-      window.localStorage.removeItem(this.OWN_MAGIC_KEY);
-      window.localStorage.removeItem(this.PLAYED_KEY);
+      this.clear();
       window.location.reload();
     }
     return true;

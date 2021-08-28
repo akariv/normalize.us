@@ -72,6 +72,11 @@
 </div>
 
 
-<div class='button-row' *ngIf='hasShare && ownCard'>
+<div class='button-row' *ngIf='hasShare'>
     <div class='button' (click)='share()'><img src='assets/img/ic-share.svg'>share this card</div>
+</div>
+
+<div class='button-row' *ngIf='ownCard'>
+    <div class='button' (click)='start.emit()'><img src='assets/img/ic-refresh.svg'>refresh</div>
+    <div class='button' (click)='delete.emit()'><img src='assets/img/ic-delete.svg'>delete</div>
 </div>

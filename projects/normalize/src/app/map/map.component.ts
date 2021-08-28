@@ -50,6 +50,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   consentModalOpen = false;
   redirectModalOpen = false;
   emailModalOpen = false;
+  deleteModalOpen = false;
 
   @ViewChild('map') mapElement:  ElementRef;
   @ViewChild(EmailModalComponent) emailModal: EmailModalComponent;
@@ -66,11 +67,14 @@ export class MapComponent implements OnInit, AfterViewInit {
       this.dim = this.configuration.dim;
       this.ready.next();
     });
+    this.hasSelfie = this.state.imageID || this.state.descriptor;
   }
 
   ngAfterViewInit() {
     console.log('HAS SELFIE', this.state.imageID, this.state.descriptor);
-    this.hasSelfie = this.state.imageID || this.state.descriptor;
+    setTimeout(() => {
+      this.hasSelfie = this.state.imageID || this.state.descriptor;
+    }, 0);
     this.ready.pipe(
       first(),
       tap(() => { // SET UP MAP
@@ -291,12 +295,22 @@ export class MapComponent implements OnInit, AfterViewInit {
     return this._feature;
   }
 
-  start() {
+  start(skipConsent?: boolean) {
     if (this.layout.mobile) {
-      this.consentModalOpen = true;
+      if (!skipConsent) {
+        this.consentModalOpen = true;
+      } else {
+        this.router.navigate(['/selfie']);
+      }
     } else {
       this.redirectModalOpen = true;
     }
+    this.drawerOpen = false
+  }
+
+  delete() {
+    this.drawerOpen = false
+    this.deleteModalOpen = true
   }
 
   set drawerOpen(open: boolean) {
