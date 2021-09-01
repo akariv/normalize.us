@@ -17,7 +17,7 @@ The online work automates Bertillon’s speaking portraits and visualizes how to
     </div>
 </div>
 
-<a class='more'><span class='hr'></span><span class='clickable'>more</span><span class='hr'></span></a>
+<!-- <a class='more'><span class='hr'></span><span class='clickable'>more</span><span class='hr'></span></a> -->
 
 <a class='button' href='https://paper.dropbox.com/doc/Normalizi.ng--BRHS~8gRVoRi2fDfSznIVEsXAQ-e7yFCURpFESkGNzAfz59j' target='_blank'>Download the Press Kit</a>
 
@@ -29,7 +29,7 @@ The code for the work was developed by **Adam Kariv** and is available on Github
 
 The work was generously commissioned by **Science Gallery Dublin**. Thank you.
 
-<a class='more'><span class='hr'></span><span class='clickable'>more</span><span class='hr'></span></a>
+<!-- <a class='more'><span class='hr'></span><span class='clickable'>more</span><span class='hr'></span></a> -->
 
 ## exhibit
 
