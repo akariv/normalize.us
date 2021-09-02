@@ -32,10 +32,10 @@
     </div>
 </div>
 <img class='shutter' src='assets/img/camera-button.svg'
-            (tapstart)='allowed=true'
-            (tapend)='allowed=false'
-            (mousedown)='allowed=true'
-            (mouseup)='allowed=false'
+            (tapstart)='allowed=true; $event.preventDefault()'
+            (tapend)='allowed=false; $event.preventDefault()'
+            (mousedown)='allowed=true; $event.preventDefault()'
+            (mouseup)='allowed=false; $event.preventDefault()'
 />
 <div class='flash' [class.active]='flashActive' *ngIf='svgHack'></div>
 <app-loader *ngIf='!started'></app-loader>
