@@ -31,7 +31,7 @@
         </svg>
     </div>
 </div>
-<img class='shutter' src='assets/img/camera-button.svg'
+<img class='shutter' src='assets/img/camera-button.svg' *ngIf='detected'
             (tapstart)='allowed=true; $event.preventDefault()'
             (tapend)='allowed=false; $event.preventDefault()'
             (mousedown)='allowed=true; $event.preventDefault()'
