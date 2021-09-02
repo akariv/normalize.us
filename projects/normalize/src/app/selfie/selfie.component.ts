@@ -202,7 +202,7 @@ export class SelfieComponent implements OnInit, AfterViewInit {
   }
 
   setAllowed(event, value) {
-    var e = event || window.event;
+    let e: Event = event || window.event;
     e.preventDefault && e.preventDefault();
     e.stopPropagation && e.stopPropagation();
     e.cancelBubble = true;
