@@ -34,9 +34,6 @@
 <div class='shutter' *ngIf='detected'
             (tapstart)='setAllowed($event, true)'
             (tapend)='setAllowed($event, false)'
-            (mousedown)='setAllowed($event, true)'
-            (mouseup)='setAllowed($event, false)'
-            (contextmenu)='setAllowed($event, _allowed)'
 ></div>
 <div class='flash' [class.active]='flashActive' *ngIf='svgHack'></div>
 <app-loader *ngIf='!started'></app-loader>
