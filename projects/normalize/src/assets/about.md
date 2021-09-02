@@ -27,7 +27,8 @@ The online work automates Bertillon’s speaking portraits and visualizes how to
 
 The code for the work was developed by **Adam Kariv** and is available on Github.
 
-The work was generously commissioned by **Science Gallery Dublin**. Thank you.
+The work was generously commissioned by **Science Gallery at Trinity College Dublin as part of BIAS 2021 and European ARTificial Intelligence Lab.**
+ Thank you.
 
 <!-- <a class='more'><span class='hr'></span><span class='clickable'>more</span><span class='hr'></span></a> -->
 
