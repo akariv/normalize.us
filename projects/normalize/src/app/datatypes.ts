@@ -28,6 +28,14 @@ export class ImageItem {
         }
         return (item[v] + 0.5) / (item[t] + 1);
     }
+
+    public static normalityText(item: ImageItem, feature?: number) {
+        const score = ImageItem.normality(item, feature);
+        if (score === 0.5) {
+            return 'N/A';
+        }
+        return score.toFixed(2);
+    }
 }
 
 export class GridItem {

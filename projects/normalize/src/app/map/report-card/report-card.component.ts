@@ -16,6 +16,7 @@ export class ReportCardComponent implements OnInit, OnChanges {
   @Output() start = new EventEmitter<void>();
 
   // 'nose', 'eyes', 'mouth', 'forehead', 'face
+  normality = '0.50';
   nose_normality = '0.50';
   eyes_normality = '0.50';
   mouth_normality = '0.50';
@@ -29,11 +30,12 @@ export class ReportCardComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     if (this.item) {
-      this.nose_normality = ImageItem.normality(this.item, 0).toFixed(2);
-      this.eyes_normality = ImageItem.normality(this.item, 1).toFixed(2);
-      this.mouth_normality = ImageItem.normality(this.item, 2).toFixed(2);
-      this.forehead_normality = ImageItem.normality(this.item, 3).toFixed(2);
-      this.face_normality = ImageItem.normality(this.item, 4).toFixed(2);
+      this.normality = ImageItem.normality(this.item).toFixed(2);
+      this.nose_normality = ImageItem.normalityText(this.item, 0);
+      this.eyes_normality = ImageItem.normalityText(this.item, 1);
+      this.mouth_normality = ImageItem.normalityText(this.item, 2);
+      this.forehead_normality = ImageItem.normalityText(this.item, 3);
+      this.face_normality = ImageItem.normalityText(this.item, 4);
     }
   }
 
