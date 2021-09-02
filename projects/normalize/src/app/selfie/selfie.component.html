@@ -32,8 +32,8 @@
     </div>
 </div>
 <div class='shutter' *ngIf='detected'
-            (tapstart)='setAllowed($event, true)'
-            (tapend)='setAllowed($event, false)'
+            (touchstart)='setAllowed($event, true)'
+            (touchend)='setAllowed($event, false)'
 ></div>
 <div class='flash' [class.active]='flashActive' *ngIf='svgHack'></div>
 <app-loader *ngIf='!started'></app-loader>
