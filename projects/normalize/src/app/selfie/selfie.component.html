@@ -31,6 +31,12 @@
         </svg>
     </div>
 </div>
-<div class='flash' [class.active]='flashActive'></div>
+<img class='shutter' src='assets/img/camera-button.svg'
+            (tapstart)='allowed=true'
+            (tapend)='allowed=false'
+            (mousedown)='allowed=true'
+            (mouseup)='allowed=false'
+/>
+<div class='flash' [class.active]='flashActive' *ngIf='svgHack'></div>
 <app-loader *ngIf='!started'></app-loader>
 <app-game-preloader *ngIf='started'></app-game-preloader>

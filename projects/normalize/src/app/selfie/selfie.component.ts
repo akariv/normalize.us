@@ -14,8 +14,8 @@ const PROMPTS = {
   too_far: ['Please bring the camera', 'closer to your face'],
   too_close: [`You're too close...`, 'move a bit farther away'],
   not_aligned: ['Please', 'align your face'],
-  hold_still: ["Hold still...", 'look straight forward'],
-  hold_still2: ["Hold still...", 'just a few more seconds'],
+  hold_still: ["Avoid uneven shadows on your face", 'then tap and hold'],
+  hold_still2: ["Keep holding...", 'hold...'],
 }
 
 @Component({
@@ -50,6 +50,7 @@ export class SelfieComponent implements OnInit, AfterViewInit {
   public promptsStream = new Subject<string[]>();
 
   public svgHack = false;
+  public _allowed = false;
 
 
   constructor(private faceProcessor: FaceProcessorService, private api: ApiService, private state: StateService,
@@ -132,7 +133,11 @@ export class SelfieComponent implements OnInit, AfterViewInit {
           this.scale = (event.scale as Number).toFixed(2);;
           this.detected = event.snapped;
           if (event.snapped) {
-            this.promptsStream.next(PROMPTS.hold_still);
+            if (this._allowed) {
+              this.promptsStream.next(PROMPTS.hold_still2);    
+            } else {
+              this.promptsStream.next(PROMPTS.hold_still);
+            }
           } else {
             setTimeout(() => {
               if (event.problem) {
@@ -151,8 +156,6 @@ export class SelfieComponent implements OnInit, AfterViewInit {
           // console.log('GOT EVENT DONE');
           // this.src = event.content;
           // console.log('STARTING COUNTDOWN');
-          this.prompts = PROMPTS.hold_still2;
-          this.promptsStream.next(PROMPTS.hold_still2);
           this.state.pushRequest(
             this.api.deleteOwnItem()
           );
@@ -188,31 +191,29 @@ export class SelfieComponent implements OnInit, AfterViewInit {
   }
 
   doCountdown() {
-    this.countdownText = '3';
     this.svgHack = true;
     return from([true]).pipe(
       delay(0),
       tap(() => {
-        this.svgHack = false;
+        this.flashActive = true;
       }),
-      switchMap(() => interval(1000)),
-      take(3),
-      map((num) => {
-        const count = 2 - num;
-        this.countdownText = '' + count;
-        if (count === 0) {
-          this.flashActive = true;
-        }
-        this.svgHack = true;
-        return count;
-      }),
-      delay(0),
-      tap(() => {
-        this.svgHack = false;
-      }),
-      filter((count) => count === 0),
       delay(3000)
     );
+  }
+
+  set allowed(value) {
+    console.log('ALLOWED=', value);
+    this._allowed = value;
+    this.faceProcessor.allowed = value;
+    if (value) {
+      if (this.prompts === PROMPTS.hold_still) {
+        this.promptsStream.next(PROMPTS.hold_still2);
+      }
+    } else {
+      if (this.prompts === PROMPTS.hold_still2) {
+        this.promptsStream.next(PROMPTS.hold_still);
+      }
+    }
   }
 
 }

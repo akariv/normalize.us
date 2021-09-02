@@ -66,6 +66,7 @@ export class FaceProcessorService {
     distance: 0.1
   };
   public defaultScale = 1;
+  public allowed = false;
 
   constructor(private faceapi: FaceApiService, private config: ConfigService, private animationManager: AnimationManagerService) {
     if (config.TINY) {
@@ -82,6 +83,7 @@ export class FaceProcessorService {
     const compositionFrame = this.getCompositionFrame();
     const canvas = document.createElement('canvas');
     const elementHeight = el.offsetHeight;
+    this.allowed = false;
     if (el instanceof HTMLVideoElement) {
       canvas.width = el.videoWidth;
       canvas.height = el.videoHeight;  
@@ -254,7 +256,7 @@ export class FaceProcessorService {
           skipFrames -= 1;
         }
       }),
-      filter(() => skipFrames === 0 && frames < this.config.COLLECTED_FRAMES),
+      filter(() => skipFrames === 0 && frames < this.config.COLLECTED_FRAMES && this.allowed),
       tap((result) => {
         if (animationObs.cancelled) {
           console.log('SKIPPING EXTRACTION, CANCELLED')
