@@ -1,0 +1,34 @@
+@import '../../../common.less';
+
+:host {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: @color-dark-brown;
+    z-index: 3;
+    padding: 32px;
+
+    .img {
+        flex: 0 0 50%;
+        height: 100%;
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+        justify-content: flex-end;
+        align-items: stretch;
+        img {
+            object-fit: contain;
+        }
+    }
+
+    .okay {
+        margin-top: auto;
+        cursor: pointer;
+    }
+}

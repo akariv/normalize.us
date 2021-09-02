@@ -27,6 +27,7 @@ export class GameComponent implements OnInit {
   results = [];
   Array = Array;
   loaded = false;
+  definition = true;
 
   constructor(private api: ApiService, private state: StateService, public imageFetcher: ImageFetcherService, private router: Router) {
     api.getGame().subscribe((game) => {
@@ -37,6 +38,7 @@ export class GameComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.definition = true;
   }
 
   next() {

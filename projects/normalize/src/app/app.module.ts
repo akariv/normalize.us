@@ -27,6 +27,7 @@ import { EmailModalComponent } from './map/email-modal/email-modal.component';
 import { AboutCardComponent } from './map/about-card/about-card.component';
 import { RedirectModalComponent } from './map/redirect-modal/redirect-modal.component';
 import { DeleteModalComponent } from './map/delete-modal/delete-modal.component';
+import { DefinitionComponent } from './tournament/definition/definition.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import { DeleteModalComponent } from './map/delete-modal/delete-modal.component'
     EmailModalComponent,
     AboutCardComponent,
     RedirectModalComponent,
-    DeleteModalComponent
+    DeleteModalComponent,
+    DefinitionComponent
   ],
   imports: [
     BrowserModule,
