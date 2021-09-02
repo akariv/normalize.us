@@ -147,8 +147,8 @@ export class MapComponent implements OnInit, AfterViewInit {
         this.tsneOverlay = new TSNEOverlay(this.map, this.grid, this.configuration.dim, this.fetchImage, this.maxZoom);
         const items: Observable<ImageItem>[] = [];
 
+        let expectedId = this.state.getOwnItemID();
         if (this.state.getOwnImageID()) {
-          let expectedId = this.state.getOwnItemID();
           if (this.state.getDescriptor()) {
             const item: ImageItem = {
               id: this.state.getOwnItemID(),
@@ -181,13 +181,16 @@ export class MapComponent implements OnInit, AfterViewInit {
               )
             );
           }
-          const sharedId = this.state.urlSearchParam('id');
-          if (sharedId) {
-            expectedId = parseInt(sharedId);
-            items.push(
-              this.api.getImage(expectedId)
-            );
-          }
+        }
+        const sharedId = this.state.urlSearchParam('id');
+        console.log('share', sharedId);
+        if (sharedId) {
+          expectedId = parseInt(sharedId);
+          items.push(
+            this.api.getImage(expectedId)
+          );
+        }
+        if (items.length > 0) {
           let targetGi = null;
           merge(...items).pipe(
             mergeMap((item) => {
@@ -219,7 +222,7 @@ export class MapComponent implements OnInit, AfterViewInit {
               this.focusedItem = targetGi;
               this.drawerOpen = true;
             }
-          });
+          });          
         }
         this.grid.next(this.configuration.grid);
       })
