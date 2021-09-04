@@ -76,15 +76,22 @@ export class MapComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.hasSelfie = this.state.imageID || this.state.descriptor;
     }, 0);
+    let start = from([true]);
     this.state.needsEmail.subscribe(() => {
       if (this.state.getOwnItemID() && !this.state.getAskedForEmail()) {
         this.emailModalOpen = true;
-        this.emailModal.closed.subscribe(() => {
-          this.state.setAskedForEmail();
-        });
+        start = this.emailModal.closed.pipe(
+          tap(() => {
+            this.state.setAskedForEmail();
+          })
+        );
       }
     });
-    this.ready.pipe(
+    start.pipe(
+      switchMap(() => {
+        console.log('WAITING FOR READY');
+        return this.ready;
+      }),
       first(),
       tap(() => { // SET UP MAP
         this.maxZoom = this.configuration.max_zoom;
@@ -244,10 +251,12 @@ export class MapComponent implements OnInit, AfterViewInit {
   onBoundsChange() {
     const bounds = this.map.getBounds();
     const weights = [0.5, 0.5];
-    if (this.layout.mobile) {
-      weights[1] = 0.875;
-    } else {
-      weights[0] = (0.5 - (200 / window.innerWidth));
+    if (this.drawerOpen) {
+      if (this.layout.mobile) {
+        weights[1] = 0.875;
+      } else {
+        weights[0] = (0.5 - (200 / window.innerWidth));
+      }  
     }
     const pos = {
       lng: bounds.getWest() + (bounds.getEast() - bounds.getWest()) * weights[0],
@@ -262,9 +271,9 @@ export class MapComponent implements OnInit, AfterViewInit {
         const posY = item.pos.y;
         if (x === posX && y === posY) {
           this.focusedItem = item;
-          if (this.drawerOpen) {
-            this.updateBreatheOverlay(this.focusedItem.pos);
-          }
+          // if (this.drawerOpen) {
+          this.updateBreatheOverlay(this.focusedItem.pos);
+          // }
           // const id = item.id;
           // const lat = -1 - y;
           // const lon = x;
@@ -334,7 +343,6 @@ export class MapComponent implements OnInit, AfterViewInit {
   set drawerOpen(open: boolean) {
     this._drawerOpen = open;
     if (this.map && this.focusedItem) {
-      console.log('FI', this.focusedItem.item.id);
       const zoom = this.map.getZoom();
       if (open) {
         let options: any = {animate: true};
