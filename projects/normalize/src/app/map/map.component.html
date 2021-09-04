@@ -10,7 +10,7 @@
     </ng-container>
 </app-drawer>
 <app-start-button label='start' [class.offseted]='layout.desktop && drawerOpen' (click)='start()' *ngIf='!hasSelfie'></app-start-button>
-<app-focus-button label='start' (click)='focusOnSelf()' *ngIf='hasSelfie && ownGI'></app-focus-button>
+<app-focus-button label='start' [class.offseted]='layout.desktop && drawerOpen' (click)='focusOnSelf()' *ngIf='hasSelfie && ownGI'></app-focus-button>
 <img class='info-button' (click)='focusedItem=null; drawerOpen=true' src='/assets/img/info-button.svg' *ngIf='!drawerOpen || !!focusedItem'>
 <app-consent-modal [open]='consentModalOpen' (closed)='consentModalOpen = false'></app-consent-modal>
 <app-email-modal [open]='emailModalOpen' (closed)='emailModalOpen = false'></app-email-modal>
