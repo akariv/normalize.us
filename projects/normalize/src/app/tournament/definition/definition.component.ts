@@ -4,9 +4,6 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
   selector: 'app-definition',
   templateUrl: './definition.component.html',
   styleUrls: ['./definition.component.less'],
-  host: {
-    '(click)': 'closed.next()'
-  }
 })
 export class DefinitionComponent implements OnInit {
 
@@ -20,10 +17,9 @@ export class DefinitionComponent implements OnInit {
     this.visible = true;
   }
 
-  close() {
-    console.log('CLOSED DEFINITION');
+  onclose() {
     this.closed.next()
-    this.visible=false;
+    this.visible = false;
   }
 
 }

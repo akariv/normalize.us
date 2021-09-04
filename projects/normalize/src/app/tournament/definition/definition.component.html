@@ -1,6 +1,5 @@
-<div class='wrapper' (click)='close()' *ngIf='visible'>
-    <div class='img'>
-        <img src='assets/img/definition.svg'>
-    </div>
-    <img class='okay' src='assets/img/okay-button.svg'>
+<div class='wrapper' *ngIf='visible'>
+    <div class='def'></div>
+    <div class='okay'></div>
 </div>
+<a class='overlay' (click)='onclose()' (touchend)='onclose()' *ngIf='visible'></a>
