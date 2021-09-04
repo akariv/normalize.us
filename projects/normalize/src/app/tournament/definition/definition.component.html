@@ -1,4 +1,6 @@
-<div class='img'>
-    <img src='assets/img/definition.svg'>
+<div class='wrapper' (click)='close()' *ngIf='visible'>
+    <div class='img'>
+        <img src='assets/img/definition.svg'>
+    </div>
+    <img class='okay' src='assets/img/okay-button.svg'>
 </div>
-<img class='okay' src='assets/img/okay-button.svg' (click)='closed.next()'>

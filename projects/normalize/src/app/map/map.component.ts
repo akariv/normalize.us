@@ -40,6 +40,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   normalityLayer: NormalityLayer;
   tsneOverlay: TSNEOverlay;
   grid = new ReplaySubject<GridItem[]>(1);
+  ownGI = null;
 
   hasSelfie = false;
   focusedItem: GridItem = null;
@@ -154,8 +155,8 @@ export class MapComponent implements OnInit, AfterViewInit {
               id: this.state.getOwnItemID(),
               image: this.state.getOwnImageID(),
               descriptor: this.state.getDescriptor(),
-              votes: 0,
-              tournaments: 0,
+              votes: this.state.getVotedSelf(),
+              tournaments: 1,
               votes_0: 0,
               tournaments_0: 0,
               votes_1: 0,
@@ -164,8 +165,8 @@ export class MapComponent implements OnInit, AfterViewInit {
               tournaments_2: 0,
               votes_3: 0,
               tournaments_3: 0,
-              votes_4: 0,
-              tournaments_4: 0,
+              votes_4: this.state.getVotedSelf(),
+              tournaments_4: 1,
               created_timestamp: new Date().toUTCString(),
               landmarks: this.state.getLandmarks(),
               gender_age: this.state.getGenderAge(),
@@ -180,6 +181,7 @@ export class MapComponent implements OnInit, AfterViewInit {
                 })
               )
             );
+            expectedId = null;
           }
         }
         const sharedId = this.state.urlSearchParam('id');
@@ -200,6 +202,9 @@ export class MapComponent implements OnInit, AfterViewInit {
               if (gi.item.id === expectedId) {
                 targetGi = gi;
               }
+              if (gi.item.id === this.state.getOwnItemID()) {
+                this.ownGI = gi;
+              }
             }),
             last(),
             map(() => {
@@ -210,7 +215,7 @@ export class MapComponent implements OnInit, AfterViewInit {
                 this.normalityLayer.refresh();
 
                 const pos = targetGi.pos;
-                center = [-pos.y + 0.5, pos.x + 0.5];
+                center = [-pos.y - 0.5, pos.x + 0.5];
                 this.map.flyTo(this.map.getCenter(), this.maxZoom - 5, {animate: true, duration: 1});
               }
               return center;
@@ -306,6 +311,17 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.deleteModalOpen = true
   }
 
+  focusOnSelf() {
+    this.drawerOpen = false;
+    const pos = this.ownGI.pos;
+    const center: L.LatLngExpression = [-pos.y - 0.5, pos.x + 0.5];
+    this.map.flyTo(center, this.maxZoom, {animate: true, duration: 1});
+    setTimeout(() => {
+      this.focusedItem = this.ownGI;
+      this.drawerOpen = true;  
+    }, 3000);
+  }
+
   updateBreatheOverlay(pos) {
     if (this.breatheOverlay) {
       // precaution
@@ -318,6 +334,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   set drawerOpen(open: boolean) {
     this._drawerOpen = open;
     if (this.map && this.focusedItem) {
+      console.log('FI', this.focusedItem.item.id);
       const zoom = this.map.getZoom();
       if (open) {
         let options: any = {animate: true};

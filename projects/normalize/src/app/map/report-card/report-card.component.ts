@@ -84,8 +84,8 @@ export class ReportCardComponent implements OnInit, OnChanges {
   share() {
     const url = `https://normalizi.ng?id=${this.item.id}`;
     navigator.share({
-      title: 'Normalizi.ng',
-      text: `Normalizi.ng - Discover what *normal* people look like ${url}`,
+      title: url,
+      text: url,
       url: url
     }).then((result) => {
       console.log('Share result:', result);

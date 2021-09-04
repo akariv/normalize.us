@@ -28,6 +28,7 @@ import { AboutCardComponent } from './map/about-card/about-card.component';
 import { RedirectModalComponent } from './map/redirect-modal/redirect-modal.component';
 import { DeleteModalComponent } from './map/delete-modal/delete-modal.component';
 import { DefinitionComponent } from './tournament/definition/definition.component';
+import { FocusButtonComponent } from './map/focus-button/focus-button.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import { DefinitionComponent } from './tournament/definition/definition.componen
     AboutCardComponent,
     RedirectModalComponent,
     DeleteModalComponent,
-    DefinitionComponent
+    DefinitionComponent,
+    FocusButtonComponent
   ],
   imports: [
     BrowserModule,

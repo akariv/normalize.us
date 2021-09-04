@@ -3,15 +3,27 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 @Component({
   selector: 'app-definition',
   templateUrl: './definition.component.html',
-  styleUrls: ['./definition.component.less']
+  styleUrls: ['./definition.component.less'],
+  host: {
+    '(click)': 'closed.next()'
+  }
 })
 export class DefinitionComponent implements OnInit {
+
+  visible = true;
 
   @Output() closed = new EventEmitter<void>();
 
   constructor() { }
 
   ngOnInit(): void {
+    this.visible = true;
+  }
+
+  close() {
+    console.log('CLOSED DEFINITION');
+    this.closed.next()
+    this.visible=false;
   }
 
 }

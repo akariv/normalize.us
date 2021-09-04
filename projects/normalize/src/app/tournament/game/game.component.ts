@@ -89,6 +89,9 @@ export class GameComponent implements OnInit {
   }
 
   addResults(single) {
+    if (single[0] === -1) {
+      this.state.setVotedSelf();
+    }
     this.results.push(single);
     this.next();
   }

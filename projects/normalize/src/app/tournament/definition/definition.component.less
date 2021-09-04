@@ -1,6 +1,6 @@
 @import '../../../common.less';
 
-:host {
+.wrapper {
     position: absolute;
     top: 0;
     left: 0;
@@ -25,10 +25,12 @@
         img {
             object-fit: contain;
         }
+        pointer-events: none;
     }
 
     .okay {
         margin-top: auto;
         cursor: pointer;
+        pointer-events: none;
     }
 }

@@ -25,6 +25,7 @@ export class StateService {
   handlingRequest = false;
   requests = [];
   needsEmail = new ReplaySubject<void>(1);
+  votedSelf = 0;
 
   constructor() {
     this.checkUrlParameters();
@@ -87,6 +88,14 @@ export class StateService {
     this.geolocation = geolocation;
   }
 
+  setVotedSelf() {
+    this.votedSelf = 1;
+  }
+
+  getVotedSelf() { 
+    return this.votedSelf;
+  }
+  
   getOwnItemID() {
     return this.itemID;
   }
