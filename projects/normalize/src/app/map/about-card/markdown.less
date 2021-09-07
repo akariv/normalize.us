@@ -3,7 +3,7 @@
 .md ::ng-deep {
     width: 100%;
 
-    h2, h3, p, a{
+    h2, h3, h4, h5 p, a, li{
         .font-source-sans;
 
         font-style: normal;
@@ -17,9 +17,7 @@
         margin: 8px 0;
     }
 
-    h2, h3 {
-        height: 20px;
-
+    h2, h3, h4, h5 {
         font-size: 16px;
         line-height: 20px;
         font-variant: small-caps;
@@ -27,13 +25,24 @@
         margin-top: 32px;
         font-weight: 600;
     }
-
+  
     h2 {
+        font-size: 18px;
+        color: @color-lead-color;
+    }
+
+    h2, h3 {
         text-transform: uppercase;
     }
 
-    h3 {
+    h4 {
         text-transform: lowercase;
+    }
+      }
+
+    h4 {
+        text-transform: lowercase;
+        font-weight: 400px;
     }
 
     a.button {
