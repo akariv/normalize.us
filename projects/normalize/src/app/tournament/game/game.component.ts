@@ -28,6 +28,7 @@ export class GameComponent implements OnInit {
   Array = Array;
   loaded = false;
   definition = true;
+  idsCount = {};
 
   constructor(private api: ApiService, private state: StateService, public imageFetcher: ImageFetcherService, private router: Router) {
     api.getGame().subscribe((game) => {
@@ -47,7 +48,14 @@ export class GameComponent implements OnInit {
         this.index += 1;
         this.feature = this.FEATURES[this.index];
         // console.log('INDEX = ', this.index, 'FEATURE=', this.feature);
-        this.tuples = this.randomTuples(this.TUPLES_PER_FEATURE);
+        const forbidden = Object.keys(this.idsCount).filter((id) => this.idsCount[id] > 2).map((id) => parseInt(id, 10));
+        this.tuples = this.randomTuples(this.TUPLES_PER_FEATURE, forbidden);
+        this.tuples.forEach((t) => {
+          for (let item of t) {
+            const id = item.id;
+            this.idsCount[id] = (this.idsCount[id] || 0) + 1;
+          }
+        });
         // console.log('TUP', this.tuples.length, this.tuples);
         if (this.feature === 4) {
           if (this.state.getOwnImageID()) {
@@ -70,11 +78,19 @@ export class GameComponent implements OnInit {
     }
   }
 
-  randomTuples(count) {
+  randomTuples(count, forbidden) {
     const ret = [];
-    for (const i of this.game.records) {
-      for (const j of this.game.records) {
+    const records = [...this.game.records];
+    this.shuffleArray(records);
+    records.sort((a, b) => {
+      return (this.idsCount[a.id] || 0) - (this.idsCount[b.id] || 0);
+    });
+    for (const i of records) {
+      for (const j of records) {
         if (i.id <= j.id) {
+          continue;
+        }
+        if (forbidden.indexOf(i.id) !== -1 || forbidden.indexOf(j.id) !== -1) {
           continue;
         }
         if (Math.random() > 0.5) {
@@ -84,8 +100,20 @@ export class GameComponent implements OnInit {
         }
       }
     }
-    this.shuffleArray(ret);
-    return ret.slice(0, count);
+    
+    const used = [];
+    const ret2 = [];
+    for (const t of ret) {
+      if (used.indexOf(t[0].id) === -1 && used.indexOf(t[1].id) === -1) {
+        ret2.push(t);
+        used.push(t[0].id);
+        used.push(t[1].id);
+      }
+      if (ret2.length === count) {
+        return ret2;
+      }
+    }
+    return ret2;
   }
 
   addResults(single) {
