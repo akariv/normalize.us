@@ -128,19 +128,19 @@ Here’s the data you will create and share with me and why:
 
 #### Selfies
 
-**a moving selfie picture made from a set of 5 images**
+##### a moving selfie picture made from a set of 5 images
 
 The moving selfie will be added to a map of faces and analyzed algorithmically. It will also be presented to other users to normalize - compare to other participants selfies.
 
 #### Normalizations
 
-**a set of answers to questions comparing pairs of images (who looks more normal?)**
+##### a set of answers to questions comparing pairs of images (who looks more normal?)
 
 Your answers will be used to set the normalization scores of other participants and to analyze your own choice patterns.
 
 #### Location
 
-**Your GPS location as detected by the browser**
+##### Your GPS location as detected by the browser
 
 By using location data I will be able to create location specific maps and normalization scores.
 
@@ -148,7 +148,7 @@ patterns.
 
 #### Email (optional)
 
-**Your email address**
+##### Your email address
 
 I will only use your email once to send you a personal link so you can always edit or delete your data at any time.
 
@@ -200,7 +200,7 @@ This is simply done by deleting your profile. If for some reason, you were not a
 
 While I took careful procedures to safeguard and secure the information I collect.
 
-**Please remember**:
+##### Please remember:
 
 - You provide personal data at your own risk: unfortunately, no data transmission is guaranteed to be 100% secure
 - You are responsible of your secret link: keep it secret and safe, otherwise someone may delete your profile on your behalf.
@@ -229,28 +229,28 @@ Here are the details of our main third-party service providers, and what data th
 
 [Privacy Policy](https://www.digitalocean.com/legal/privacy-policy/)
 
-**Data collected or shared:**
+Data collected or shared:
 - Your photograph
 - Your face's biometric data
 - Time and date of the photo taken
 - Location where the photo was taken
 
-**Purpose:**
+Purpose:
 This is a web hosting provider: we use it to store data you generate by using the service securely in the cloud.
 
-**Place of processing:** Frankfurt, Germany
+Place of processing: Frankfurt, Germany
 
 ##### Google Cloud Platform
 
 [Privacy Policy](https://cloud.google.com/terms/cloud-privacy-notice)
 
-**Data collected or shared:**
+Data collected or shared:
 NONE
 
-**Purpose:**
+Purpose:
 This platform does data processing but no data is stored here
 
-**Place of processing:** Frankfurt, Germany
+Place of processing: Frankfurt, Germany
 
 ### Changes to this document
 
