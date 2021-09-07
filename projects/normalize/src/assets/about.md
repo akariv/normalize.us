@@ -1,11 +1,3 @@
-## About Normalizi.ng
-
-**Normalizi.ng** is an experimental online research in machine-learning that aims to analyze and understand how do we decide who looks more “normal”. When you visit www.Normalizi.ng on your phone you will be asked to take a selfie and then be presented with a series of previously recorded participants. You will then choose who looks more “normal” between pairs of noses, mouths, eyes, and faces. The machine will analyze your decisions and your face and then add you to it’s algorithmic map of normality.
-
-In the late 1800s the French forensics pioneer Alphonse Bertillon, the father of the mugshot, developed “Le Portrait Parle” (the speaking portrait) a system for standardizing, indexing and classifying the human face. His statistical system was never meant to criminalize the face but it was later widely adopted by both the Eugenics movement and by the Nazis to do exactly that.
-
-The online work automates Bertillon’s speaking portraits and visualizes how today’s systematic discrimination is aggregated, amplified and conveniently hidden behind the seemingly objective black box of Artificial Intelligence.
-
 <div class='gallery'>
     <div class='gallery-item'>
         <div class='img' style='background-image: url(/assets/gallery/le-portrait-parle.png)'></div>
@@ -16,6 +8,14 @@ The online work automates Bertillon’s speaking portraits and visualizes how to
         <label>Mugshot on an Arrest card - Invented by Bertillion</label>
     </div>
 </div>
+
+## About Normalizi.ng
+
+**Normalizi.ng** is an experimental online research in machine-learning that aims to analyze and understand how do we decide who looks more “normal”. When you visit www.Normalizi.ng on your phone you will be asked to take a selfie and then be presented with a series of previously recorded participants. You will then choose who looks more “normal” between pairs of noses, mouths, eyes, and faces. The machine will analyze your decisions and your face and then add you to it’s algorithmic map of normality.
+
+In the late 1800s the French forensics pioneer Alphonse Bertillon, the father of the mugshot, developed “Le Portrait Parle” (the speaking portrait) a system for standardizing, indexing and classifying the human face. His statistical system was never meant to criminalize the face but it was later widely adopted by both the Eugenics movement and by the Nazis to do exactly that.
+
+The online work automates Bertillon’s speaking portraits and visualizes how today’s systematic discrimination is aggregated, amplified and conveniently hidden behind the seemingly objective black box of Artificial Intelligence.
 
 <!-- <a class='more'><span class='hr'></span><span class='clickable'>more</span><span class='hr'></span></a> -->
 
@@ -34,7 +34,7 @@ The work was generously commissioned by **Science Gallery at Trinity College Dub
 
 ## exhibit
 
-<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/323711041?h=4c1b93e06c" style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/323711041?h=4c1b93e06c;dnt=1" style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
 
 An exhibition version of the work is also available. Below are documentations <!---from the work’s debut in Dublin (Sep, 2021) and -->of The Normalizing Machine, a previous iterrations of the work:
 
