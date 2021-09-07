@@ -18,10 +18,22 @@ export class NormalityLayer {
 
     refresh() {
         const features: geojson.Feature[] = [];
+        let minNorm = 1;
+        let maxNorm = 0;
+        this._grid.forEach((g) => {
+            const norm = GridItem.normality(g);
+            if (norm < minNorm) {
+                minNorm = norm;
+            }
+            if (norm > maxNorm) {
+                maxNorm = norm;
+            }
+        });
+        const normRange = Math.max(maxNorm - minNorm, 0.1);
         this._grid.forEach((g) => {
             const x = g.pos.x;
             const y = - 1 - g.pos.y;
-            const r = 0.24 * (1.0 - GridItem.normality(g));
+            const r = 0.24 * (1.0 - (GridItem.normality(g) - minNorm) / normRange);
             features.push({
                 type: 'Feature',
                 properties: {},
