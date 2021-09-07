@@ -51,7 +51,9 @@ An exhibition version of the work is also available. Below are documentations <!
 
 Check out the site for [The Normalizing Machine](https://mushon.com/tnm).
 
-Please contact us for further inquieries: 
+## Contact
+
+Please contact me for further inquieries: 
 
 me @ normalizi.ng
 
