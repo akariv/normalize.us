@@ -4,7 +4,7 @@
     <span>We will ask your permission to:</span>
     <span class='option'><mat-slide-toggle [(ngModel)]='sliderCamera'></mat-slide-toggle>Take a picture of your face</span>
     <span class='option' *ngIf='geolocationPossible'><mat-slide-toggle [(ngModel)]='sliderGeolocation'></mat-slide-toggle>Receive your general location</span>
-    <span class='option'><mat-slide-toggle [(ngModel)]='sliderPrivacy'></mat-slide-toggle>Approve our privacy policy</span>
+    <span class='option'><mat-slide-toggle [(ngModel)]='sliderPrivacy'></mat-slide-toggle>Approve the <a href="/#privacypolicy" target="_blank">privacy policy</a></span>
 
-    <span class='smallprint'>*Read our FAQ to better understand all of this</span>
+  <span class='smallprint'>*Read the <a href="/#frequentlyaskedquestions" target="_blank">FAQ</a> to better understand all of this</span>
 </app-modal>
