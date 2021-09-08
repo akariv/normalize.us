@@ -16,7 +16,7 @@
   
     <div class='gallery-item'>
         <div class='img' style='background-image: url(/assets/gallery/face_recognition_betaface.jpg)'></div>
-        <label>Contemporary face recognition technology</label>
+        <label>Contemporary face recognition algorithm clustering faces by similarity</label>
     </div>
   
     <div class='gallery-item'>
