@@ -15,6 +15,7 @@ export class LayoutService {
     fromEvent(window, 'resize').subscribe(($event) => {
       this.updateView();
     });
+    this.updateView();
   }
 
   updateView(nativeElement?: HTMLElement) {
@@ -22,10 +23,12 @@ export class LayoutService {
       this.nativeElement = nativeElement;
     }
     if (this.nativeElement) {
+      console.log(this.nativeElement, this.nativeElement.offsetWidth);
       this.mobile = this.nativeElement.offsetWidth < 600;
       this.desktop = this.nativeElement.offsetWidth >= 600;
       this.layout = this.mobile ? 'mobile' : 'desktop';
       this.height = this.nativeElement.offsetHeight;
+      console.log('LAYOUT', this.layout);
     }
   }
 
