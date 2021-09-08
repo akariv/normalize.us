@@ -7,7 +7,7 @@
     <div class='handle' (click)='state(!open)'>
         <img src='assets/img/handle.svg'/>
     </div>
-    <div class='content' #content>
+    <div class='content' #content (touchstart)='touchstartContent($event)'>
         <ng-content></ng-content>
     </div>    
 </div>

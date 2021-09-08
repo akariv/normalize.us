@@ -1,4 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
+import { fromEvent } from 'rxjs';
+import { first } from 'rxjs/operators';
 import { LayoutService } from '../../layout.service';
 
 @Component({
@@ -11,6 +13,7 @@ import { LayoutService } from '../../layout.service';
     '[class.hidden]': 'hidden',
     '[class.desktop]': 'layout.desktop',
     '[class.mobile]': 'layout.mobile',
+    '(touchstart)': 'touchstart($event)',
   }
 })
 export class DrawerComponent implements OnInit, OnChanges {
@@ -20,6 +23,8 @@ export class DrawerComponent implements OnInit, OnChanges {
   @Output() changed = new EventEmitter<boolean>();
 
   @ViewChild('content') content: ElementRef;
+
+  startTouch: number;
 
   constructor(public layout: LayoutService) { }
 
@@ -37,4 +42,26 @@ export class DrawerComponent implements OnInit, OnChanges {
     this.changed.emit(value);
   }
 
+  touchstart(event: TouchEvent) {
+    this.startTouch = event.touches[0].clientY;
+    fromEvent(window, 'touchend').pipe(first()).subscribe((event: TouchEvent) => {
+      const endTouch = event.changedTouches[0].clientY;
+      const diff = endTouch - this.startTouch;
+      if (diff > 100 && this.open) {
+        this.state(false);
+      }
+      if (diff < 100 && !this.open) {
+        this.state(true);
+      }
+      this.startTouch = null
+    });
+  }
+
+  touchstartContent(event: TouchEvent) {
+    // console.log('touchstartContent', this.open, this.content.nativeElement.scrollTop);
+    event.stopPropagation();
+    if (this.open && this.content.nativeElement && this.content.nativeElement.scrollTop === 0) {
+      this.touchstart(event);
+    }
+  }
 }
