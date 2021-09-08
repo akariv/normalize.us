@@ -3,10 +3,27 @@
         <div class='img' style='background-image: url(/assets/gallery/le-portrait-parle.png)'></div>
         <label>Le Portrait Parle / Alphonse Bertillion</label>
     </div>
+  
+    <div class='gallery-item'>
+        <div class='img' style='background-image: url(/assets/gallery/bertillion-clipper.jpg)'></div>
+        <label>Bertillion using a Caliper Compass for Anthropometric measurements</label>
+    </div>
+  
     <div class='gallery-item'>
         <div class='img' style='background-image: url(/assets/gallery/mugshot-arrest-card.jpg)'></div>
-        <label>Mugshot on an Arrest card - Invented by Bertillion</label>
+        <label>Bertillion invented the Mugshot and the use of anthropometric data in arrest cards</label>
     </div>
+  
+    <div class='gallery-item'>
+        <div class='img' style='background-image: url(/assets/gallery/face_recognition_betaface.jpg)'></div>
+        <label>Contemporary face recognition technology</label>
+    </div>
+  
+    <div class='gallery-item'>
+        <div class='img' style='background-image: url(/assets/gallery/gay_face_recognition.png)'></div>
+        <label>Stanford researchers build software claiming to identify sexual orientation from face recognition</label>
+    </div>
+  
 </div>
 
 ## About Normalizi.ng
