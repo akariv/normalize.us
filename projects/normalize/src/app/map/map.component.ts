@@ -4,7 +4,7 @@ import * as L from 'leaflet';
 import * as geojson from 'geojson';
 
 import { forkJoin, from, merge, Observable, ReplaySubject, Subject } from 'rxjs';
-import { delay, first, last, map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { catchError, delay, first, last, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { ApiService } from '../api.service';
 import { ImageFetcherService } from '../image-fetcher.service';
 import { NormalityLayer } from './normality-layer';
@@ -183,9 +183,12 @@ export class MapComponent implements OnInit, AfterViewInit {
           } else {
             items.push(
               this.api.getImage(this.state.getOwnItemID()).pipe(
+                catchError(() => {
+                  return from([{} as ImageItem]);
+                }),
                 tap((item) => {
                   this.state.checkItem(item);
-                })
+                }),
               )
             );
             expectedId = null;
