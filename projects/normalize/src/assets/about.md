@@ -1,17 +1,17 @@
 <div class='gallery'>
     <div class='gallery-item'>
         <div class='img' style='background-image: url(/assets/gallery/le-portrait-parle.png)'></div>
-        <label>Le Portrait Parle / Alphonse Bertillion</label>
+        <label>Le Portrait Parle / Alphonse Bertillon (1893)</label>
     </div>
   
     <div class='gallery-item'>
         <div class='img' style='background-image: url(/assets/gallery/bertillion-clipper.jpg)'></div>
-        <label>Bertillion using a Caliper Compass for Anthropometric measurements</label>
+        <label>Bertillon using a Caliper Compass for Anthropometric measurements</label>
     </div>
   
     <div class='gallery-item'>
         <div class='img' style='background-image: url(/assets/gallery/mugshot-arrest-card.jpg)'></div>
-        <label>Bertillion invented the Mugshot and the use of anthropometric data in arrest cards</label>
+        <label>Bertillon invented the Mugshot and the use of anthropometric data in arrest cards</label>
     </div>
   
     <div class='gallery-item'>
@@ -30,7 +30,7 @@
 
 **Normalizi.ng** is an experimental online research in machine-learning that aims to analyze and understand how do we decide who looks more “normal”. When you visit www.Normalizi.ng on your phone you will be asked to take a selfie and then be presented with a series of previously recorded participants. You will then choose who looks more “normal” between pairs of noses, mouths, eyes, and faces. The machine will analyze your decisions and your face and then add you to it’s algorithmic map of normality.
 
-In the late 1800s the French forensics pioneer Alphonse Bertillon, the father of the mugshot, developed “Le Portrait Parle” (the speaking portrait) a system for standardizing, indexing and classifying the human face. His statistical system was never meant to criminalize the face but it was later widely adopted by both the Eugenics movement and by the Nazis to do exactly that.
+In the late 19th Century the French forensics pioneer Alphonse Bertillon, the father of the mugshot, developed “Le Portrait Parle” (the speaking portrait) a system for standardizing, indexing and classifying the human face. His statistical system was never meant to criminalize the face but it was later widely adopted by both the Eugenics movement and by the Nazis to do exactly that.
 
 The online work automates Bertillon’s speaking portraits and visualizes how today’s systematic discrimination is aggregated, amplified and conveniently hidden behind the seemingly objective black box of Artificial Intelligence.
 
