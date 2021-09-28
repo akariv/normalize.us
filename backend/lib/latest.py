@@ -59,6 +59,8 @@ def get_latest_handler(request: Request):
             update_key = request.args.get('key')
             if result and update_key and UPDATE_KEY == update_key:
                 connection.execute(update, id=result['id'])
+        if result is not None:
+            result['created_timestamp'] = result['created_timestamp'].isoformat()
         response = dict(
             success=result is not None, record=result
         )
