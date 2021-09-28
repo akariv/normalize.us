@@ -14,11 +14,10 @@ class Overlaid {
 export class TSNEOverlay {
 
   grid: GridItem[];
-  imageLayers: L.ImageOverlay[] = [];
+  imageLayers: any = {};
 
   constructor(private map: L.Map, private gridObs: ReplaySubject<GridItem[]>,
-              private dim: number, private imageFetcher: ImageFetcherService,
-              private maxZoom: number) {
+              private dim: number, private imageFetcher: ImageFetcherService) {
     this.map.createPane('tsne-overlay');
     this.map.getPane('tsne-overlay').style.zIndex = '9';
     this.gridObs.subscribe(grid => {
@@ -52,6 +51,7 @@ export class TSNEOverlay {
           [[-emptyPosition.y-0.75, emptyPosition.x+0.25], [-emptyPosition.y-0.25, emptyPosition.x+0.75]]
         );
         overlay.addTo(this.map);
+        this.imageLayers[image.id] = overlay;
         const gi = {pos: emptyPosition, item: image};
         this.grid.push(gi);
         return gi;
@@ -61,6 +61,14 @@ export class TSNEOverlay {
         return found;
       }
     }), first());
+  }
+
+  removeImageLayer(image: ImageItem) {
+    const layer: L.ImageOverlay = this.imageLayers[image.id];
+    if (layer) {
+      layer.remove();
+      delete this.imageLayers[image.id];
+    }
   }
 
   isEmpty(x, y) {

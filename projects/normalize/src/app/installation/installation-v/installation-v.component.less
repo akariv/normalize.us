@@ -1,3 +1,5 @@
+@import '../../../common.less';
+
 :host {
     display: flex;
     width: 2160px;
@@ -7,5 +9,40 @@
         flex: 0 0 50%;
         overflow: hidden;
         height: 100%;
+        position: relative;
+    }
+    ::ng-deep {
+        app-installation-card {
+            box-shadow: 0px 3.03798px 91.1393px rgba(0, 0, 0, 0.25);
+        }
+        .card-position-0 {
+            transform: translate(175px, -900px)rotate(0deg);
+            z-index: 20;
+        }
+        .card-position-1 {
+            transform: translate(175px, 48px)rotate(0deg);
+            z-index: 20;
+        }
+        .card-position-2 {
+            transform: translate(332px, 488px)rotate(3.66deg);
+            z-index: 19;            
+        }
+        .card-position-3 {
+            transform: translate(11px, 1012px)rotate(-4.8deg);
+            z-index: 18;            
+        }
+        .card-position-4 {
+            transform: translate(290px, 1321px)rotate(-3.38deg);
+            z-index: 17;            
+        }
+        .card-position-5 {
+            transform: translate(62px, 1482px)rotate(4.66deg);
+            z-index: 16;
+        }
+        .card-position-6 {
+            transform: translate(48px, 2000px)rotate(0deg);
+            z-index: 15;
+            opacity: 0;
+        }   
     }
 }

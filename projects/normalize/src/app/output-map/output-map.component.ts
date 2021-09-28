@@ -1,8 +1,11 @@
 import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 
 import * as L from 'leaflet';
+import { Observable } from 'rxjs';
 import { ApiService } from '../api.service';
+import { GridItem } from '../datatypes';
 import { LayoutService } from '../layout.service';
+import { NormalityLayer } from '../map/normality-layer';
 
 @Component({
   selector: 'app-output-map',
@@ -11,10 +14,14 @@ import { LayoutService } from '../layout.service';
 })
 export class OutputMapComponent implements OnInit {
 
+  @Input() clean = false;
+  @Input() grid: Observable<GridItem[]>;
   @ViewChild('map') mapElement: ElementRef;
   map: L.Map;
   tileLayers: any = {};
   _feature = 'faces';
+  normalityLayer: NormalityLayer;
+
   
   constructor(private layout: LayoutService) {}
 
@@ -35,7 +42,7 @@ export class OutputMapComponent implements OnInit {
         zoom: configuration.min_zoom + 2,
         zoomControl: false,
       });
-      if (this.layout.desktop) {
+      if (this.layout.desktop && !this.clean) {
         new L.Control.Zoom({ position: 'bottomleft' }).addTo(this.map);
       }
       // Tile layers
@@ -46,7 +53,8 @@ export class OutputMapComponent implements OnInit {
           bounds: [[-configuration.dim - 1, 0], [-1, configuration.dim]],
           errorTileUrl: '/assets/img/empty.png'
         });
-      }  
+      }
+      this.normalityLayer = new NormalityLayer(this.map, this.grid);
     }
     return this.map;
   }

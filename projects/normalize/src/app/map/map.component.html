@@ -1,4 +1,4 @@
-<app-output-map></app-output-map>
+<app-output-map [grid]='grid'></app-output-map>
 <app-feature-selector [feature]='feature' (selected)='feature = $event' *ngIf='false'></app-feature-selector>
 <div class='overlay' *ngIf='overlay' (click)='overlay = false; drawerOpen = false'></div>
 <app-drawer [open]='drawerOpen' [hidden]='consentModalOpen || deleteModalOpen' (changed)='overlay = false; drawerOpen = $event'>

@@ -32,6 +32,8 @@ import { FocusButtonComponent } from './map/focus-button/focus-button.component'
 import { OutputMapComponent } from './output-map/output-map.component';
 import { InstallationVComponent } from './installation/installation-v/installation-v.component';
 import { InstallationHComponent } from './installation/installation-h/installation-h.component';
+import { InstallationCardComponent } from './installation/installation-card/installation-card.component';
+import { InstallationCardContainerComponent } from './installation/installation-card-container/installation-card-container.component';
 
 @NgModule({
   declarations: [
@@ -60,7 +62,9 @@ import { InstallationHComponent } from './installation/installation-h/installati
     FocusButtonComponent,
     OutputMapComponent,
     InstallationVComponent,
-    InstallationHComponent
+    InstallationHComponent,
+    InstallationCardComponent,
+    InstallationCardContainerComponent
   ],
   imports: [
     BrowserModule,

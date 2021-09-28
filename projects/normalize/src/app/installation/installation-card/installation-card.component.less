@@ -1,0 +1,31 @@
+@import '../../../common.less';
+
+:host {
+    display: block;
+    width: 729px;
+    height: 729px;
+    position: absolute;
+    svg {
+        width: 100%;
+        height: 100%;
+        .text {
+            .font-typewriter;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: 18px;
+            fill: @color-lead-color;
+        }
+    }
+    app-moving-image {
+        position: absolute;
+        top: 165px;
+        left: 197px;
+        transform: scale(1.11);
+    }
+    transform: translate(0, 0)rotate(0deg);
+    opacity: 1;
+    transition-property: transform opacity;
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+}

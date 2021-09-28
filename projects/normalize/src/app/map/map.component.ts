@@ -7,7 +7,6 @@ import { forkJoin, from, merge, Observable, ReplaySubject, Subject } from 'rxjs'
 import { catchError, delay, first, last, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { ApiService } from '../api.service';
 import { ImageFetcherService } from '../image-fetcher.service';
-import { NormalityLayer } from './normality-layer';
 import { StateService } from '../state.service';
 import { LayoutService } from '../layout.service';
 import { Router } from '@angular/router';
@@ -38,7 +37,6 @@ export class MapComponent implements OnInit, AfterViewInit {
   configuration: any = {};
   tileLayers: any = {};
   _feature = null;
-  normalityLayer: NormalityLayer;
   tsneOverlay: TSNEOverlay;
   grid = new ReplaySubject<GridItem[]>(1);
   ownGI = null;
@@ -128,11 +126,8 @@ export class MapComponent implements OnInit, AfterViewInit {
           }
         });        
       }),
-      tap(() => { // SET UP NORMALITY LAYER
-        this.normalityLayer = new NormalityLayer(this.map, this.grid);
-      }),
       tap(() => { // SET UP TSNE OVERLAY
-        this.tsneOverlay = new TSNEOverlay(this.map, this.grid, this.configuration.dim, this.fetchImage, this.maxZoom);
+        this.tsneOverlay = new TSNEOverlay(this.map, this.grid, this.configuration.dim, this.fetchImage);
         const items: Observable<ImageItem>[] = [];
 
         let expectedId = this.state.getOwnItemID();
@@ -202,7 +197,7 @@ export class MapComponent implements OnInit, AfterViewInit {
               if (targetGi !== null) {
                 this.overlay = false;
                 this.drawerOpen = false;
-                this.normalityLayer.refresh();
+                this.mapElement.normalityLayer.refresh();
 
                 const pos = targetGi.pos;
                 center = [-pos.y - 0.5, pos.x + 0.5];

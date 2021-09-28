@@ -6,9 +6,5 @@ import { InstallationBase } from '../InstallationBase';
   templateUrl: './installation-h.component.html',
   styleUrls: ['./installation-h.component.less']
 })
-export class InstallationHComponent extends InstallationBase implements OnInit {
-
-  ngOnInit(): void {
-  }
-
+export class InstallationHComponent extends InstallationBase {
 }

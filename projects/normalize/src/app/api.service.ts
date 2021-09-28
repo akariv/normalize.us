@@ -46,6 +46,18 @@ export class ApiService {
     return this.http.get('https://normalizing-us-files.fra1.digitaloceanspaces.com/tsne.json');
   }
 
+  getLatest() {
+    const search = new URLSearchParams(location.search);
+    const key = search.get('key');
+    const params = {};
+    if (key) {
+      params['key'] = key;
+    }
+    return this.http.get(environment.endpoints.getLatest, {params}).pipe(
+      map((result: any) => result.record as ImageItem)
+    );
+  }
+
   sendEmail(email) {
     const link = this.state.getPrivateUrl();
     return this.http.post(environment.endpoints.sendEmail, {email, link}).pipe(
