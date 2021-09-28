@@ -1,9 +1,12 @@
+import os
 import json
 from sqlalchemy.sql import text
 from flask import Request, Response
 
 from .db import engine
 from .net import HEADERS
+
+UPDATE_KEY = os.environ.get('UPDATE_KEY')
 
 fetch_latest_1 = text('''
     SELECT id, image, votes, tournaments, descriptor, landmarks, gender_age,  geolocation
@@ -18,6 +21,9 @@ fetch_latest_2 = text('''
     where last_shown_1 is not null
     ORDER BY last_shown_1 asc
     LIMIT 1
+''')
+update = text('''
+    UPDATE FACES set last_shown_1=now() where id=:id
 ''')
 
 
@@ -38,6 +44,9 @@ def get_latest_handler(request: Request):
                     row = dict(row)
                     result = row
                     break
+            update_key = request.args.get('key')
+            if result and update_key and UPDATE_KEY == update_key:
+                connection.execute(update, id=result['id'])
         response = dict(
             success=result is not None, record=result
         )
