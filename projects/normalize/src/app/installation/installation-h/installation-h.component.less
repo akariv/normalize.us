@@ -1,0 +1,14 @@
+:host {
+    display: flex;
+    width: 3840px;
+    height: 1080px;
+    flex-flow: row;
+    > * {
+        flex: 0 0 25%;
+        overflow: hidden;
+        height: 100%;
+    }
+    > *:first-child {
+        flex-basis: 75%;
+    }
+}

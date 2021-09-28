@@ -8,8 +8,8 @@ from .net import HEADERS
 fetch_latest = text('''
     SELECT id, image, votes, tournaments, descriptor, landmarks, gender_age,  geolocation
     FROM faces
-    ORDER BY id desc
-    LIMIT 5
+    ORDER BY random()
+    LIMIT 1
 ''')
 
 
@@ -19,12 +19,13 @@ def get_latest_handler(request: Request):
     if request.method == 'GET':
         with engine.connect() as connection:
             rows = connection.execute(fetch_latest)
-            result = []
+            result = None
             for row in rows:
                 row = dict(row)
-                result.append(row)
+                result = row
+                break
         response = dict(
-            success=True, records=result
+            success=True, record=result
         )
         response = Response(
             json.dumps(response),

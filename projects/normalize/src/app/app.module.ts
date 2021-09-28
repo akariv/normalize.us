@@ -29,6 +29,9 @@ import { RedirectModalComponent } from './map/redirect-modal/redirect-modal.comp
 import { DeleteModalComponent } from './map/delete-modal/delete-modal.component';
 import { DefinitionComponent } from './tournament/definition/definition.component';
 import { FocusButtonComponent } from './map/focus-button/focus-button.component';
+import { OutputMapComponent } from './output-map/output-map.component';
+import { InstallationVComponent } from './installation/installation-v/installation-v.component';
+import { InstallationHComponent } from './installation/installation-h/installation-h.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +57,10 @@ import { FocusButtonComponent } from './map/focus-button/focus-button.component'
     RedirectModalComponent,
     DeleteModalComponent,
     DefinitionComponent,
-    FocusButtonComponent
+    FocusButtonComponent,
+    OutputMapComponent,
+    InstallationVComponent,
+    InstallationHComponent
   ],
   imports: [
     BrowserModule,

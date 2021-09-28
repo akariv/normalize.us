@@ -15,6 +15,7 @@ import { GridItem, ImageItem } from '../datatypes';
 import { TSNEOverlay } from './tsne-overlay';
 import { FaceApiService } from '../face-api.service';
 import { EmailModalComponent } from './email-modal/email-modal.component';
+import { OutputMapComponent } from '../output-map/output-map.component';
 
 @Component({
   selector: 'app-map',
@@ -53,13 +54,12 @@ export class MapComponent implements OnInit, AfterViewInit {
   emailModalOpen = false;
   deleteModalOpen = false;
 
-  @ViewChild('map') mapElement:  ElementRef;
+  @ViewChild(OutputMapComponent) mapElement: OutputMapComponent;
   @ViewChild(EmailModalComponent) emailModal: EmailModalComponent;
   
-  constructor(private hostElement: ElementRef, private api: ApiService,
+  constructor(private api: ApiService, private faceapi: FaceApiService,
               private fetchImage: ImageFetcherService, private state: StateService,
-              public layout: LayoutService, private router: Router,
-              private faceapi: FaceApiService) {
+              public layout: LayoutService, private router: Router) {
   }
 
   ngOnInit(): void {
@@ -96,27 +96,7 @@ export class MapComponent implements OnInit, AfterViewInit {
       tap(() => { // SET UP MAP
         this.maxZoom = this.configuration.max_zoom;
         // Create map
-        this.map = L.map(this.mapElement.nativeElement, {
-          crs: L.CRS.Simple,
-          maxZoom: this.maxZoom,
-          minZoom: this.configuration.min_zoom,
-          maxBounds: [[-this.configuration.dim * 2, -this.configuration.dim], [this.configuration.dim, this.configuration.dim * 2]],
-          center: [-this.configuration.dim/2, this.configuration.dim/2],
-          zoom: this.configuration.min_zoom + 2,
-          zoomControl: false,
-        });
-        if (this.layout.desktop) {
-          new L.Control.Zoom({ position: 'bottomleft' }).addTo(this.map);
-        }
-        // Tile layers
-        for (const feature of ['faces', 'mouths', 'eyes', 'noses', 'foreheads']) {
-          this.tileLayers[feature] = L.tileLayer(`https://normalizing-us-files.fra1.cdn.digitaloceanspaces.com/feature-tiles/${this.configuration.set}/${feature}/{z}/{x}/{y}`, {
-            maxZoom: 9,
-            minZoom: this.configuration.min_zoom,
-            bounds: [[-this.configuration.dim - 1, 0], [-1, this.configuration.dim]],
-            errorTileUrl: '/assets/img/empty.png'
-          });
-        }
+        this.map = this.mapElement.getMap(this.configuration);
         this.feature = 'faces';
         // Map events
         this.map.on('zoomend', (ev) => { return this.onZoomChange(); });
@@ -294,15 +274,11 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   set feature(feature: string) {
-    if (this._feature) {
-      this.map.removeLayer(this.tileLayers[this._feature]);
-    }
-    this._feature = feature;
-    this.tileLayers[this._feature].addTo(this.map);
+    this.mapElement.feature = feature;
   }
 
   get feature(): string {
-    return this._feature;
+    return this.mapElement.feature;
   }
 
   start(skipConsent?: boolean) {
