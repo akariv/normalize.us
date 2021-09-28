@@ -7,7 +7,10 @@ import { StateService } from '../../state.service';
 @Component({
   selector: 'app-report-card',
   templateUrl: './report-card.component.html',
-  styleUrls: ['./report-card.component.less']
+  styleUrls: ['./report-card.component.less'],
+  host: {
+    '[class.focused]': 'focused'
+  }
 })
 export class ReportCardComponent implements OnInit, OnChanges {
 
@@ -23,6 +26,9 @@ export class ReportCardComponent implements OnInit, OnChanges {
   forehead_normality = '0.50';
   face_normality = '0.50';
 
+  itemImage = null;
+  focused = true;
+
   constructor(public imageFetcher: ImageFetcherService, private state: StateService) { }
 
   ngOnInit(): void {
@@ -30,12 +36,22 @@ export class ReportCardComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     if (this.item) {
-      this.normality = ImageItem.normality(this.item).toFixed(2);
-      this.nose_normality = ImageItem.normalityText(this.item, 0);
-      this.eyes_normality = ImageItem.normalityText(this.item, 1);
-      this.mouth_normality = ImageItem.normalityText(this.item, 2);
-      this.forehead_normality = ImageItem.normalityText(this.item, 3);
-      this.face_normality = ImageItem.normalityText(this.item, 4);
+      let delay = 0;
+      const item = this.item;
+      if (this.itemImage) {
+        delay = 500;
+      }
+      this.focused = false;
+      setTimeout(() => {
+        this.focused = true;
+        this.itemImage = this.imageFetcher.fetchImage(item.image)
+        this.normality = ImageItem.normality(item).toFixed(2);
+        this.nose_normality = ImageItem.normalityText(item, 0);
+        this.eyes_normality = ImageItem.normalityText(item, 1);
+        this.mouth_normality = ImageItem.normalityText(item, 2);
+        this.forehead_normality = ImageItem.normalityText(item, 3);
+        this.face_normality = ImageItem.normalityText(item, 4);
+      }, delay);
     }
   }
 
