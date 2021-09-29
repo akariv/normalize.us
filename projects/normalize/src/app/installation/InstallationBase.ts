@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
-import { interval, ReplaySubject, Subscription } from "rxjs";
-import { first } from "rxjs/operators";
+import { forkJoin, interval, ReplaySubject, Subscription } from "rxjs";
+import { first, switchMap } from "rxjs/operators";
 import { ApiService } from "../api.service";
 import { OutputMapComponent } from "../output-map/output-map.component";
 
@@ -39,9 +39,7 @@ export class InstallationBase implements AfterViewInit, OnInit, OnDestroy {
         this.ready.pipe(
             first(),
         ).subscribe(() => {
-            this.map = this.mapElement.getMap(this.configuration);
-            this.mapElement.feature = 'faces';
-            this.tsneOverlay = new TSNEOverlay(this.map, this.grid, this.configuration.dim, this.fetchImage);
+            this.createMap();
             this.loop = interval(30000).subscribe(() => {
                 // this.loop = interval(5000).subscribe(() => {
                 this.fetchLatest();
@@ -50,8 +48,29 @@ export class InstallationBase implements AfterViewInit, OnInit, OnDestroy {
         });
     }
 
+    createMap() {
+        this.map = this.mapElement.getMap(this.configuration);
+        this.mapElement.feature = 'faces';
+        this.tsneOverlay = new TSNEOverlay(this.map, this.grid, this.configuration.dim, this.fetchImage);
+        forkJoin(this.items.map((gi) => this.tsneOverlay.addImageLayer(gi.item))).subscribe((gis) => {
+            this.items.forEach((gi, i) => {
+                gi.pos = gis[i].pos;
+            });
+        });
+    }
+
     fetchLatest() {
-        this.api.getLatest().subscribe((data) => {
+        this.api.getMapConfiguration().pipe(
+            switchMap((config: any) => {
+                if (config.set !== this.configuration.set) {
+                    console.log('SET CHANGED!!!');
+                    this.configuration = config;
+                    this.grid.next(this.configuration.grid);
+                    this.createMap();
+                }
+                return this.api.getLatest();
+            })
+        ).subscribe((data) => {
             this.tsneOverlay.addImageLayer(data).subscribe((gi: GridItem) => {
                 if (this.items.length > 0) {
                     const pos = this.items[0].pos;

@@ -32,6 +32,10 @@ export class OutputMapComponent implements OnInit {
   }
 
   getMap(configuration) {
+    if (this.map) {
+      this.map.remove();
+      this.map = null;
+    }
     if (!this.map) {
       this.map = L.map(this.mapElement.nativeElement, {
         crs: L.CRS.Simple,

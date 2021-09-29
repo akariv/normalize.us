@@ -14,4 +14,35 @@
     > *:first-child {
         flex-basis: 75%;
     }
+    ::ng-deep {
+        .card-position-0 {
+            transform: translate(0px, -900px)rotate(0deg);
+            z-index: 20;
+        }
+        .card-position-1 {
+            transform: translate(0px, 48px)rotate(0deg);
+            z-index: 20;
+        }
+        .card-position-2 {
+            transform: translate(476px, 81px)rotate(3.66deg);
+            z-index: 19;            
+        }
+        .card-position-3 {
+            transform: translate(572px, 244px)rotate(-4.8deg);
+            z-index: 18;            
+        }
+        .card-position-4 {
+            transform: translate(678px, 288px)rotate(-0.93deg);
+            z-index: 17;            
+        }
+        .card-position-5 {
+            transform: translate(716px, 618px)rotate(-3.38deg);
+            z-index: 16;
+        }
+        .card-position-6 {
+            transform: translate(960px, 800px)rotate(0deg);
+            z-index: 15;
+            opacity: 0;
+        }
+    }
 }
