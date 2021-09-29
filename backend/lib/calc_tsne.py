@@ -220,10 +220,10 @@ def create_tiles(filename, image: Image, out_dim, res, info, current_set):
 
 
 IMAGES = [
-    ('noses', (200, 300), (0, 0)),
-    ('eyes', (300, 150), (300, 0)),
-    ('mouths', (300, 150), (600, 0)),
-    ('foreheads', (300, 150), (900, 0)),
+    # ('noses', (200, 300), (0, 0)),
+    # ('eyes', (300, 150), (300, 0)),
+    # ('mouths', (300, 150), (600, 0)),
+    # ('foreheads', (300, 150), (900, 0)),
     ('faces', (300, 300), (1200, 0)),
 ]
 
