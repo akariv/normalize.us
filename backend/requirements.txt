@@ -9,3 +9,4 @@ Pillow
 boto3
 scikit-image
 requests
+geocoder

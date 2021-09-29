@@ -5,11 +5,15 @@ from flask import Request, Response
 from PIL import Image
 from io import BytesIO
 import uuid
+import geocoder
 
 from .db import engine
 from .net import HEADERS, upload_fileobj_s3
 
-insert_new = text('INSERT INTO FACES (image, descriptor, landmarks, gender_age, geolocation, magic) VALUES (:image, :descriptor, :landmarks, :gender_age, :geolocation, :magic) RETURNING id')
+insert_new = text('''
+    INSERT INTO FACES (image, descriptor, landmarks, gender_age, geolocation, place_name, magic) 
+               VALUES (:image, :descriptor, :landmarks, :gender_age, :geolocation, :place_name, :magic) RETURNING id
+''')
 PREFIX = 'data:image/png;base64,'
 
 def new_selfie_handler(request: Request):
@@ -46,10 +50,21 @@ def new_selfie_handler(request: Request):
             gender_age = json.dumps(gender_age)
 
             geolocation = content.get('geolocation')
+            place_name = ''
+            if geolocation:
+                try:
+                    ret = geocoder.google(geolocation, method='reverse')
+                    place_name = '%s, %s' % (ret.city_long, ret.country_long)
+                except:
+                    try:
+                        place_name = '%.2f, %.2f' % tuple(geolocation)
+                    except:
+                        pass
             geolocation = json.dumps(geolocation)
 
             with engine.connect() as connection:
-                result = connection.execute(insert_new, image=filename_base, descriptor=descriptor, landmarks=landmarks, gender_age=gender_age, geolocation=geolocation, magic=magic)
+                result = connection.execute(insert_new, image=filename_base, descriptor=descriptor, landmarks=landmarks, 
+                                            gender_age=gender_age, geolocation=geolocation, place_name=place_name, magic=magic)
                 new_id = result.fetchone()[0]
             return Response(
                 json.dumps(dict(success=True, id=new_id, image=filename_base, magic=magic)),

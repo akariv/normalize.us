@@ -15,7 +15,7 @@ fetch_latest_1 = text('''
         votes_2, tournaments_2, 
         votes_3, tournaments_3, 
         votes_4, tournaments_4,
-        descriptor, landmarks, gender_age, geolocation, created_timestamp
+        descriptor, landmarks, gender_age, place_name, created_timestamp
     FROM faces
     where last_shown_1 is null
     ORDER BY id asc
@@ -28,7 +28,7 @@ fetch_latest_2 = text('''
         votes_2, tournaments_2, 
         votes_3, tournaments_3, 
         votes_4, tournaments_4,
-        descriptor, landmarks, gender_age, geolocation, created_timestamp
+        descriptor, landmarks, gender_age, place_name, created_timestamp
     FROM faces
     where last_shown_1 is not null
     ORDER BY last_shown_1 asc
