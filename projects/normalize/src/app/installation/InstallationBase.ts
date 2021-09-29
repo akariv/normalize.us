@@ -74,7 +74,10 @@ export class InstallationBase implements AfterViewInit, OnInit, OnDestroy {
             this.tsneOverlay.addImageLayer(data).subscribe((gi: GridItem) => {
                 if (this.items.length > 0) {
                     const pos = this.items[0].pos;
-                    this.map.flyTo([-pos.y - 0.5, pos.x + 0.5], this.configuration.max_zoom);
+                    this.map.flyTo([-pos.y - 0.5, pos.x + 0.5], this.configuration.min_zoom + 2, {duration: 1});
+                    setTimeout(() => {
+                        this.map.flyTo([-pos.y - 0.5, pos.x + 0.5], this.configuration.max_zoom, {duration: 5});
+                    }, 3000);
                 }
                 this.items.unshift(gi);
                 if (this.items.length > 7) {
