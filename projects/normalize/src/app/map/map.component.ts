@@ -133,6 +133,7 @@ export class MapComponent implements OnInit, AfterViewInit {
         let expectedId = this.state.getOwnItemID();
         if (this.state.getOwnImageID()) {
           if (this.state.getDescriptor()) {
+            const gl = this.state.getGeolocation();
             const item: ImageItem = {
               id: this.state.getOwnItemID(),
               image: this.state.getOwnImageID(),
@@ -152,7 +153,8 @@ export class MapComponent implements OnInit, AfterViewInit {
               created_timestamp: new Date().toUTCString(),
               landmarks: this.state.getLandmarks(),
               gender_age: this.state.getGenderAge(),
-              geolocation: this.state.getGeolocation(),
+              geolocation: gl,
+              place_name: gl ? `${gl[0].toFixed(2)}, ${gl[1].toFixed(2)}` : ''
             };
             items.push(from([item]));
           } else {

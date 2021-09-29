@@ -19,6 +19,7 @@ export class StateService {
   itemID: number;
   imageID: string;
   geolocation: number[];
+  place_name: string;
   magic: string;
   played = false;
   askedForEmail = false;
@@ -88,6 +89,10 @@ export class StateService {
     this.geolocation = geolocation;
   }
 
+  setPlaceName(place_name: string) {
+    this.place_name = place_name;
+  }
+
   setVotedSelf() {
     this.votedSelf = 1;
   }
@@ -122,6 +127,10 @@ export class StateService {
 
   getGeolocation() {
     return this.geolocation;
+  }
+
+  getPlaceName() {
+    return this.place_name;
   }
   
   getPlayed() {

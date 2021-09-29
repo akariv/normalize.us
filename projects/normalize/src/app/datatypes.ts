@@ -7,6 +7,7 @@ export class ImageItem {
     landmarks: number[];
     gender_age: {gender: string; genderProbability: number; age: number};
     geolocation: number[];
+    place_name?: string;
     created_timestamp?: string;
     tournaments_0?: number;
     votes_0?: number;
