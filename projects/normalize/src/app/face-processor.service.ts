@@ -62,7 +62,7 @@ export class FaceProcessorService {
   public detectorOptions: any;
   public defaultSnap = {
     orientaton: 10,
-    size: 50,
+    size: 75,
     distance: 0.1
   };
   public defaultScale = 1;
