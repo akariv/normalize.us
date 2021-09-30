@@ -42,7 +42,7 @@ export class InstallationCardComponent implements OnInit {
   }
 
   get placeName() {
-    return this.item.place_name || 'Unknown, Unknown';
+    return this.item.place_name || '';
   }
 
   get createdTime() {
