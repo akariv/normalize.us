@@ -11,8 +11,8 @@ from .db import engine
 from .net import HEADERS, upload_fileobj_s3
 
 insert_new = text('''
-    INSERT INTO FACES (image, descriptor, landmarks, gender_age, geolocation, place_name, magic) 
-               VALUES (:image, :descriptor, :landmarks, :gender_age, :geolocation, :place_name, :magic) RETURNING id
+    INSERT INTO FACES (image, descriptor, landmarks, gender_age, geolocation, place_name, last_shown_1, magic) 
+               VALUES (:image, :descriptor, :landmarks, :gender_age, :geolocation, :place_name, NULL, :magic) RETURNING id
 ''')
 PREFIX = 'data:image/png;base64,'
 
