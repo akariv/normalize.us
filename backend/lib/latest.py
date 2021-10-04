@@ -6,9 +6,12 @@ from flask import Request, Response
 from .db import engine
 from .net import HEADERS
 
-UPDATE_KEY = os.environ.get('UPDATE_KEY')
+UPDATE_KEYS = {
+    1: os.environ.get('UPDATE_KEY_1') or os.environ.get('UPDATE_KEY'),
+    2: os.environ.get('UPDATE_KEY_2')
+}
 
-fetch_latest_1 = text('''
+query_new = '''
     SELECT id, image, votes, tournaments, 
         votes_0, tournaments_0, 
         votes_1, tournaments_1, 
@@ -17,11 +20,11 @@ fetch_latest_1 = text('''
         votes_4, tournaments_4,
         descriptor, landmarks, gender_age, place_name, created_timestamp
     FROM faces
-    where last_shown_1 is null
+    where last_shown_{idx} is null
     ORDER BY id asc
     LIMIT 1
-''')
-fetch_latest_2 = text('''
+'''
+query_any = '''
     SELECT id, image, votes, tournaments, 
         votes_0, tournaments_0, 
         votes_1, tournaments_1, 
@@ -30,13 +33,13 @@ fetch_latest_2 = text('''
         votes_4, tournaments_4,
         descriptor, landmarks, gender_age, place_name, created_timestamp
     FROM faces
-    where last_shown_1 is not null
-    ORDER BY last_shown_1 asc
+    where last_shown_{idx} is not null
+    ORDER BY last_shown_{idx} asc
     LIMIT 1
-''')
-update = text('''
-    UPDATE FACES set last_shown_1=now() where id=:id
-''')
+'''
+update = '''
+    UPDATE FACES set last_shown_{idx}=now() where id=:id
+'''
 
 
 def get_latest_handler(request: Request):
@@ -44,21 +47,28 @@ def get_latest_handler(request: Request):
         return Response('', headers=HEADERS)
     if request.method == 'GET':
         with engine.connect() as connection:
-            rows = connection.execute(fetch_latest_1)
+            idx = 1
+            update_key = request.args.get('key')
+            found_update_key = None
+            for k, v in UPDATE_KEYS.items():
+                if v == update_key:
+                    idx = k
+                    found_update_key = v
+                    break
+            rows = connection.execute(text(query_new.format(idx=idx)))
             result = None
             for row in rows:
                 row = dict(row)
                 result = row
                 break
             if result is None:
-                rows = connection.execute(fetch_latest_2)
+                rows = connection.execute(text(query_any.format(idx=idx)))
                 for row in rows:
                     row = dict(row)
                     result = row
                     break
-            update_key = request.args.get('key')
-            if result and update_key and UPDATE_KEY == update_key:
-                connection.execute(update, id=result['id'])
+            if result and found_update_key is not None:
+                connection.execute(text(update.format(idx=idx)), id=result['id'])
         if result is not None:
             result['created_timestamp'] = result['created_timestamp'].isoformat()
         response = dict(
