@@ -14,8 +14,8 @@ const PROMPTS = {
   too_far: ['Please bring the camera', 'closer to your face'],
   too_close: [`You're too close...`, 'move a bit farther away'],
   not_aligned: ['Please', 'align your face'],
-  hold_still: ["Avoid uneven shadows on your face", 'then tap and hold'],
-  hold_still2: ["Keep holding...", 'hold...'],
+  hold_still: ["Avoid uneven shadows on your face", 'then tap'],
+  hold_still2: ["That's it", 'now hold still'],
 }
 
 @Component({
@@ -224,6 +224,10 @@ export class SelfieComponent implements OnInit, AfterViewInit {
         this.promptsStream.next(PROMPTS.hold_still);
       }
     }
+  }
+
+  get allowed() {
+    return this._allowed;
   }
 
 }

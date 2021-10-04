@@ -13,6 +13,7 @@
     <div class='face-mask-overlay' *ngIf='videoHeight'>
         <img [class.visible]='!detected' src='assets/img/frame-overlay.svg' [style.transform]='maskOverlayTransform'>
         <img [class.visible]='detected' src='assets/img/frame-overlay2.svg' [style.transform]='maskOverlayTransform'>
+        <img [class.visible]='detected && allowed' src='assets/img/frame-overlay3.svg' [style.transform]='maskOverlayTransform' [class.flicker]='allowed'>
         <svg width="194" height="254" fill="none" xmlns="http://www.w3.org/2000/svg" [style.transform]='maskOverlayTransform' [style.display]='svgHack ? "none" : "inherit"'>
             <g filter="url(#filter0_d)">
                 <text style="mix-blend-mode:lighten" fill='white' transform='scale(-1, 1)translate(-97,60)'>{{countdownText}}</text>
@@ -31,9 +32,8 @@
         </svg>
     </div>
 </div>
-<div class='shutter' *ngIf='detected'
+<div class='shutter' *ngIf='detected' [class.allowed]='allowed'
             (touchstart)='setAllowed($event, true)'
-            (touchend)='setAllowed($event, false)'
 ></div>
 <div class='flash' [class.active]='flashActive' *ngIf='svgHack'></div>
 <app-loader *ngIf='!started'></app-loader>

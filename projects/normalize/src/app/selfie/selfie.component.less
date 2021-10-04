@@ -95,6 +95,10 @@
                 &.visible {
                     display: block;
                 }
+                opacity: 1;
+                &.flicker {
+                    animation: 250ms linear 0s infinite normal both flash-flicker;
+                }
             }
 
             svg {
@@ -134,8 +138,7 @@
     //     }
     // }
 
-    .shutter {
-        
+    .shutter {        
         position: absolute;
         z-index: 2;
         bottom: 0;
@@ -144,6 +147,9 @@
         height: 124px;
         user-select: none;
         background-image: url('../../assets/img/camera-button.svg'), linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 48.96%);
+        &.allowed {
+            background-image: url('../../assets/img/camera-button-allowed.svg'), linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 48.96%);
+        }
         background-repeat: no-repeat;
         background-position: center;
     }
@@ -208,4 +214,18 @@
         filter: blur(0px);
     }
     
+}
+
+@keyframes flash-flicker {
+    from {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }    
 }
