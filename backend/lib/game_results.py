@@ -10,6 +10,8 @@ per_feature_updates_sql = [
     text(f'UPDATE faces SET tournaments_{i}=tournaments_{i}+:t, votes_{i}=votes_{i}+:v WHERE id=:id')
     for i in range(5)
 ]
+mark_updated = text('UPDATE faces SET last_shown_1=null, last_shown_2=null WHERE id=:id and magic=:magic')
+
 
 def game_results_handler(request: Request):
     if request.method == 'OPTIONS':
@@ -28,6 +30,8 @@ def game_results_handler(request: Request):
                 feature = update.pop('f')
                 connection.execute(update_sql, t=update['t'], v=update['v'], id=id)
                 connection.execute(per_feature_updates_sql[feature], t=update['t'], v=update['v'], id=id)
+            own_id, magic = content['own_id'], content['magic']
+            connection.execute(mark_updated, id=own_id, magic=magic)
         response = dict(
             success=True, updated=len(updates)
         )

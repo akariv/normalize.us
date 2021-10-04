@@ -39,7 +39,10 @@ export class ApiService {
   }
 
   saveGameResults(results) {
-    return this.http.post(environment.endpoints.gameResults, {results});
+    const own_id = this.state.getOwnItemID();
+    const magic = this.state.getMagic();
+    console.log('SAVE GAME RESULTS', own_id, magic, results);
+    return this.http.post(environment.endpoints.gameResults, {results, own_id, magic});
   }
 
   getMapConfiguration() {
