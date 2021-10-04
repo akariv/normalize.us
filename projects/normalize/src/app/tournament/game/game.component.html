@@ -17,5 +17,5 @@
 <ng-container *ngIf='!game || !game.records || !loaded'>
     <app-loader></app-loader>
 </ng-container>
-<app-definition *ngIf='definition' (closed)='definition=false'></app-definition>
 <app-game-preloader (loaded)='loaded = true'></app-game-preloader>
+<app-definition *ngIf='definition' imgSrc='def-step2.png' (closed)='definition=false'></app-definition>

@@ -45,19 +45,6 @@ export class ConsentModalComponent implements OnInit {
 
   set sliderGeolocation(value: boolean) {
     this._sliderGeolocation = value;
-    if (value) {
-      if (!this.state.getGeolocation()) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          if (position && position.coords) {
-            this.state.setGeolocation([position.coords.latitude, position.coords.longitude]);
-          }
-        }, () => {
-          // this.sliderGeolocation = false;
-        }, {
-          enableHighAccuracy: false, 
-        });
-      }
-    }
   }
 
   get sliderGeolocation() {

@@ -38,3 +38,4 @@
 <div class='flash' [class.active]='flashActive' *ngIf='svgHack'></div>
 <app-loader *ngIf='!started'></app-loader>
 <app-game-preloader *ngIf='started'></app-game-preloader>
+<app-definition imgSrc='def-step1.png' (closed)='canStart.next()'></app-definition>

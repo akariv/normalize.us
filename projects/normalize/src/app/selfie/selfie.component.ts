@@ -29,6 +29,7 @@ export class SelfieComponent implements OnInit, AfterViewInit {
 
   private videoStream: MediaStream;
   private completed = new ReplaySubject(1);
+  public canStart = new ReplaySubject(1);
   private countdown: Subscription = null;
 
   public flashActive = false;
@@ -62,7 +63,18 @@ export class SelfieComponent implements OnInit, AfterViewInit {
       });
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void { 
+    if (!this.state.getGeolocation()) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        if (position && position.coords) {
+          this.state.setGeolocation([position.coords.latitude, position.coords.longitude]);
+        }
+      }, () => {
+      }, {
+        enableHighAccuracy: false, 
+      });
+    }
+  }
 
   ngAfterViewInit(): void {
     defer(async () => this.init()).subscribe(() => {
@@ -98,7 +110,7 @@ export class SelfieComponent implements OnInit, AfterViewInit {
     fromEvent(videoEl, 'play').pipe(
       first(),
       delay(1000),
-      tap(() => {
+      switchMap(() => {
         this.videoHeight = videoEl.offsetHeight;
         this.faceProcessor.defaultScale = Math.max(
           this.el.nativeElement.offsetWidth/videoEl.offsetWidth,
@@ -107,6 +119,11 @@ export class SelfieComponent implements OnInit, AfterViewInit {
         );
         this.maskOverlayTransform = `scale(${videoEl.offsetHeight * 0.675 / 254 * this.faceProcessor.defaultScale})`;
         // this.maskOverlayTransform = `scale(${videoEl.offsetHeight * 0.675 / 254})`;
+        console.log('RETURNING CAN START');
+        return this.canStart;
+      }),
+      tap(() => {
+        console.log('CAN START TRIGGERED');
         this.triggerDetectFaces();
       })
     ).subscribe(() => {

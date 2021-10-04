@@ -1,5 +1,20 @@
 @import '../../../common.less';
 
+:host {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(-100%);
+    &.visible {
+        transform: translateX(0);
+    }
+    z-index: 39;
+}
+
 .overlay {
     position: absolute;
     display: block;
@@ -22,10 +37,10 @@
     justify-content: flex-start;
     background-color: @color-dark-brown;
     z-index: 3;
-    padding: 32px;
+    padding: 32px 0;
 
     .def {
-        flex: 0 0 50%;
+        flex: 1 0 50%;
         height: 100%;
         width: 100%;
         display: flex;
@@ -33,14 +48,13 @@
         align-items: center;
         justify-content: flex-end;
         align-items: stretch;
-        background-image: url('../../../assets/img/definition.svg');
         background-size: contain;
-        background-position: bottom;
+        background-position: center;
         background-repeat: no-repeat;
     }
 
     .okay {
-        background-image: url('../../../assets/img/okay-button.svg');
+        background-image: url('../../../assets/img/next-button.svg');
         background-size: contain;
         background-position: center;
         background-repeat: no-repeat;
