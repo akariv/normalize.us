@@ -47,7 +47,6 @@ export class GameComponent implements OnInit {
       if (this.tuples.length === 0) {
         this.index += 1;
         this.feature = this.FEATURES[this.index];
-        // console.log('INDEX = ', this.index, 'FEATURE=', this.feature);
         const forbidden = Object.keys(this.idsCount).filter((id) => this.idsCount[id] > 2).map((id) => parseInt(id, 10));
         this.tuples = this.randomTuples(this.TUPLES_PER_FEATURE, forbidden);
         this.tuples.forEach((t) => {
@@ -56,7 +55,6 @@ export class GameComponent implements OnInit {
             this.idsCount[id] = (this.idsCount[id] || 0) + 1;
           }
         });
-        // console.log('TUP', this.tuples.length, this.tuples);
         if (this.feature === 4) {
           if (this.state.getOwnImageID()) {
             this.tuples[this.tuples.length - 1][1] = {id: -1, image: this.state.getOwnImageID()};

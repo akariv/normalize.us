@@ -26,7 +26,9 @@ export class MapComponent implements OnInit, AfterViewInit {
   map: L.Map;
   maxZoom: number;
   zoomedMax = false;
+  
   definition = false;
+  definitionClosed = new ReplaySubject(1);
 
   focusedLayerPhoto: L.ImageOverlay;
   focusedLayerPos: {x: number, y: number} = {x: -1, y: -1};
@@ -196,6 +198,7 @@ export class MapComponent implements OnInit, AfterViewInit {
               }
             }),
             last(),
+            switchMap(() => this.definitionClosed),
             map(() => {
               let center: L.LatLngExpression = null;
               if (targetGi !== null) {
