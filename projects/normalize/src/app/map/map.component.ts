@@ -26,6 +26,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   map: L.Map;
   maxZoom: number;
   zoomedMax = false;
+  definition = false;
 
   focusedLayerPhoto: L.ImageOverlay;
   focusedLayerPos: {x: number, y: number} = {x: -1, y: -1};
@@ -76,6 +77,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     }, 0);
     let start = from([true]);
     this.state.needsEmail.subscribe(() => {
+      this.definition = true;
       if (this.state.getOwnItemID() && !this.state.getAskedForEmail()) {
         this.emailModalOpen = true;
         start = this.emailModal.closed.pipe(
