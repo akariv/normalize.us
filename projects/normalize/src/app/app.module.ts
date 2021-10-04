@@ -34,6 +34,7 @@ import { InstallationVComponent } from './installation/installation-v/installati
 import { InstallationHComponent } from './installation/installation-h/installation-h.component';
 import { InstallationCardComponent } from './installation/installation-card/installation-card.component';
 import { InstallationCardContainerComponent } from './installation/installation-card-container/installation-card-container.component';
+import { LessmoreComponent } from './lessmore/lessmore.component';
 
 @NgModule({
   declarations: [
@@ -64,7 +65,8 @@ import { InstallationCardContainerComponent } from './installation/installation-
     InstallationVComponent,
     InstallationHComponent,
     InstallationCardComponent,
-    InstallationCardContainerComponent
+    InstallationCardContainerComponent,
+    LessmoreComponent
   ],
   imports: [
     BrowserModule,

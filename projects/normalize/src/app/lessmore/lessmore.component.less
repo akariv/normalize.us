@@ -1,0 +1,23 @@
+@import '../../common.less';
+
+:host {
+    height: 40px;
+    background-color: @color-dark-brown;
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    justify-content: center;
+
+    span {
+        .font-source-sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 16px;
+        line-height: 18px;
+        color: @color-offwhite;
+        font-variant: small-caps;
+    }
+    img {
+        margin: 0 8px;
+    }
+}

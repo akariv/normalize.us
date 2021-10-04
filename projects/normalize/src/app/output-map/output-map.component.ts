@@ -45,6 +45,7 @@ export class OutputMapComponent implements OnInit {
         center: [-configuration.dim/2, configuration.dim/2],
         zoom: configuration.min_zoom + 2,
         zoomControl: false,
+        attributionControl: false
       });
       if (this.layout.desktop && !this.clean) {
         new L.Control.Zoom({ position: 'bottomleft' }).addTo(this.map);
