@@ -22,13 +22,15 @@ export class EmailModalComponent implements OnInit {
 
   close(result) {
     if (result === false) {
-      this.closed.next(result);
+      this.api.sendEmail(null).subscribe(() => {
+        console.log('WAIVED EMAIL');
+      });
     } else {
-      this.closed.next(result);
       this.api.sendEmail(this.emailAddress).subscribe(() => {
         console.log('SENT EMAIL');
       });
     }
+    this.closed.next(result);
   }
 
   get hasEmail() {

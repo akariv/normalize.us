@@ -39,10 +39,7 @@ export class ApiService {
   }
 
   saveGameResults(results) {
-    const own_id = this.state.getOwnItemID();
-    const magic = this.state.getMagic();
-    console.log('SAVE GAME RESULTS', own_id, magic, results);
-    return this.http.post(environment.endpoints.gameResults, {results, own_id, magic});
+    return this.http.post(environment.endpoints.gameResults, {results});
   }
 
   getMapConfiguration() {
@@ -63,7 +60,9 @@ export class ApiService {
 
   sendEmail(email) {
     const link = this.state.getPrivateUrl();
-    return this.http.post(environment.endpoints.sendEmail, {email, link}).pipe(
+    const own_id = this.state.getOwnItemID();
+    const magic = this.state.getMagic();
+    return this.http.post(environment.endpoints.sendEmail, {email, link, own_id, magic}).pipe(
       tap((res) => {
         console.log('SENT EMAIL RESULT', res);
       })
