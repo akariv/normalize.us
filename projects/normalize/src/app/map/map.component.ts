@@ -33,7 +33,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   focusedLayerPhoto: L.ImageOverlay;
   focusedLayerPos: {x: number, y: number} = {x: -1, y: -1};
   focusedState = false;
-  
+
   dim = 13;
 
   ready = new ReplaySubject(1);
@@ -194,7 +194,6 @@ export class MapComponent implements OnInit, AfterViewInit {
               return this.tsneOverlay.addImageLayer(item);
             }),
             tap((gi) => {
-              console.log('TSNE GI', gi, gi.item.id);
               if (gi.item.id === expectedId) {
                 targetGi = gi;
               }
@@ -207,7 +206,6 @@ export class MapComponent implements OnInit, AfterViewInit {
             map(() => {
               let center: L.LatLngExpression = null;
               if (targetGi !== null) {
-                console.log('targetGi!');
                 this.overlay = false;
                 this.drawerOpen = false;
                 this.mapElement.normalityLayer.refresh();
@@ -267,7 +265,7 @@ export class MapComponent implements OnInit, AfterViewInit {
           this.updateBreatheOverlay(this.focusedItem.pos);
           setTimeout(() => {
             this.focusedState = true;
-          }, 500);          
+          }, 500);
         }
       }
     }
