@@ -1,7 +1,9 @@
 <app-output-map [grid]='grid'></app-output-map>
 <app-feature-selector [feature]='feature' (selected)='feature = $event' *ngIf='false'></app-feature-selector>
 <div class='overlay' *ngIf='overlay' (click)='overlay = false; drawerOpen = false'></div>
-<app-drawer [open]='drawerOpen' [hidden]='consentModalOpen || deleteModalOpen' (changed)='overlay = false; drawerOpen = $event'>
+<app-drawer [open]='drawerOpen' [hidden]='consentModalOpen || deleteModalOpen' (changed)='overlay = false; drawerOpen = $event'
+            [class.focused]='focusedState'
+>
     <ng-container *ngIf='!focusedItem'>
         <app-about-card [showStart]='!hasSelfie' (start)='start()'></app-about-card>
     </ng-container>

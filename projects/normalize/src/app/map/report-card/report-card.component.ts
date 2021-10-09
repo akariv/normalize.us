@@ -1,5 +1,6 @@
-import { EventEmitter } from '@angular/core';
+import { EventEmitter, OnDestroy } from '@angular/core';
 import { Component, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { Location } from '@angular/common';
 import { ImageItem } from '../../datatypes';
 import { ImageFetcherService } from '../../image-fetcher.service';
 import { StateService } from '../../state.service';
@@ -8,11 +9,8 @@ import { StateService } from '../../state.service';
   selector: 'app-report-card',
   templateUrl: './report-card.component.html',
   styleUrls: ['./report-card.component.less'],
-  host: {
-    '[class.focused]': 'focused'
-  }
 })
-export class ReportCardComponent implements OnInit, OnChanges {
+export class ReportCardComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() item: ImageItem;
   @Output() delete = new EventEmitter<void>();
@@ -27,31 +25,27 @@ export class ReportCardComponent implements OnInit, OnChanges {
   face_normality = '0.50';
 
   itemImage = null;
-  focused = true;
 
-  constructor(public imageFetcher: ImageFetcherService, private state: StateService) { }
+  constructor(public imageFetcher: ImageFetcherService, private state: StateService, private location: Location) { }
 
   ngOnInit(): void {
   }
 
+  ngOnDestroy() {
+    this.location.replaceState('/');
+  }
+
   ngOnChanges() {
     if (this.item) {
-      let delay = 0;
       const item = this.item;
-      if (this.itemImage) {
-        delay = 500;
-      }
-      this.focused = false;
-      setTimeout(() => {
-        this.focused = true;
-        this.itemImage = this.imageFetcher.fetchImage(item.image)
-        this.normality = ImageItem.normality(item).toFixed(2);
-        this.nose_normality = ImageItem.normalityText(item, 0);
-        this.eyes_normality = ImageItem.normalityText(item, 1);
-        this.mouth_normality = ImageItem.normalityText(item, 2);
-        this.forehead_normality = ImageItem.normalityText(item, 3);
-        this.face_normality = ImageItem.normalityText(item, 4);
-      }, delay);
+      this.itemImage = this.imageFetcher.fetchImage(item.image)
+      this.normality = ImageItem.normality(item).toFixed(2);
+      this.nose_normality = ImageItem.normalityText(item, 0);
+      this.eyes_normality = ImageItem.normalityText(item, 1);
+      this.mouth_normality = ImageItem.normalityText(item, 2);
+      this.forehead_normality = ImageItem.normalityText(item, 3);
+      this.face_normality = ImageItem.normalityText(item, 4);
+      this.location.replaceState('/', `?id=${this.item.id}`);
     }
   }
 
@@ -93,8 +87,12 @@ export class ReportCardComponent implements OnInit, OnChanges {
     return this.item.id === this.state.getOwnItemID();
   }
 
+  shareUrl() {
+    return `https://normalizi.ng?id=${this.item.id}`;
+  }
+
   share() {
-    const url = `https://normalizi.ng?id=${this.item.id}`;
+    const url = this.shareUrl();
     navigator.share({
       title: url,
       text: url,

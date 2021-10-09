@@ -39,7 +39,7 @@ export class StateService {
     this.magic = window.localStorage.getItem(this.OWN_MAGIC_KEY);
     this.played = window.localStorage.getItem(this.PLAYED_KEY) === 'true';
     this.askedForEmail = window.localStorage.getItem(this.ASKED_FOR_EMAIL_KEY) === 'true';
-    if (this.magic && !this.askedForEmail) {
+    if (this.getNeedsEmail()) {
       this.needsEmail.next();
     }
   }
@@ -197,6 +197,10 @@ export class StateService {
       window.location.reload();
     }
     return true;
+  }
+
+  getNeedsEmail() {
+    return this.magic && !this.askedForEmail;
   }
 
   urlSearchParam(key) {

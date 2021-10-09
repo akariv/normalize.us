@@ -32,7 +32,8 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   focusedLayerPhoto: L.ImageOverlay;
   focusedLayerPos: {x: number, y: number} = {x: -1, y: -1};
-
+  focusedState = false;
+  
   dim = 13;
 
   ready = new ReplaySubject(1);
@@ -89,6 +90,9 @@ export class MapComponent implements OnInit, AfterViewInit {
         );
       }
     });
+    if (!this.state.getNeedsEmail()) {
+      this.definitionClosed.next();
+    }
     start.pipe(
       switchMap(() => {
         console.log('WAITING FOR READY');
@@ -190,6 +194,7 @@ export class MapComponent implements OnInit, AfterViewInit {
               return this.tsneOverlay.addImageLayer(item);
             }),
             tap((gi) => {
+              console.log('TSNE GI', gi, gi.item.id);
               if (gi.item.id === expectedId) {
                 targetGi = gi;
               }
@@ -202,6 +207,7 @@ export class MapComponent implements OnInit, AfterViewInit {
             map(() => {
               let center: L.LatLngExpression = null;
               if (targetGi !== null) {
+                console.log('targetGi!');
                 this.overlay = false;
                 this.drawerOpen = false;
                 this.mapElement.normalityLayer.refresh();
@@ -249,27 +255,19 @@ export class MapComponent implements OnInit, AfterViewInit {
     };
     const x = Math.floor(pos.lng);
     const y = -Math.ceil(pos.lat);
+    const dist = Math.sqrt(Math.pow(x - pos.lng, 2) + Math.pow(y + pos.lat, 2));
     if (this.focusedLayerPos.x !== x || this.focusedLayerPos.x !== y) {
       this.focusedLayerPos = {x, y};
+      this.focusedState = false;
       for (const item of this.configuration.grid) {
         const posX = item.pos.x;
         const posY = item.pos.y;
         if (x === posX && y === posY) {
           this.focusedItem = item;
-          // if (this.drawerOpen) {
           this.updateBreatheOverlay(this.focusedItem.pos);
-          // }
-          // const id = item.id;
-          // const lat = -1 - y;
-          // const lon = x;
-          // const imgTop = lat -0.09050195011;
-          // const imgLeft = lon + 0.20588;
-          // const imgSide = 1.08597721996;
-          // const bounds: L.LatLngTuple[] = [[imgTop, imgLeft], [imgTop + imgSide, imgLeft + imgSide]];
-          // this.focusedLayerPhoto = L.imageOverlay(
-          //   '/assets/img/normalizi.ng_arrest_card.svg', bounds, {zIndex: 2}
-          // ).addTo(this.map);
-          // break;
+          setTimeout(() => {
+            this.focusedState = true;
+          }, 500);          
         }
       }
     }
