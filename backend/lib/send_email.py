@@ -9,6 +9,9 @@ from .net import HEADERS
 from .db import engine
 
 
+logging.getLogger().setLevel(logging.INFO)
+
+
 OUR_EMAIL = 'me@normalizi.ng'
 REPLY_TO_EMAIL = 'mushon@shual.com'
 REPLY_TO_NAME = 'Mushon Zer-Aviv'

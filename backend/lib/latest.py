@@ -7,6 +7,9 @@ from flask import Request, Response
 from .db import engine
 from .net import HEADERS
 
+logging.getLogger().setLevel(logging.INFO)
+
+
 UPDATE_KEYS = {
     1: os.environ.get('UPDATE_KEY_1') or os.environ.get('UPDATE_KEY'),
     2: os.environ.get('UPDATE_KEY_2')
