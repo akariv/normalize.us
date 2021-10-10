@@ -1,3 +1,4 @@
+import logging
 import os
 import json
 from flask import Response
@@ -61,6 +62,7 @@ def send_email_handler(request):
                 print('ERROR', repr(ex), error)
 
         with engine.connect() as connection:
+            logging.info(f'Marking {own_id} with {magic} as updated')
             connection.execute(mark_updated, id=own_id, magic=magic)
 
     return Response(
