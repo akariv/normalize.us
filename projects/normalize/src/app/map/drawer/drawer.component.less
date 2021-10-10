@@ -40,7 +40,7 @@
         }
       
         .focused{
-          &:not(.open) {
+          :not(.open) {
             bottom: ~'calc(70px - 75%)';
           }
         }
@@ -49,7 +49,7 @@
             transition: filter 250ms;
          }
 
-        &:not(.focused){
+        :not(.focused){
           .value, app-moving-image {
             filter: blur(8px);
           }
