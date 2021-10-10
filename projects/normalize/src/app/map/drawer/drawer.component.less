@@ -29,7 +29,7 @@
       }
     }
     &.mobile {
-        bottom: ~'calc(70px - 75%)';
+        bottom: - 75%;
         left: 0;    
         width: 100%;
         height: 75%;
@@ -38,6 +38,23 @@
         &.open {
             bottom: 0;
         }
+      
+        .focused{
+          &:not(.open) {
+            bottom: ~'calc(70px - 75%)';
+          }
+        }
+      
+        .value, app-moving-image {
+            transition: filter 250ms;
+         }
+
+        &:not(.focused){
+          .value, app-moving-image {
+            filter: blur(8px);
+          }
+        }
+      
     
         &.hidden {
             bottom: -75%;
