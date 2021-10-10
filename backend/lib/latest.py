@@ -1,3 +1,4 @@
+import logging
 import os
 import json
 from sqlalchemy.sql import text
@@ -68,6 +69,7 @@ def get_latest_handler(request: Request):
                     result = row
                     break
             if result and found_update_key is not None:
+                logging.info(f'UPDATING WITH KEY {found_update_key}')
                 connection.execute(text(update.format(idx=idx)), id=result['id'])
         if result is not None:
             result['created_timestamp'] = result['created_timestamp'].isoformat()
