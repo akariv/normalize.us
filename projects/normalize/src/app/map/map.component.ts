@@ -4,7 +4,7 @@ import * as L from 'leaflet';
 import * as geojson from 'geojson';
 
 import { forkJoin, from, merge, Observable, ReplaySubject, Subject } from 'rxjs';
-import { catchError, delay, first, last, map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { catchError, delay, filter, first, last, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { ApiService } from '../api.service';
 import { ImageFetcherService } from '../image-fetcher.service';
 import { StateService } from '../state.service';
@@ -83,17 +83,28 @@ export class MapComponent implements OnInit, AfterViewInit {
       this.definition = true;
       if (this.state.getOwnItemID() && !this.state.getAskedForEmail()) {
         this.emailModalOpen = true;
-        start = this.emailModal.closed.pipe(
-          tap(() => {
-            this.state.setAskedForEmail();
-          })
-        );
+        if (!this.state.gallery) {
+          start = this.emailModal.closed.pipe(
+            map(() => {
+              this.state.setAskedForEmail();
+              return true;
+            })
+          );  
+        } else {
+          this.emailModal.closed.pipe(
+            first()
+          ).subscribe(() => {
+            this.router.navigate(['/selfie'])
+          });
+          start = from([false]);
+        }
       }
     });
     if (!this.state.getNeedsEmail()) {
       this.definitionClosed.next();
     }
     start.pipe(
+      filter((el) => !!el),
       switchMap(() => {
         console.log('WAITING FOR READY');
         return this.ready;

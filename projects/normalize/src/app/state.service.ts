@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
 import { delay, first } from 'rxjs/operators';
 import { ImageItem } from './datatypes';
 
@@ -12,6 +12,7 @@ export class StateService {
   OWN_MAGIC_KEY = 'normalize_own_magic';
   PLAYED_KEY = 'normalize_played';
   ASKED_FOR_EMAIL_KEY = 'normalize_email';
+  GALLERY = 'normalize_gallery';
 
   descriptor: any;
   landmarks: any;
@@ -27,6 +28,8 @@ export class StateService {
   requests = [];
   needsEmail = new ReplaySubject<void>(1);
   votedSelf = 0;
+  gallery = false;
+  networkQueueLength = new BehaviorSubject<number>(0);
 
   constructor() {
     this.checkUrlParameters();
@@ -39,6 +42,7 @@ export class StateService {
     this.magic = window.localStorage.getItem(this.OWN_MAGIC_KEY);
     this.played = window.localStorage.getItem(this.PLAYED_KEY) === 'true';
     this.askedForEmail = window.localStorage.getItem(this.ASKED_FOR_EMAIL_KEY) === 'true';
+    this.checkGallery();
     if (this.getNeedsEmail()) {
       this.needsEmail.next();
     }
@@ -56,6 +60,12 @@ export class StateService {
       window.localStorage.setItem(this.OWN_IMAGE_KEY, imageID);
       window.localStorage.setItem(this.OWN_MAGIC_KEY, magic);
       window.location.search = '';
+    }
+    const gallery = urlParams.get('gallery');
+    if (gallery) {
+      if (gallery === 'dublin') {
+        this.setGallery([53.3441249,-6.2524838]);
+      }
     }
   }
 
@@ -151,6 +161,25 @@ export class StateService {
     return this.askedForEmail;
   }
 
+  setGallery(coords) {
+    window.localStorage.setItem(this.GALLERY, JSON.stringify(coords));
+  }
+
+  checkGallery() {
+    try {
+      const coordsJson = window.localStorage.getItem(this.GALLERY);
+      const coords = JSON.parse(coordsJson);
+      if (coords && Array.isArray(coords)) {
+        this.setGeolocation(JSON.parse(coordsJson));
+        this.gallery = true;
+        console.log('IN GALLERY @', coordsJson);
+        return;  
+      }
+    } catch(e) {
+    }
+    console.log('NOT IN GALLERY');
+  }
+
   pushRequest(request) {
     this.requests.push(request);
     this.handleRequest();
@@ -160,6 +189,7 @@ export class StateService {
     if (this.handlingRequest) {
       return;
     }
+    this.networkQueueLength.next(this.requests.length);
     if (this.requests.length === 0) {
       return
     }
@@ -175,6 +205,9 @@ export class StateService {
   }
 
   clear() {
+    this.itemID = null;
+    this.imageID = null;
+    this.magic = null;
     window.localStorage.removeItem(this.OWN_ID_KEY);
     window.localStorage.removeItem(this.OWN_IMAGE_KEY);
     window.localStorage.removeItem(this.OWN_MAGIC_KEY);

@@ -18,4 +18,4 @@ select count(1) from faces;
 
 select id, descriptor from faces;
 
-delete from faces;
+delete from faces where id in ()

@@ -111,6 +111,17 @@ export class SelfieComponent implements OnInit, AfterViewInit {
       first(),
       delay(1000),
       switchMap(() => {
+        return this.state.networkQueueLength.pipe(
+          filter((l) => l === 0),
+          first(),
+          tap(() => {
+            if (this.state.gallery) {
+              this.state.fullClear();
+            }
+          }),
+        );
+      }),
+      switchMap(() => {
         this.videoHeight = videoEl.offsetHeight;
         this.faceProcessor.defaultScale = Math.max(
           this.el.nativeElement.offsetWidth/videoEl.offsetWidth,
