@@ -270,7 +270,6 @@ export class FaceProcessorService {
         }
         if (result.age) {
           gender_age.age = result.age;
-          console.log('gender_age', gender_age);
         }
         const landmarks: FaceLandmarks68 = result.landmarks;
         if (firstLandmarks.length === 0) {

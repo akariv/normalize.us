@@ -16,3 +16,4 @@
     <span ><strong>more normal</strong></span>
 </div>
 <app-slider [state]='state' [extraHandles]='extraHandles' (location)='location = $event' (selected)='finish($event)'></app-slider>
+<app-timeout-counter (canceled)='triggerTimeout.next(true); timeoutVisible=false' *ngIf='timeoutVisible'></app-timeout-counter>

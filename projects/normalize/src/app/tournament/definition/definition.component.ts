@@ -21,14 +21,16 @@ export class DefinitionComponent implements OnInit {
     this.visible = true;
     setTimeout(() => {
       this.onclose();
-    }, 100000);
+    }, 10000);
   }
 
   onclose() {
-    this.visible = false;
-    setTimeout(() => {
-      this.closed.next();
-    }, 300);
+    if (this.visible) {
+      this.visible = false;
+      setTimeout(() => {
+        this.closed.next();
+      }, 300);  
+    }
   }
 
 }

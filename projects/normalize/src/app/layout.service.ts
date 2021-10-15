@@ -23,7 +23,6 @@ export class LayoutService {
       this.nativeElement = nativeElement;
     }
     if (this.nativeElement) {
-      console.log(this.nativeElement, this.nativeElement.offsetWidth);
       this.mobile = this.nativeElement.offsetWidth < 600;
       this.desktop = this.nativeElement.offsetWidth >= 600;
       this.layout = this.mobile ? 'mobile' : 'desktop';

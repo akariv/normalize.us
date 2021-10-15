@@ -1,5 +1,7 @@
 import { ElementRef, ViewChild } from '@angular/core';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { debounceTime, first } from 'rxjs/operators';
 import { ApiService } from '../../api.service';
 import { StateService } from '../../state.service';
 
@@ -14,11 +16,19 @@ export class EmailModalComponent implements OnInit {
   @Output() closed = new EventEmitter<boolean>();
 
   @ViewChild('input') input: ElementRef;
-  emailAddress: string = null;
+  _emailAddress: string = null;
+
+  triggerTimeout = new BehaviorSubject<boolean>(null);
 
   constructor(private api: ApiService, private state: StateService) { }
 
   ngOnInit(): void {
+    this.triggerTimeout.pipe(
+      debounceTime(30000),
+      first()
+    ).subscribe(() => {
+      this.close(false);
+    });
   }
 
   close(result) {
@@ -40,4 +50,12 @@ export class EmailModalComponent implements OnInit {
     return !!this.emailAddress && valid; 
   }
 
+  set emailAddress(value: string) {
+    this._emailAddress = value;
+    this.triggerTimeout.next(true);
+  }
+
+  get emailAddress() {
+    return this._emailAddress;
+  }
 }

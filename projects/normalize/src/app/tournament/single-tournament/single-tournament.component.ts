@@ -1,8 +1,9 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, ViewChildren } from '@angular/core';
-import { from } from 'rxjs';
-import { delay, tap } from 'rxjs/operators';
+import { BehaviorSubject, from } from 'rxjs';
+import { debounceTime, delay, first, tap } from 'rxjs/operators';
 import { ConfigService } from '../../config.service';
 import { ImageFetcherService } from '../../image-fetcher.service';
+import { StateService } from '../../state.service';
 
 @Component({
   selector: 'app-single-tournament',
@@ -24,8 +25,11 @@ export class SingleTournamentComponent implements OnInit, OnChanges, AfterViewIn
   baseScale = 1;
   direction = null;
   state = 'start';
+  triggerTimeout = new BehaviorSubject<boolean>(null);
+  timeoutVisible = false;
 
-  constructor(public imageFetcher: ImageFetcherService, private el: ElementRef, private config: ConfigService) { }
+  constructor(public imageFetcher: ImageFetcherService, private el: ElementRef, private config: ConfigService,
+              private stateSvc: StateService) { }
 
   set location(value) {
     this.position = Math.abs(value);
@@ -45,9 +49,19 @@ export class SingleTournamentComponent implements OnInit, OnChanges, AfterViewIn
   }
 
   ngOnInit(): void {
+    if (this.stateSvc.gallery) {
+      console.log('STARTING TOURNAMENT TIMEOUT');
+      this.triggerTimeout.pipe(
+        debounceTime(30000),
+      ).subscribe(() => {
+        this.timeoutVisible = true;
+      });  
+    }
   }
 
   ngOnChanges() {
+    console.log('TRIGGERING TOURNAMENT TIMEOUT');
+    this.triggerTimeout.next(true);
     from([true]).pipe(
       tap(() => {
         this.state = 'start';

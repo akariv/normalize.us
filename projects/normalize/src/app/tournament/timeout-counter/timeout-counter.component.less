@@ -1,0 +1,35 @@
+@import '../../../common.less';
+
+:host {
+    background-color: @color-dark-brown;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+
+    .box {
+        width: 70px;
+        height: 70px;
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+        justify-content: center;
+        
+        .inner {
+            width: 10px;
+            height: 10px;
+            border-color: @color-offwhite;
+            border-style: solid;
+            transition: border-width 1s linear;
+            box-sizing: content-box;
+        }
+    }
+
+    > span, > strong {
+        .font-source-sans;
+        font-size: 20px;
+        line-height: 25px;
+        text-align: center;
+        color: @color-white;
+    }
+}

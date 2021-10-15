@@ -35,6 +35,7 @@ import { InstallationHComponent } from './installation/installation-h/installati
 import { InstallationCardComponent } from './installation/installation-card/installation-card.component';
 import { InstallationCardContainerComponent } from './installation/installation-card-container/installation-card-container.component';
 import { LessmoreComponent } from './lessmore/lessmore.component';
+import { TimeoutCounterComponent } from './tournament/timeout-counter/timeout-counter.component';
 
 @NgModule({
   declarations: [
@@ -66,7 +67,8 @@ import { LessmoreComponent } from './lessmore/lessmore.component';
     InstallationHComponent,
     InstallationCardComponent,
     InstallationCardContainerComponent,
-    LessmoreComponent
+    LessmoreComponent,
+    TimeoutCounterComponent
   ],
   imports: [
     BrowserModule,

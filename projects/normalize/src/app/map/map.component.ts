@@ -78,7 +78,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.hasSelfie = this.state.imageID || this.state.descriptor;
     }, 0);
-    let start = from([true]);
+    let start = this.state.gallery ? from([false]) : from([true]);
     this.state.needsEmail.subscribe(() => {
       this.definition = true;
       if (this.state.getOwnItemID() && !this.state.getAskedForEmail()) {
@@ -92,16 +92,17 @@ export class MapComponent implements OnInit, AfterViewInit {
           );  
         } else {
           this.emailModal.closed.pipe(
+            switchMap(() => this.definitionClosed),
             first()
           ).subscribe(() => {
             this.router.navigate(['/selfie'])
           });
-          start = from([false]);
         }
       }
     });
     if (!this.state.getNeedsEmail()) {
       this.definitionClosed.next();
+      this.router.navigate(['/selfie']);
     }
     start.pipe(
       filter((el) => !!el),
@@ -191,7 +192,6 @@ export class MapComponent implements OnInit, AfterViewInit {
           }
         }
         const sharedId = this.state.urlSearchParam('id');
-        console.log('share', sharedId);
         if (sharedId) {
           expectedId = parseInt(sharedId);
           items.push(

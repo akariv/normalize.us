@@ -1,0 +1,43 @@
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
+import { TIMEOUT } from 'dns';
+import { interval } from 'rxjs';
+import { take } from 'rxjs/operators';
+
+@Component({
+  selector: 'app-timeout-counter',
+  templateUrl: './timeout-counter.component.html',
+  styleUrls: ['./timeout-counter.component.less'],
+  host: {
+    '(touchstart)': 'cancel()'
+  }
+})
+export class TimeoutCounterComponent implements OnInit {
+
+  @Output() canceled = new EventEmitter<void>();
+  TIMEOUT = 10;
+  seconds: number = this.TIMEOUT;
+  width = 1;
+
+  constructor(private router: Router) { }
+
+  ngOnInit(): void {
+    interval(1000).pipe(
+      take(this.TIMEOUT),
+    ).subscribe(() => {
+      if (this.seconds > 5) {
+        this.seconds -= 1;
+      }
+      this.width = this.seconds / this.TIMEOUT;
+      if (this.seconds === 0) {
+        this.router.navigate(['/selfie']);
+      }
+    })
+  }
+
+  cancel() {
+    console.log('CANCEL');
+    this.canceled.emit();
+    return false;
+  }
+}
