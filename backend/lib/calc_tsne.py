@@ -89,6 +89,7 @@ def load_activations():
                 votes_3, tournaments_3, 
                 votes_4, tournaments_4
             from faces
+            where allowed=1
             order by id desc limit 500''')
         ids = []
         activations = []

@@ -22,7 +22,8 @@ query_new = '''
         votes_2, tournaments_2, 
         votes_3, tournaments_3, 
         votes_4, tournaments_4,
-        descriptor, landmarks, gender_age, place_name, created_timestamp
+        descriptor, landmarks, gender_age, place_name, created_timestamp,
+        last_shown_1, last_shown_2
     FROM faces
     where last_shown_{idx} is null
     ORDER BY id asc
@@ -35,7 +36,8 @@ query_any = '''
         votes_2, tournaments_2, 
         votes_3, tournaments_3, 
         votes_4, tournaments_4,
-        descriptor, landmarks, gender_age, place_name, created_timestamp
+        descriptor, landmarks, gender_age, place_name, created_timestamp,
+        last_shown_1, last_shown_2
     FROM faces
     where last_shown_{idx} is not null
     ORDER BY last_shown_{idx} asc
@@ -71,8 +73,11 @@ def get_latest_handler(request: Request):
                     row = dict(row)
                     result = row
                     break
+            last_shown = None
+            if result is not None:
+                last_shown = [result.pop('last_shown_1'), result.pop('last_shown_2')]
             if result and found_update_key is not None:
-                logging.info(f'UPDATING WITH KEY {found_update_key}')
+                logging.info(f'UPDATING {idx} WITH KEY {found_update_key} (last_shown={last_shown})')
                 connection.execute(text(update.format(idx=idx)), id=result['id'])
         if result is not None:
             result['created_timestamp'] = result['created_timestamp'].isoformat()

@@ -1,4 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Subscription, timer } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-definition',
@@ -11,6 +13,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 export class DefinitionComponent implements OnInit {
 
   visible = true;
+  timerSub: Subscription;
 
   @Input() imgSrc: string;
   @Output() closed = new EventEmitter<void>();
@@ -19,12 +22,18 @@ export class DefinitionComponent implements OnInit {
 
   ngOnInit(): void {
     this.visible = true;
-    setTimeout(() => {
+    this.timerSub = timer(10000).pipe(
+      first()
+    ).subscribe(() => {
       this.onclose();
-    }, 10000);
+    });
   }
 
   onclose() {
+    if (this.timerSub) {
+      this.timerSub.unsubscribe();
+      this.timerSub = null;
+    }
     if (this.visible) {
       this.visible = false;
       setTimeout(() => {

@@ -15,7 +15,7 @@ logging.getLogger().setLevel(logging.INFO)
 OUR_EMAIL = 'me@normalizi.ng'
 REPLY_TO_EMAIL = 'mushon@shual.com'
 REPLY_TO_NAME = 'Mushon Zer-Aviv'
-mark_updated = text('UPDATE faces SET last_shown_1=null, last_shown_2=null WHERE id=:id and magic=:magic')
+mark_updated = text('UPDATE faces SET last_shown_1=null, last_shown_2=null, allowed=1 WHERE id=:id and magic=:magic')
 
 
 def send_email_handler(request):
