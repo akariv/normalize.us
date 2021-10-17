@@ -102,7 +102,9 @@ export class MapComponent implements OnInit, AfterViewInit {
     });
     if (!this.state.getNeedsEmail()) {
       this.definitionClosed.next();
-      this.router.navigate(['/selfie']);
+      if (this.state.gallery) {
+        this.router.navigate(['/selfie']);
+      }
     }
     start.pipe(
       filter((el) => !!el),

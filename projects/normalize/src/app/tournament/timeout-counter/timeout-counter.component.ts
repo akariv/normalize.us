@@ -25,9 +25,7 @@ export class TimeoutCounterComponent implements OnInit {
     interval(1000).pipe(
       take(this.TIMEOUT),
     ).subscribe(() => {
-      if (this.seconds > 5) {
-        this.seconds -= 1;
-      }
+      this.seconds -= 1;
       this.width = this.seconds / this.TIMEOUT;
       if (this.seconds === 0) {
         this.router.navigate(['/selfie']);
