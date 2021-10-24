@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { from, Observable, ReplaySubject } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 
 import { environment } from '../environments/environment';
 import { ImageItem } from './datatypes';
@@ -59,10 +59,14 @@ export class ApiService {
   }
 
   sendEmail(email) {
-    const link = this.state.getPrivateUrl();
-    const own_id = this.state.getOwnItemID();
-    const magic = this.state.getMagic();
-    return this.http.post(environment.endpoints.sendEmail, {email, link, own_id, magic}).pipe(
+    return from([true]).pipe(
+      map(() => {
+        const link = this.state.getPrivateUrl();
+        const own_id = this.state.getOwnItemID();
+        const magic = this.state.getMagic();
+        return {email, link, own_id, magic};
+      }),
+      switchMap((body) => this.http.post(environment.endpoints.sendEmail, body)),
       tap((res) => {
         console.log('SENT EMAIL RESULT', res);
       })
