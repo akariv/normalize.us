@@ -69,6 +69,7 @@ export class MapComponent implements OnInit, AfterViewInit {
       this.configuration = config;
       this.dim = this.configuration.dim;
       this.ready.next();
+      this.ready.complete();
     });
     this.hasSelfie = this.state.imageID || this.state.descriptor;
   }
@@ -112,7 +113,6 @@ export class MapComponent implements OnInit, AfterViewInit {
         console.log('WAITING FOR READY');
         return this.ready;
       }),
-      first(),
       tap(() => { // SET UP MAP
         this.maxZoom = this.configuration.max_zoom;
         // Create map

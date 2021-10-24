@@ -64,7 +64,9 @@ export class ApiService {
         const link = this.state.getPrivateUrl();
         const own_id = this.state.getOwnItemID();
         const magic = this.state.getMagic();
-        return {email, link, own_id, magic};
+        const body = {email, link, own_id, magic};
+        console.log('EMAIL PARAMS', body);
+        return body;
       }),
       switchMap((body) => this.http.post(environment.endpoints.sendEmail, body)),
       tap((res) => {

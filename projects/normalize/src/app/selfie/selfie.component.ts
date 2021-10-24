@@ -192,11 +192,11 @@ export class SelfieComponent implements OnInit, AfterViewInit {
           this.state.pushRequest(
             this.api.createNew(event)
             .pipe(
-              switchMap((result: any) => {
+              tap((result: any) => {
                 if (result.success) {
+                  console.log('SETTING OWN INFO', result);
                   this.state.setOwnInfo(result);
                 }
-                return this.completed;
               })
             )
           );

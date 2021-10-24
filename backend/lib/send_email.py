@@ -27,6 +27,8 @@ def send_email_handler(request):
         link = content['link']
         send = to_email is not None
         own_id = content['own_id']
+        if own_id is not None:
+            own_id = int(own_id)
         magic = content['magic']
 
         success = True

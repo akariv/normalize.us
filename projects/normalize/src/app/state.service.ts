@@ -191,6 +191,7 @@ export class StateService {
     if (this.handlingRequest) {
       return;
     }
+    console.log('networkQueueLength', this.requests.length);
     this.networkQueueLength.next(this.requests.length);
     if (this.requests.length === 0) {
       return
@@ -235,7 +236,7 @@ export class StateService {
   }
 
   getNeedsEmail() {
-    return this.magic && !this.askedForEmail;
+    return (this.magic || this.gallery) && !this.askedForEmail;
   }
 
   urlSearchParam(key) {
