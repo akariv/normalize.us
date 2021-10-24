@@ -81,6 +81,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     }, 0);
     let start = this.state.gallery ? from([false]) : from([true]);
     this.state.needsEmail.subscribe(() => {
+      console.log('NEEDS EMAIL');
       this.definition = true;
       if (this.state.getOwnItemID() && !this.state.getAskedForEmail()) {
         this.emailModalOpen = true;
@@ -99,9 +100,14 @@ export class MapComponent implements OnInit, AfterViewInit {
             this.router.navigate(['/selfie'])
           });
         }
+      } else {
+        if (this.state.gallery) {
+          this.router.navigate(['/selfie'])
+        }
       }
     });
     if (!this.state.getNeedsEmail()) {
+      console.log('DOESNT NEED EMAIL');
       this.definitionClosed.next();
       if (this.state.gallery) {
         this.router.navigate(['/selfie']);
