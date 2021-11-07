@@ -184,11 +184,10 @@ export class SelfieComponent implements OnInit, AfterViewInit {
           // console.log('GOT EVENT DONE');
           // this.src = event.content;
           // console.log('STARTING COUNTDOWN');
-          this.state.pushRequest(
-            this.api.deleteOwnItem()
-          );
-          this.state.setOwnInfo({id: -1, descriptor: event.descriptor, image: event.image, landmarks: event.landmarks, gender_age: event.gender_age});
+          this.state.setOwnInfo({descriptor: event.descriptor, image: event.image, landmarks: event.landmarks, gender_age: event.gender_age});
           event.geolocation = this.state.geolocation;
+          event.id = this.state.itemID;
+          event.magic = this.state.magic;
           this.state.pushRequest(
             this.api.createNew(event)
             .pipe(

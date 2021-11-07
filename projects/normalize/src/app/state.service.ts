@@ -76,7 +76,7 @@ export class StateService {
   }
 
   setOwnInfo(value) {
-    this.itemID = value.id;
+    this.itemID = value.id || this.itemID || -1;
     this.imageID = value.image;
     this.magic = value.magic || this.magic;
     this.descriptor = value.descriptor || this.descriptor;
