@@ -7,7 +7,7 @@ from .db import engine
 from .net import HEADERS
 
 fetch_item = text('''SELECT magic from FACES WHERE id = :id''')
-delete_item = text('''DELETE from FACES WHERE id = :id''')
+delete_item = text('''UPDATE FACES set allowed=-1 WHERE id = :id''')
 
 
 def delete_item_handler(request: Request):

@@ -25,7 +25,7 @@ query_new = '''
         descriptor, landmarks, gender_age, place_name, created_timestamp,
         last_shown_1, last_shown_2
     FROM faces
-    where last_shown_{idx} is null and allowed=1
+    where last_shown_{idx} is null and allowed>0
     ORDER BY id asc
     LIMIT 1
 '''
@@ -39,7 +39,7 @@ query_any = '''
         descriptor, landmarks, gender_age, place_name, created_timestamp,
         last_shown_1, last_shown_2
     FROM faces
-    where last_shown_{idx} is not null and allowed=1
+    where last_shown_{idx} is not null and allowed>0
     ORDER BY last_shown_{idx} asc
     LIMIT 1
 '''

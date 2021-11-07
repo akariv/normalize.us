@@ -15,7 +15,7 @@ logging.getLogger().setLevel(logging.INFO)
 OUR_EMAIL = 'me@normalizi.ng'
 REPLY_TO_EMAIL = 'mushon@shual.com'
 REPLY_TO_NAME = 'Mushon Zer-Aviv'
-mark_updated = text('UPDATE faces SET last_shown_1=null, last_shown_2=null, allowed=1 WHERE id=:id and magic=:magic')
+mark_updated = text('UPDATE faces SET last_shown_1=null, last_shown_2=null, allowed=:allowed WHERE id=:id and magic=:magic')
 
 
 def send_email_handler(request):
@@ -26,6 +26,7 @@ def send_email_handler(request):
         to_email = content['email']
         link = content['link']
         send = to_email is not None
+        allowed = 2 if send else 1
         own_id = content['own_id']
         if own_id is not None:
             own_id = int(own_id)
@@ -68,7 +69,7 @@ def send_email_handler(request):
 
         with engine.connect() as connection:
             logging.info(f'Marking {own_id} with {magic} as updated')
-            connection.execute(mark_updated, id=own_id, magic=magic)
+            connection.execute(mark_updated, id=own_id, magic=magic, allowed=allowed)
 
     return Response(
         json.dumps(dict(success=success, error=error)),
