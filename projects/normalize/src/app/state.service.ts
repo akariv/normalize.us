@@ -65,6 +65,8 @@ export class StateService {
     if (gallery) {
       if (gallery === 'dublin') {
         this.setGallery([53.3441249,-6.2524838]);
+      } else if (gallery === 'moscow') {
+        this.setGallery([55.7546161,37.6363133]);
       } else if (gallery === 'clear') {
         window.localStorage.removeItem(this.GALLERY);
       }
