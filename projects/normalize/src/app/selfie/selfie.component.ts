@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 const PROMPTS = {
   initial: ['', ''],
   getting_ready: ['Hold on', `we're getting things ready`],
-  no_detection: ['Please bring your face', 'into the red frame'],
+  no_detection: ['Please bring your face', 'into the frame'],
   too_far: ['Please bring the camera', 'closer to your face'],
   too_close: [`You're too close...`, 'move a bit farther away'],
   not_aligned: ['Please', 'align your face'],
