@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
 import { delay, first } from 'rxjs/operators';
 import { ImageItem } from './datatypes';
+import { Galleries } from './galleries';
 
 @Injectable({
   providedIn: 'root'
@@ -63,12 +64,13 @@ export class StateService {
     }
     const gallery = urlParams.get('gallery');
     if (gallery) {
-      if (gallery === 'dublin') {
-        this.setGallery([53.3441249,-6.2524838]);
-      } else if (gallery === 'moscow') {
-        this.setGallery([55.7546161,37.6363133]);
-      } else if (gallery === 'clear') {
+      if (gallery === 'clear') {
         window.localStorage.removeItem(this.GALLERY);
+      } else {
+        const coords = Galleries[gallery];
+        if (coords) {
+          this.setGallery(coords);
+        }
       }
     }
   }
