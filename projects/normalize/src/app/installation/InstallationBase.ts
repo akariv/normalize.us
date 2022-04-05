@@ -77,6 +77,7 @@ export class InstallationBase implements AfterViewInit, OnInit, OnDestroy {
         ).subscribe((data) => {
             this.tsneOverlay.addImageLayer(data).subscribe((gi: GridItem) => {
                 if (this.items.length > 0) {
+                    this.mapElement.normalityLayer.refresh();
                     const pos = this.items[0].pos;
                     let center: L.LatLngTuple =[-pos.y - 0.5, pos.x + 0.5];
                     const projected = this.map.project(center);
