@@ -93,7 +93,7 @@ export class InstallationBase implements AfterViewInit, OnInit, OnDestroy {
                     this.map.flyTo(center, this.configuration.min_zoom + 2, Object.assign({duration: 1}, this.baseFlyToParams));
                     setTimeout(() => {
                         // this.map.flyTo(newCenter, this.configuration.max_zoom, Object.assign({duration: 5}, this.baseFlyToParams));
-                        const params: L.FitBoundsOptions = Object.assign({duration: 50, maxZoom: this.configuration.max_zoom, animate: true}, this.baseFlyToParams);
+                        const params: L.FitBoundsOptions = Object.assign({duration: 5, maxZoom: this.configuration.max_zoom, animate: true}, this.baseFlyToParams);
                         params['zoom'] = {animate: true, duration: 5};
                         // console.log('PPP', params);
                         this.map.flyToBounds(bounds, params);
