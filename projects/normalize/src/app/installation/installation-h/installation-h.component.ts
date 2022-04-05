@@ -9,6 +9,8 @@ import { InstallationBase } from '../InstallationBase';
 export class InstallationHComponent extends InstallationBase {
 
   ngOnInit(): void {
-      this.offsetX = 960;
+      this.baseFlyToParams = {
+        paddingBottomRight: [960, 0],
+      };
   }
 }

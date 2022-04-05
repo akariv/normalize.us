@@ -87,12 +87,16 @@ export class InstallationBase implements AfterViewInit, OnInit, OnDestroy {
                         // precaution
                         this.breatheOverlay.remove();
                     }
-                    this.breatheOverlay = new L.ImageOverlay('/assets/img/breathe.svg',
-                        [[-pos.y - 0.75, pos.x + 0.25], [-pos.y - 0.25, pos.x + 0.75]]).addTo(this.map);
+                    const bounds: L.LatLngBoundsExpression = [[-pos.y - 0.75, pos.x + 0.25], [-pos.y - 0.25, pos.x + 0.75]];
+                    this.breatheOverlay = new L.ImageOverlay('/assets/img/breathe.svg', bounds).addTo(this.map);
 
                     this.map.flyTo(center, this.configuration.min_zoom + 2, Object.assign({duration: 1}, this.baseFlyToParams));
                     setTimeout(() => {
-                        this.map.flyTo(newCenter, this.configuration.max_zoom, Object.assign({duration: 5}, this.baseFlyToParams));
+                        // this.map.flyTo(newCenter, this.configuration.max_zoom, Object.assign({duration: 5}, this.baseFlyToParams));
+                        const params: L.FitBoundsOptions = Object.assign({duration: 50, maxZoom: this.configuration.max_zoom, animate: true}, this.baseFlyToParams);
+                        params['zoom'] = {animate: true, duration: 5};
+                        // console.log('PPP', params);
+                        this.map.fitBounds(bounds, params);
                     }, 3000);
                 }
                 this.items.unshift(gi);
