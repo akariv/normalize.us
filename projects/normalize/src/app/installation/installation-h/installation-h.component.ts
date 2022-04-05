@@ -7,4 +7,8 @@ import { InstallationBase } from '../InstallationBase';
   styleUrls: ['./installation-h.component.less']
 })
 export class InstallationHComponent extends InstallationBase {
+
+  ngOnInit(): void {
+      this.offsetX = 960;
+  }
 }
