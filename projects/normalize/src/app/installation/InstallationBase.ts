@@ -26,6 +26,10 @@ export class InstallationBase implements AfterViewInit, OnInit, OnDestroy {
     loop: Subscription;
 
     items: GridItem[] = [];
+    baseFlyToParams = {};
+    offsetX = 0;
+
+    breatheOverlay: L.ImageOverlay = null;
 
     constructor(private api: ApiService, private fetchImage: ImageFetcherService) {
         this.api.getMapConfiguration().subscribe((config) => {
@@ -74,9 +78,21 @@ export class InstallationBase implements AfterViewInit, OnInit, OnDestroy {
             this.tsneOverlay.addImageLayer(data).subscribe((gi: GridItem) => {
                 if (this.items.length > 0) {
                     const pos = this.items[0].pos;
-                    this.map.flyTo([-pos.y - 0.5, pos.x + 0.5], this.configuration.min_zoom + 2, {duration: 1});
+                    let center: L.LatLngTuple =[-pos.y - 0.5, pos.x + 0.5];
+                    const projected = this.map.project(center);
+                    const moved = new L.Point(projected.x + this.offsetX, projected.y);
+                    const newCenter = this.map.unproject(moved);
+
+                    if (this.breatheOverlay) {
+                        // precaution
+                        this.breatheOverlay.remove();
+                    }
+                    this.breatheOverlay = new L.ImageOverlay('/assets/img/breathe.svg',
+                        [[-pos.y - 0.75, pos.x + 0.25], [-pos.y - 0.25, pos.x + 0.75]]).addTo(this.map);
+
+                    this.map.flyTo(center, this.configuration.min_zoom + 2, Object.assign({duration: 1}, this.baseFlyToParams));
                     setTimeout(() => {
-                        this.map.flyTo([-pos.y - 0.5, pos.x + 0.5], this.configuration.max_zoom, {duration: 5});
+                        this.map.flyTo(newCenter, this.configuration.max_zoom, Object.assign({duration: 5}, this.baseFlyToParams));
                     }, 3000);
                 }
                 this.items.unshift(gi);
