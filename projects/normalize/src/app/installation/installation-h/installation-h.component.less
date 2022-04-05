@@ -1,8 +1,11 @@
 @import '../../../common.less';
 
+@left-area: 1000px;
+@width: 3840px;
+
 :host {
     display: flex;
-    width: 3840px;
+    width: @width;
     height: 1080px;
     flex-flow: row;
     .qr-code {
@@ -29,11 +32,11 @@
         app-lessmore {
             position: absolute;
             bottom: 16px;
-            left: 16px;
+            left: calc(16px + @left-area);
             padding: 10px;
         }
-        width: 4840px;
-        left: -1000px;
+        width: @width + @left-area;
+        left: -@left-area;
     }
     ::ng-deep {
         .card-position-0 {
