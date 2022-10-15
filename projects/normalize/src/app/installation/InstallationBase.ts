@@ -44,7 +44,7 @@ export class InstallationBase implements AfterViewInit, OnInit, OnDestroy {
             first(),
         ).subscribe(() => {
             this.createMap();
-            this.loop = interval(20000).subscribe(() => {
+            this.loop = interval(10000).subscribe(() => {
                 // this.loop = interval(5000).subscribe(() => {
                 this.fetchLatest();
             });
