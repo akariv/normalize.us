@@ -1,8 +1,8 @@
 <svg width="1000" height="516" viewBox="0 0 1000 516" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_3005_160471)">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M1000 0H0V516H1000V0ZM500 195C464.654 195 436 223.654 436 259C436 294.346 464.654 323 500 323C535.346 323 564 294.346 564 259C564 223.654 535.346 195 500 195Z" fill="#038100" fill-opacity="0.33"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M1000 0H0V516H1000V0ZM500 179C455.817 179 420 214.817 420 259C420 303.183 455.817 339 500 339C544.183 339 580 303.183 580 259C580 214.817 544.183 179 500 179Z" fill="#038100" fill-opacity="0.33"/>
 <g style="mix-blend-mode:lighten" filter="url(#filter0_d_3005_160471)">
-<circle cx="500" cy="258" r="61" stroke="white" stroke-width="6"/>
+<circle cx="500" cy="258" r="77" stroke="white" stroke-width="6"/>
 </g>
 <g style="mix-blend-mode:lighten" filter="url(#filter1_d_3005_160471)">
 <circle cx="500" cy="258" r="79.5" stroke="white" stroke-dasharray="2 2"/>
@@ -27,7 +27,7 @@
 </g>
 </g>
 <defs>
-<filter id="filter0_d_3005_160471" x="420" y="178" width="160" height="160" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<filter id="filter0_d_3005_160471" x="404" y="162" width="192" height="192" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"/>
 <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
 <feOffset/>
